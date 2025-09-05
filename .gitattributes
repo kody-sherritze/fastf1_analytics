@@ -1,0 +1,15 @@
+﻿# Normalize line endings to LF in repo; Git will checkout CRLF on Windows if configured
+* text=auto eol=lf
+
+# Scripts
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+*.sh  text eol=lf
+
+# Code & config (LF)
+*.py  text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.toml text eol=lf
+*.md  text eol=lf
+*.json text eol=lf

@@ -1,0 +1,15 @@
+﻿site_name: FastF1 Portfolio
+repo_url: https://github.com/yourname/fastf1-portfolio
+theme:
+  name: material
+plugins:
+  - search
+  - mkdocstrings
+  - mkdocs-jupyter
+nav:
+  - Home: index.md
+  - Gallery: gallery.md
+  - How it works: how-it-works.md
+  - API:
+    - Session Loader: api/session_loader.md
+    - Plotting: api/plotting.md

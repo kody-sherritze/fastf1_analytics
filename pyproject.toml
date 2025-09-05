@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fastf1-portfolio"
+version = "0.1.0"
+description = "Reusable FastF1 helpers and a gallery of analyses"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [{ name = "Your Name"}]
+dependencies = [
+  "fastf1>=3.2.1",
+  "matplotlib>=3.7",
+  "pandas>=2.0",
+  "numpy>=1.24",
+  "scipy>=1.10",
+  "tqdm>=4.65",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=7.0",
+  "ruff>=0.4.0",
+  "black>=24.3.0",
+  "pre-commit>=3.6.0",
+  "nbstripout>=0.7.1",
+  "mkdocs-material>=9.5.0",
+  "mkdocstrings[python]>=0.24.0",
+  "mkdocs-jupyter>=0.24.1",
+]
+
+[tool.ruff]
+line-length = 100
+
+[tool.black]
+line-length = 100
+target-version = ["py310"]
