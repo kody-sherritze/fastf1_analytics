@@ -9,7 +9,7 @@ description = "Reusable FastF1 helpers and a gallery of analyses"
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
-authors = [{ name = "Your Name"}]
+authors = [{ name = "ksherr0"}]
 dependencies = [
   "fastf1>=3.2.1",
   "matplotlib>=3.7",
@@ -37,3 +37,6 @@ line-length = 100
 [tool.black]
 line-length = 100
 target-version = ["py310"]
+
+[project.scripts]
+f1-portfolio-monaco = "fastf1_portfolio.cli:monaco_main"

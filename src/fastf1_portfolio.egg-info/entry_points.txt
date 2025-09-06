@@ -1,0 +1,2 @@
+[console_scripts]
+f1-portfolio-monaco = fastf1_portfolio.cli:monaco_main
