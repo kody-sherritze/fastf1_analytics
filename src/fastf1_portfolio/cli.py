@@ -3,6 +3,7 @@ import argparse
 import matplotlib.pyplot as plt
 from . import load_session, apply_style
 
+
 def monaco_main():
     parser = argparse.ArgumentParser(description="Generate Monaco qualifying best-lap chart.")
     parser.add_argument("--year", type=int, default=2024)
