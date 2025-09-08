@@ -2,12 +2,14 @@ LICENSE
 README.md
 pyproject.toml
 src/fastf1_portfolio/__init__.py
+src/fastf1_portfolio/cli.py
 src/fastf1_portfolio/plotting.py
 src/fastf1_portfolio/session_loader.py
 src/fastf1_portfolio/utils.py
 src/fastf1_portfolio.egg-info/PKG-INFO
 src/fastf1_portfolio.egg-info/SOURCES.txt
 src/fastf1_portfolio.egg-info/dependency_links.txt
+src/fastf1_portfolio.egg-info/entry_points.txt
 src/fastf1_portfolio.egg-info/requires.txt
 src/fastf1_portfolio.egg-info/top_level.txt
 tests/test_imports.py
