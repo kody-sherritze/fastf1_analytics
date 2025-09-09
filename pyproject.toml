@@ -31,10 +31,8 @@ dev = [
   "mkdocs>=1.6",
   "mkdocs-material>=9.5.0",
   "mkdocstrings[python]>=0.24.0",
-  "mkdocs-jupyter>=0.24.1",
   "mkdocs-glightbox>=0.3.7",
   "pymdown-extensions>=10.8",
-  "types-requests",
   "PyYAML>=6.0.2",
 ]
 
