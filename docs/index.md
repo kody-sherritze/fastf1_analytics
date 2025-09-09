@@ -6,12 +6,15 @@ High-quality analyses and reusable helpers built on [FastF1](https://docs.fastf1
 
 ```bash
 pip install -e .[dev]
-# Generate Monaco visuals
-python examples/scripts/monaco_2024_qual_bestlaps.py
-python examples/scripts/race_tyre_strategy.py
-python examples/scripts/pace_evolution.py
-python examples/scripts/positions_gained.py
-python examples/scripts/telemetry_compare.py
+# Generate gallery tiles (PNG + YAML sidecar)
+python tools/plots/tyre_strategy.py --year 2025 --event "Italian Grand Prix" --cache .fastf1-cache
+python tools/plots/driver_championship.py --year 2024 --include-sprints --cache .fastf1-cache
+
+# Rebuild the Gallery page from sidecars
+python tools/generate_gallery.py
+
+# Preview the site
+mkdocs serve
 ```
 
 See the **[Gallery](gallery.md)** for the latest visuals.
