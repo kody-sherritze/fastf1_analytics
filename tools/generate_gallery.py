@@ -18,14 +18,7 @@ def load_items() -> list[dict]:
 
 
 def render_gallery(items: list[dict]) -> str:
-    lines = [
-        "# Gallery",
-        "",
-        "Below is a curated set of static visuals. Click any tile to zoom.",
-        "",
-        '<div class="grid cards" markdown>',
-        "",
-    ]
+    lines = ['<div class="grid cards" markdown>', ""]
     for it in items:
         title = it["title"]
         subtitle = it.get("subtitle", "")
@@ -39,7 +32,7 @@ def render_gallery(items: list[dict]) -> str:
             "  ---",
             f"  [![{title}]({img}){{ loading=lazy }}]({img}){{ .glightbox }}",
             f"  _{subtitle}_",
-            "  ",
+            "",
             f"  `Source:` `{code}`  ",
             f"  `Params:` `{ppreview}`",
             "",
@@ -53,7 +46,7 @@ def replace_block(text: str, block: str) -> str:
         pre = text.split(BEGIN, 1)[0]
         post = text.split(END, 1)[1]
         return f"{pre}{BEGIN}\n{block}\n{END}{post}"
-    # If markers are missing, just return the block with markers appended
+    # If markers are missing, append after any existing content
     return f"{text.rstrip()}\n\n{BEGIN}\n{block}\n{END}\n"
 
 

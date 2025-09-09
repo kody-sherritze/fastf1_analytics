@@ -44,4 +44,3 @@ nav:
       - Session Loader: api/session_loader.md
       - Plotting: api/plotting.md
       - fastf1_portfolio: reference/fastf1_portfolio.md
-      - Gallery API: api/gallery/index.md
