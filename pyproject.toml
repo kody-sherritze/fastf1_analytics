@@ -21,14 +21,21 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-  "pytest>=7.0",
-  "ruff>=0.4.0",
+  "pytest>=8.2",
+  "pytest-cov>=5.0",
+  "ruff>=0.5.6",
+  "mypy>=1.11",
   "black>=24.3.0",
   "pre-commit>=3.6.0",
   "nbstripout>=0.7.1",
+  "mkdocs>=1.6",
   "mkdocs-material>=9.5.0",
   "mkdocstrings[python]>=0.24.0",
   "mkdocs-jupyter>=0.24.1",
+  "mkdocs-glightbox>=0.3.7",
+  "pymdown-extensions>=10.8",
+  "types-requests",
+  "PyYAML>=6.0.2",
 ]
 
 [tool.ruff]

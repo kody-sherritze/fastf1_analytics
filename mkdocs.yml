@@ -1,15 +1,46 @@
 ﻿site_name: FastF1 Portfolio
 repo_url: https://github.com/ksherr0/fastf1_portfolio
+
 theme:
   name: material
+  features:
+    - navigation.instant
+    - navigation.sections
+    - content.code.copy
+    - content.action.edit
+    - content.tabs.link
+  palette:
+    - scheme: slate
+      primary: red
+      accent: red
+
 plugins:
   - search
-  - mkdocstrings
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            docstring_style: google
   - mkdocs-jupyter
+  - glightbox
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
 nav:
   - Home: index.md
   - Gallery: gallery.md
   - How it works: how-it-works.md
   - API:
-    - Session Loader: api/session_loader.md
-    - Plotting: api/plotting.md
+      - Session Loader: api/session_loader.md
+      - Plotting: api/plotting.md
+      - fastf1_portfolio: reference/fastf1_portfolio.md
+      - Gallery API: api/gallery/index.md

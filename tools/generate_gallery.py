@@ -54,7 +54,7 @@ def replace_block(text: str, block: str) -> str:
         post = text.split(END, 1)[1]
         return f"{pre}{BEGIN}\n{block}\n{END}{post}"
     # If markers are missing, just return the block with markers appended
-    return f"{BEGIN}\n{block}\n{END}\n"
+    return f"{text.rstrip()}\n\n{BEGIN}\n{block}\n{END}\n"
 
 
 def main() -> None:

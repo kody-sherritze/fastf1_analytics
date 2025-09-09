@@ -1,7 +1,7 @@
 ﻿# Gallery
 
-This page is auto-generated from metadata sidecars (`docs/assets/gallery/*.yml`) so every image
-corresponds to a reproducible script.
+This page lists pre-rendered visuals. Each tile is backed by a reproducible script
+and a YAML sidecar under `docs/assets/gallery/`.
 
 <!-- AUTO-GALLERY:BEGIN -->
 # Gallery
