@@ -14,4 +14,4 @@ python examples/scripts/positions_gained.py
 python examples/scripts/telemetry_compare.py
 ```
 
-See the **[Gallery](gallery/index.md)** for the latest visuals.
+See the **[Gallery](gallery.md)** for the latest visuals.

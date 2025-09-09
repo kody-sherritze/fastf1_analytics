@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from . import load_session, apply_style
 
 
-def monaco_main():
+def monaco_main() -> None:
     parser = argparse.ArgumentParser(description="Generate Monaco qualifying best-lap chart.")
     parser.add_argument("--year", type=int, default=2024)
     parser.add_argument("--session", default="Q")

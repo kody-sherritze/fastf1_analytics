@@ -1,0 +1,15 @@
+title: "2024 Drivers' Championship \u2013 Cumulative points"
+subtitle: Total points by race (lines per driver)
+image: assets/gallery/2024_drivers_championship_points.png
+code_path: tools/plots/driver_championship.py
+function: fastf1_portfolio.charts.driver_points.build_driver_points_chart
+params:
+  year: 2024
+  include_sprints: true
+  color_variant: secondary
+  min_total_points: 0.0
+  dpi: 220
+tags:
+- season
+- drivers
+- points

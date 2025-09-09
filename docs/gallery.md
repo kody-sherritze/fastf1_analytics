@@ -1,16 +1,31 @@
 ﻿# Gallery
 
-- Monaco 2024 Qualifying - Fastest lap per driver
-  ![Monaco 2024 Qualifying Fastest Laps](assets/gallery/monaco_grand_prix_2024_qual_bestlaps.png)
+This page lists pre-rendered visuals. Each tile is backed by a reproducible script
+and a YAML sidecar under `docs/assets/gallery/`.
 
-- Monaco 2024 Grand Prix - Tyre Strategies
-  ![Monaco 2024 GP Tyre Strategies](assets/gallery/monaco_grand_prix_2024_tyre_strategy.png)
+<!-- AUTO-GALLERY:BEGIN -->
+# Gallery
 
-- Monaco 2024 Grand Prix - Pace Evolution
-  ![Monaco 2024 GP Pace Evolution](assets/gallery/monaco_grand_prix_2024_pace.png)
+Below is a curated set of static visuals. Click any tile to zoom.
 
-- Monaco 2024 GP - Most Positions Gained/Lost
-  ![Monaco 2024 GP Position Changes](assets/gallery/monaco_grand_prix_2024_positions.png)
+<div class="grid cards" markdown>
 
-- Monaco 2024 Qualifying - VER/LEC Fastest Lap Comparison
-  ![Monaco 2024 Qualifying VER/LEC Comparison](assets/gallery/monaco_grand_prix_2024_tel_VER_LEC.png)
+- :material-chart-bar: **2024 Drivers' Championship – Cumulative points**
+  ---
+  [![2024 Drivers' Championship – Cumulative points](assets/gallery/2024_drivers_championship_points.png){ loading=lazy }](assets/gallery/2024_drivers_championship_points.png){ .glightbox }
+  _Total points by race (lines per driver)_
+  
+  `Source:` `tools/plots/driver_championship.py`  
+  `Params:` `year=2024, include_sprints=True, color_variant=secondary, min_total_points=0.0, dpi=220`
+
+- :material-chart-bar: **2025 Italian Grand Prix – Tyre Strategy**
+  ---
+  [![2025 Italian Grand Prix – Tyre Strategy](assets/gallery/italian_grand_prix_2025_tyre_strategy.png){ loading=lazy }](assets/gallery/italian_grand_prix_2025_tyre_strategy.png){ .glightbox }
+  _Stints and compounds by driver_
+  
+  `Source:` `tools/plots/tyre_strategy.py`  
+  `Params:` `driver_order=results, bar_height=0.6, bar_gap=0.35, annotate_compound=True, dpi=220`
+
+</div>
+
+<!-- AUTO-GALLERY:END -->
