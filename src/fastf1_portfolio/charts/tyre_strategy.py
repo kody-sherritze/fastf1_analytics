@@ -7,6 +7,7 @@ from typing import Any, Tuple
 import matplotlib.pyplot as plt
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
+from matplotlib.patches import Rectangle
 
 from fastf1_portfolio.plotting import apply_style, get_compound_color, savefig
 
@@ -112,8 +113,7 @@ def build_tyre_strategy(
         # Simple legend with compounds present
         uniques = [str(c) for c in stints["Compound"].unique().tolist()]
         handles = [
-            plt.Rectangle((0, 0), 1, 1, color=get_compound_color(c), label=c.title())
-            for c in uniques
+            Rectangle((0, 0), 1, 1, color=get_compound_color(c), label=c.title()) for c in uniques
         ]
         ax.legend(handles=handles, title="Compound", ncols=5, frameon=False, loc="lower right")
 

@@ -1,9 +1,16 @@
 ﻿from __future__ import annotations
 import fastf1
+from typing import Any
 from pathlib import Path
 
 
-def load_session(year: int, gp: str, session: str, *, cache: str | None = ".fastf1"):
+def load_session(
+    year: int,
+    gp: str,
+    session: str,
+    *,
+    cache: str | None = ".fastf1",
+) -> Any:
     """Load a FastF1 session with optional local cache directory."""
     if cache:
         cache_path = Path(cache)

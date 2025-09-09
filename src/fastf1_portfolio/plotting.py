@@ -1,4 +1,5 @@
 ﻿from __future__ import annotations
+
 from typing import Any, cast
 import re
 from pathlib import Path
@@ -6,10 +7,13 @@ from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter
 from matplotlib.colors import to_hex, to_rgb
-import fastf1.plotting as f1plot  # type: ignore[import-untyped]
+import fastf1.plotting as f1plot
 
 
-def apply_style(color_scheme: str | None = "fastf1", timedelta_support: bool = True) -> None:
+def apply_style(
+    color_scheme: str | None = "fastf1",
+    timedelta_support: bool = True,
+) -> None:
     """Apply a consistent, portfolio-ready Matplotlib style.
 
     Uses FastF1's built-in styling (dark theme by default) and a few readability tweaks.
@@ -43,7 +47,7 @@ def get_team_color(team: str, *, session: Any | None = None) -> str:
         return cast(str, f1plot.get_team_color(team, session=session))
     except Exception:
         # Public mapping if present in this FastF1 version
-        mapping = getattr(f1plot, "TEAM_COLORS", None)  # type: ignore[attr-defined]
+        mapping = getattr(f1plot, "TEAM_COLORS", None)
         if isinstance(mapping, dict) and team in mapping:
             return cast(str, mapping[team])
         # Normalize and try our local fallback
@@ -75,9 +79,9 @@ def _norm_key(s: str) -> str:
     return re.sub(r"[^a-z0-9]+", "", s.lower())
 
 
-def get_driver_color(driver: str, *, session=None) -> str:
+def get_driver_color(driver: str, *, session: Any | None = None) -> str:
     """Return the (team) color for a driver abbreviation in a given session."""
-    return f1plot.get_driver_color(driver, session=session)
+    return cast(str, f1plot.get_driver_color(driver, session=session))
 
 
 def fmt_laptime_seconds(sec: float) -> str:
@@ -108,7 +112,7 @@ def get_compound_color(compound: str) -> str:
     # Prefer FastF1 if available
     try:
         # FastF1 exposes a mapping in plotting; normalize keys when present
-        mapping = getattr(f1plot, "COMPOUND_COLORS", None)  # type: ignore[attr-defined]
+        mapping = getattr(f1plot, "COMPOUND_COLORS", None)
         if isinstance(mapping, dict):
             # keys in FastF1 are typically 'SOFT','MEDIUM','HARD','INTERMEDIATE','WET'
             return cast(str, mapping.get(c, _COMPOUND_FALLBACK.get(c, "#888888")))

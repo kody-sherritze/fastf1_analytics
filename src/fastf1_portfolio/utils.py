@@ -1,7 +1,7 @@
 ﻿from typing import Any
 
 
-def ensure_list(x: Any) -> list:
+def ensure_list(x: Any) -> list[Any]:
     if x is None:
         return []
     if isinstance(x, (list, tuple, set)):

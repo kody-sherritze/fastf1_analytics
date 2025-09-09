@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Literal, Tuple
-
 import matplotlib.pyplot as plt
 import pandas as pd
+from dataclasses import dataclass
+from typing import Literal, Tuple
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 
@@ -56,24 +55,26 @@ def build_driver_points_chart(
 
     # Determine color per driver (constant across season)
     color_by_driver: dict[str, str] = {}
-    for drv, grp in df.groupby("Driver"):
+    for drv, grp in df.groupby("Driver", sort=False):
+        drv_str = str(drv)
         team = str(grp.iloc[-1]["TeamName"])  # last seen team
         color = get_team_color(team)
         if params.color_variant == "secondary":
             color = lighten_color(color, amount=0.25)
-        color_by_driver[drv] = color
+        color_by_driver[drv_str] = color
 
     fig, ax = plt.subplots(figsize=(12, 7))
 
     # One line per driver
-    for drv, grp in df.groupby("Driver"):
+    for drv, grp in df.groupby("Driver", sort=False):
+        drv_str = str(drv)
         grp = grp.sort_values("Round")
         ax.plot(
             grp["Round"],
             grp["PointsCum"],
-            label=drv,
+            label=drv_str,
             linewidth=params.linewidth,
-            color=color_by_driver.get(drv, "#666666"),
+            color=color_by_driver.get(drv_str, "#666666"),
         )
 
     ax.set_xlabel("Round")
