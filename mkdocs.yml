@@ -1,5 +1,6 @@
 ﻿site_name: FastF1 Portfolio
 repo_url: https://github.com/ksherr0/fastf1_portfolio
+edit_uri: edit/main/docs/
 
 theme:
   name: material
