@@ -10,6 +10,14 @@ Below is a curated set of static visuals. Click any tile to zoom.
 
 <div class="grid cards" markdown>
 
+- :material-chart-bar: **2024 Drivers' Championship – Cumulative points**
+  ---
+  [![2024 Drivers' Championship – Cumulative points](assets/gallery/2024_drivers_championship_points.png){ loading=lazy }](assets/gallery/2024_drivers_championship_points.png){ .glightbox }
+  _Total points by race (lines per driver)_
+  
+  `Source:` `tools/plots/driver_championship.py`  
+  `Params:` `year=2024, include_sprints=True, color_variant=secondary, min_total_points=0.0, dpi=220`
+
 - :material-chart-bar: **2025 Italian Grand Prix – Tyre Strategy**
   ---
   [![2025 Italian Grand Prix – Tyre Strategy](assets/gallery/italian_grand_prix_2025_tyre_strategy.png){ loading=lazy }](assets/gallery/italian_grand_prix_2025_tyre_strategy.png){ .glightbox }
