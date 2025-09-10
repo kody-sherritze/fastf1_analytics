@@ -110,25 +110,6 @@ def _clean_laps(session: Any, driver: str) -> pd.DataFrame:
 # -----------------------------------------------------------------------------
 
 
-def _ensure_timedelta_index(df: pd.DataFrame) -> pd.DataFrame:
-    """Ensure the DataFrame has a Timedelta index for time‑based rolling.
-
-    If a ``Time`` column exists and is a timedelta dtype, set it as the index.
-    Otherwise, construct a synthetic monotonic time index using the sample
-    order (1 ms apart) as a fallback.
-    """
-    df = df.copy()
-    if not isinstance(df.index, pd.TimedeltaIndex):
-        # If a 'Time' column is Timedelta, set it as the index
-        if "Time" in df.columns and is_timedelta64_dtype(df["Time"]):
-            df = df.set_index("Time")
-        else:
-            # fallback: monotonic synthetic time axis
-            df = df.set_index(pd.to_timedelta(np.arange(len(df)), unit="ms"))
-    # fallback: monotonic synthetic time axis
-    return df
-
-
 def _first_sustained_brake_idx(
     tel: pd.DataFrame,
     accel_threshold_kmh_s: float,
@@ -184,28 +165,24 @@ def _slice_main_straight_window(tel: pd.DataFrame, brake_idx: Optional[int]) -> 
 
 
 def _resample_normalized(
-    df: pd.DataFrame,
-    n_points: int,
-) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """Resample telemetry onto a normalized 0–1 distance axis.
-
-    Returns (x_norm, speed_interp, drs_binary_interp).
-    """
-
-    # empty/None guard
+    df: pd.DataFrame, n_points: int
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Resample (Distance, Speed, DRS) onto [0..1] grid; return x, speed, drs_open (0/1)."""
     if df is None or len(df) == 0:
         x = np.linspace(0.0, 1.0, n_points)
         return x, np.full_like(x, np.nan, dtype=float), np.zeros_like(x, dtype=float)
 
-    # pull arrays; coerce to float and drop bad samples
     d = pd.to_numeric(df["Distance"], errors="coerce").to_numpy(dtype=float)
     s = pd.to_numeric(df["Speed"], errors="coerce").to_numpy(dtype=float)
+    m = np.isfinite(d) & np.isfinite(s)
+    if not np.any(m):
+        x = np.linspace(0.0, 1.0, n_points)
+        return x, np.full_like(x, np.nan, dtype=float), np.zeros_like(x, dtype=float)
+    d = d[m]
+    s = s[m]
 
-    if "DRS" in df.columns:
-        drs_raw = pd.to_numeric(df["DRS"], errors="coerce").fillna(0).astype(int).to_numpy()
-        drs_open = np.isin(drs_raw, (12, 14)).astype(float)
-    else:
-        drs_open = np.zeros_like(s, dtype=float)
+    drs_open = _drs_open_flags(df)
+    drs_open = drs_open[m]
 
     d0, d1 = float(np.nanmin(d)), float(np.nanmax(d))
     span = max(d1 - d0, 1e-6)
@@ -213,8 +190,8 @@ def _resample_normalized(
     d_target = d0 + x * span
 
     speed_i = np.interp(d_target, d, s)
-    drs_i = np.interp(d_target, d, drs_open)  # still 0..1 after interp
-    drs_i = (drs_i > 0.5).astype(float)  # binarize on the grid
+    drs_i = np.interp(d_target, d, drs_open)  # in [0,1]
+    drs_i = (drs_i > 0.5).astype(float)  # binarize grid
     return x, speed_i, drs_i
 
 
@@ -240,6 +217,122 @@ def _median_activation_point(drs_traces: List[np.ndarray], x: np.ndarray) -> Opt
         if len(idx):
             starts.append(float(x[idx[0]]))
     return float(np.median(starts)) if starts else None
+
+
+def _drs_open_flags(df: pd.DataFrame) -> np.ndarray:
+    """Return 1 when the DRS flap is actually open (codes 12 or 14), else 0."""
+    if "DRS" not in df.columns:
+        return np.zeros(len(df), dtype=float)
+    drs_raw = pd.to_numeric(df["DRS"], errors="coerce").fillna(0).astype(int).to_numpy()
+    return np.isin(drs_raw, (12, 14)).astype(float)
+
+
+def _ensure_timedelta_index(df: pd.DataFrame) -> pd.DataFrame:
+    """Ensure df has a TimedeltaIndex for time-based rolling windows."""
+    df = df.copy()
+    if not isinstance(df.index, pd.TimedeltaIndex):
+        if "Time" in df.columns and is_timedelta64_dtype(df["Time"]):
+            df = df.set_index("Time")
+        else:
+            df = df.set_index(pd.to_timedelta(np.arange(len(df)), unit="ms"))
+    return df
+
+
+def _accel_series(tel: pd.DataFrame) -> pd.Series:
+    """Compute a float acceleration Series (km/h/s) with a TimedeltaIndex."""
+    df = tel[["Time", "Speed"]].dropna().copy()
+    if df.empty:
+        return pd.Series(dtype=float)
+    df = _ensure_timedelta_index(df)
+    v = df["Speed"].astype(float)
+    # seconds from TimedeltaIndex
+    idx_ns = df.index.to_numpy(dtype="timedelta64[ns]").astype("int64")
+    t_seconds = idx_ns.astype(float) / 1e9
+    dv = v.diff().to_numpy()
+    dt = np.diff(t_seconds, prepend=t_seconds[0])
+    with np.errstate(divide="ignore", invalid="ignore"):
+        a_vals = np.divide(dv, dt, out=np.zeros_like(dv), where=dt != 0)
+    return pd.Series(a_vals, index=df.index, dtype=float)
+
+
+def _brake_mask(a: pd.Series, sustain_sec: float, threshold: float) -> np.ndarray:
+    """Return bool array where sustained braking is happening."""
+    if a.empty:
+        return np.zeros(0, dtype=bool)
+    a_roll = a.rolling(f"{sustain_sec}s").mean()
+    # Convert to ndarray for typed comparisons
+    return a_roll.to_numpy(dtype=float) < float(threshold)
+
+
+def _segments_from_brake_mask(mask: np.ndarray, min_len: int = 8) -> list[tuple[int, int]]:
+    """Return contiguous (start, end) index pairs for non-braking segments."""
+    if mask.size == 0:
+        return []
+    non_brake = ~mask
+    segs: list[tuple[int, int]] = []
+    i = 0
+    n = non_brake.size
+    while i < n:
+        if non_brake[i]:
+            j = i
+            while j + 1 < n and non_brake[j + 1]:
+                j += 1
+            if (j - i + 1) >= min_len:
+                segs.append((i, j))
+            i = j + 1
+        else:
+            i += 1
+    return segs
+
+
+def _select_drs_straight_indices(
+    tel: pd.DataFrame, accel_threshold_kmh_s: float, sustain_sec: float
+) -> tuple[int, int] | None:
+    """Pick the lap's straight with strongest DRS-open presence (length-weighted).
+    Falls back to the longest straight if DRS coverage is minimal.
+    """
+    # Ensure required columns
+    cols = [c for c in ("Time", "Speed", "Distance", "DRS") if c in tel.columns]
+    if not cols:
+        return None
+    t = tel[cols].dropna(subset=[c for c in cols if c != "DRS"]).copy()
+    if t.empty:
+        return None
+
+    # Acceleration and braking mask
+    a = _accel_series(t)
+    if a.empty or len(a) != len(t):
+        return None
+    brake = _brake_mask(a, sustain_sec=sustain_sec, threshold=accel_threshold_kmh_s)
+
+    segs = _segments_from_brake_mask(brake, min_len=8)
+    if not segs:
+        return None
+
+    dists = pd.to_numeric(t["Distance"], errors="coerce").to_numpy(dtype=float)
+    drs_open = _drs_open_flags(t)
+
+    # Score segments: (mean DRS open) * (distance length)
+    best = None
+    best_score = -1.0
+    best_len = -1.0
+    for s_idx, e_idx in segs:
+        seg_len = float(dists[e_idx] - dists[s_idx])
+        if seg_len <= 1.0:
+            continue
+        coverage = float(np.nanmean(drs_open[s_idx : e_idx + 1]))
+        score = coverage * seg_len
+        if (score > best_score) or (np.isclose(score, best_score) and seg_len > best_len):
+            best_score = score
+            best_len = seg_len
+            best = (s_idx, e_idx)
+
+    # If coverage is tiny everywhere, use the longest straight instead
+    if best is None or best_score < 1e-6:
+        # Longest by distance
+        best = max(segs, key=lambda se: dists[se[1]] - dists[se[0]])
+
+    return best
 
 
 # -----------------------------------------------------------------------------
@@ -274,10 +367,13 @@ def build_drs_effectiveness_distance(
             tel = lap.get_car_data().add_distance()
         except Exception:
             continue
-        brake_idx = _first_sustained_brake_idx(
-            tel, params.accel_threshold_kmh_s, params.sustain_sec
-        )
-        win = _slice_main_straight_window(tel, brake_idx)
+        sel = _select_drs_straight_indices(tel, params.accel_threshold_kmh_s, params.sustain_sec)
+        if not sel:
+            continue
+        s_idx, e_idx = sel
+        win = tel.iloc[s_idx : e_idx + 1][
+            [c for c in ("Distance", "Speed", "DRS", "Time") if c in tel.columns]
+        ]
         if win is None or len(win) < 5:
             continue
         _, speed_i, drs_i = _resample_normalized(win, params.n_points)
