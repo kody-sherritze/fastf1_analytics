@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 import argparse
+from typing import Any
 from pathlib import Path
 
 import pandas as pd
 import yaml
-import fastf1  # type: ignore[import-untyped]
+import fastf1
 
 from fastf1_portfolio.session_loader import load_session
 from fastf1_portfolio.charts.driver_points import (
@@ -23,7 +24,7 @@ def _season_points_table(year: int, include_sprints: bool, cache: str) -> pd.Dat
         if str(row.get("EventName", "")).strip()
     ]
 
-    rows: list[dict] = []
+    rows: list[dict[str, Any]] = []
     by_driver_total: dict[str, float] = {}
 
     for rnd, event in rounds:
@@ -57,12 +58,13 @@ def _season_points_table(year: int, include_sprints: bool, cache: str) -> pd.Dat
             # Use team from last race result if available, else blank
             # (Color selection later will still work with team="")
             team = ""
-            try:
-                team_rows = race_res[race_res["Abbreviation"] == drv]
-                if len(team_rows) > 0:
-                    team = str(team_rows.iloc[-1]["TeamName"])
-            except Exception:
-                pass
+            if race_res is not None:
+                try:
+                    team_rows = race_res[race_res["Abbreviation"] == drv]
+                    if len(team_rows) > 0:
+                        team = str(team_rows.iloc[-1]["TeamName"])
+                except Exception:
+                    pass
 
             rows.append(
                 {

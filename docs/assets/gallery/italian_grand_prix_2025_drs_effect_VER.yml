@@ -1,0 +1,17 @@
+title: "2025 Italian Grand Prix \u2013 DRS effect on main straight (VER)"
+subtitle: Median speed traces along main straight (DRS ON/OFF)
+image: assets/gallery/italian_grand_prix_2025_drs_effect_VER.png
+code_path: tools/plots/drs_effectiveness.py
+function: fastf1_portfolio.charts.drs_effectiveness.build_drs_effectiveness_distance
+params:
+  year: 2025
+  gp: Italian Grand Prix
+  session: R
+  driver: VER
+  n_points: 200
+  accel_threshold_kmh_s: -8.0
+  sustain_sec: 0.3
+tags:
+- drs
+- speed
+- straight
