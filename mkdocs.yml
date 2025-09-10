@@ -22,7 +22,6 @@ plugins:
         python:
           options:
             docstring_style: google
-  - mkdocs-jupyter
   - glightbox
 
 markdown_extensions:
