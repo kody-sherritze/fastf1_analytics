@@ -29,7 +29,7 @@ minus OFF).  The design reflects user preferences:
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Tuple, Optional, List, cast
+from typing import Any, Tuple, Optional, List, cast, NamedTuple
 
 import numpy as np
 import pandas as pd
@@ -285,6 +285,49 @@ def _segments_from_brake_mask(mask: np.ndarray, min_len: int = 8) -> list[tuple[
     return segs
 
 
+def _turn_pair_for_segment(
+    tel: pd.DataFrame,
+    s_idx: int,
+    e_idx: int,
+    accel_threshold_kmh_s: float,
+    sustain_sec: float,
+) -> tuple[int, int] | None:
+    """Return (turn_start, turn_end) for the non-braking segment [s_idx, e_idx].
+
+    We (re)build the braking mask from this lap's telemetry using the same
+    time-based dV/dt rule, find all non-braking segments (straights), then
+    locate which straight contains (or best overlaps) [s_idx, e_idx].
+
+    Mapping: straight #k (0-based) is between Turn (k+1) and Turn (k+2),
+    wrapping so the last straight is between T{n} and T1.
+    """
+    # Build braking mask
+    a = _accel_series(tel)
+    if a.empty or len(a) != len(tel):
+        return None
+    brake = _brake_mask(a, sustain_sec=sustain_sec, threshold=accel_threshold_kmh_s)
+    segs = _segments_from_brake_mask(brake, min_len=8)
+    if not segs:
+        return None
+
+    # Find straight with max overlap with [s_idx, e_idx]
+    best_k = -1
+    best_overlap = -1
+    for k, (s, e) in enumerate(segs):
+        overlap = min(e, e_idx) - max(s, s_idx) + 1
+        if overlap > best_overlap:
+            best_overlap = overlap
+            best_k = k
+
+    if best_k < 0:
+        return None
+
+    n = len(segs)
+    t_start = best_k + 1
+    t_end = 1 if (t_start == n) else (t_start + 1)
+    return (t_start, t_end)
+
+
 def _select_drs_straight_indices(
     tel: pd.DataFrame, accel_threshold_kmh_s: float, sustain_sec: float
 ) -> tuple[int, int] | None:
@@ -335,6 +378,39 @@ def _select_drs_straight_indices(
     return best
 
 
+class _BestLap(NamedTuple):
+    x: np.ndarray
+    speed: np.ndarray
+    drs_bin: np.ndarray
+    time_sec: float
+    d_start: float
+    d_end: float
+    turn_start: Optional[int]
+    turn_end: Optional[int]
+
+
+def _window_time_seconds(win: pd.DataFrame) -> float:
+    """Duration across the selected straight window."""
+    # Prefer Time column if it’s Timedelta
+    if "Time" in win.columns and is_timedelta64_dtype(win["Time"]):
+        t = win["Time"].dt.total_seconds().to_numpy(dtype=float)
+        if t.size >= 2:
+            return float(np.nanmax(t) - np.nanmin(t))
+
+    # Fallback: integrate Δd / v (robust if Time missing)
+    d = pd.to_numeric(win["Distance"], errors="coerce").to_numpy(dtype=float)
+    s_kmh = pd.to_numeric(win["Speed"], errors="coerce").to_numpy(dtype=float)
+    m = np.isfinite(d) & np.isfinite(s_kmh)
+    d = d[m]
+    s_kmh = s_kmh[m]
+    if d.size < 2:
+        return float("nan")
+    v_ms = np.maximum(s_kmh, 1e-3) * (1000.0 / 3600.0)  # clamp to avoid div/0
+    dd = np.diff(d)
+    v_mid = 0.5 * (v_ms[1:] + v_ms[:-1])
+    return float(np.sum(dd / v_mid))
+
+
 # -----------------------------------------------------------------------------
 # Main chart builder
 # -----------------------------------------------------------------------------
@@ -347,46 +423,75 @@ def build_drs_effectiveness_distance(
     params: DRSEffectivenessParams = DRSEffectivenessParams(),
     out_path: Optional[str] = None,
 ) -> Tuple[Figure, Axes]:
-    """Build a distance‑aligned DRS effectiveness chart for a given driver.
+    """Best-case DRS effectiveness on the auto-selected DRS straight.
 
-    The returned figure contains two curves (median speed with DRS ON and OFF)
-    with IQR bands and an optional delta trace plotted on a secondary axis.
+    Compares the fastest DRS-ON straight vs the fastest DRS-OFF straight
+    (per-lap windows selected automatically where DRS is actually used).
     """
     apply_style()
     drv = str(driver).upper()
-    # Filter laps according to user criteria
+
+    # Filter laps (race-only, no in/out, no SC/VSC/Yellow)
     laps = _clean_laps(session, drv)
-    # Prepare containers
-    x_grid = np.linspace(0.0, 1.0, params.n_points)
-    on_speeds: List[np.ndarray] = []
-    on_drsbin: List[np.ndarray] = []
-    off_speeds: List[np.ndarray] = []
-    # Process each lap
+
+    # Track best ON and OFF windows (by minimal time across the straight)
+    best_on: _BestLap | None = None
+    best_off: _BestLap | None = None
+    off_windows: list[pd.DataFrame] = []
+
+    # thresholds for classification (keep tight to avoid glitches)
+    MIN_OPEN_RATIO_ON = 0.15  # ≥15% of window open → ON
+    MAX_OPEN_RATIO_OFF = 0.02  # ≤2% open → OFF
+
     for _, lap in laps.iterrows():
         try:
             tel = lap.get_car_data().add_distance()
         except Exception:
             continue
+
         sel = _select_drs_straight_indices(tel, params.accel_threshold_kmh_s, params.sustain_sec)
         if not sel:
             continue
         s_idx, e_idx = sel
+
+        # build the straight window for the lap
         win = tel.iloc[s_idx : e_idx + 1][
             [c for c in ("Distance", "Speed", "DRS", "Time") if c in tel.columns]
-        ]
+        ].copy()
         if win is None or len(win) < 5:
             continue
-        _, speed_i, drs_i = _resample_normalized(win, params.n_points)
-        if np.all(np.isnan(speed_i)):
+
+        win = win.sort_values("Distance")
+
+        # resample to normalized grid
+        x_i, s_i, drs_i = _resample_normalized(win, params.n_points)
+        if np.all(np.isnan(s_i)):
             continue
-        open_ratio = float(drs_i.mean())  # fraction of straight with flap open
-        if open_ratio >= 0.15:  # 10–20% works; 0.15 is a good default
-            on_speeds.append(speed_i)
-            on_drsbin.append(drs_i)
-        else:
-            off_speeds.append(speed_i)
-    # Fallback: if no ON laps in race, use fastest valid qualifying lap
-    if not on_speeds:
+
+        # classify and time the window
+        open_ratio = float(drs_i.mean())
+        t_sec = _window_time_seconds(win)
+        if not np.isfinite(t_sec):
+            continue
+
+        if open_ratio >= MIN_OPEN_RATIO_ON:
+            # distance bounds of THIS ON window
+            d0 = float(pd.to_numeric(win["Distance"], errors="coerce").iloc[0])
+            d1 = float(pd.to_numeric(win["Distance"], errors="coerce").iloc[-1])
+
+            # which turns bound this straight in THIS lap
+            tp = _turn_pair_for_segment(
+                tel, s_idx, e_idx, params.accel_threshold_kmh_s, params.sustain_sec
+            )
+            t_s, t_e = tp if tp is not None else (None, None)
+
+            if (best_on is None) or (t_sec < best_on.time_sec):
+                best_on = _BestLap(x_i, s_i, drs_i, t_sec, d0, d1, t_s, t_e)
+        elif open_ratio <= MAX_OPEN_RATIO_OFF:
+            off_windows.append(win)
+
+    # Fallback: if no ON in race, try fastest valid qualifying lap (same auto-straight)
+    if best_on is None:
         try:
             qual = load_session(
                 session.event.year, session.event["EventName"], "Q", cache=str(session._api.path)
@@ -404,63 +509,137 @@ def build_drs_effectiveness_distance(
             if qlap is not None:
                 try:
                     qtel = qlap.get_car_data().add_distance()
-                    qbrk = _first_sustained_brake_idx(
+                    sel_q = _select_drs_straight_indices(
                         qtel, params.accel_threshold_kmh_s, params.sustain_sec
                     )
-                    qwin = _slice_main_straight_window(qtel, qbrk)
-                    _, qs_i, qdrs_i = _resample_normalized(qwin, params.n_points)
-                    if not np.all(np.isnan(qs_i)):
-                        on_speeds.append(qs_i)
-                        on_drsbin.append((qdrs_i > 0.5).astype(float))
+                    if sel_q:
+                        qs, qe = sel_q
+                        qwin = (
+                            qtel.iloc[qs : qe + 1][
+                                [
+                                    c
+                                    for c in ("Distance", "Speed", "DRS", "Time")
+                                    if c in qtel.columns
+                                ]
+                            ]
+                            .copy()
+                            .sort_values("Distance")
+                        )
+                        xq, sq, dq = _resample_normalized(qwin, params.n_points)
+                        open_ratio_q = float(dq.mean())
+                        tq = _window_time_seconds(qwin)
+                        if open_ratio_q >= MIN_OPEN_RATIO_ON and np.isfinite(tq):
+                            d0 = float(pd.to_numeric(qwin["Distance"], errors="coerce").iloc[0])
+                            d1 = float(pd.to_numeric(qwin["Distance"], errors="coerce").iloc[-1])
+                            tp = _turn_pair_for_segment(
+                                qtel, qs, qe, params.accel_threshold_kmh_s, params.sustain_sec
+                            )
+                            t_s, t_e = tp if tp is not None else (None, None)
+                            best_on = _BestLap(xq, sq, dq, tq, d0, d1, t_s, t_e)
                 except Exception:
                     pass
-    # Aggregate medians and IQRs
-    on_med, on_iqr = _aggregate_class(on_speeds)
-    off_med, off_iqr = _aggregate_class(off_speeds)
+
+    # Build the figure
     fig, ax = plt.subplots(figsize=(10, 6))
-    # Handle empty
-    if on_med.size == 0 and off_med.size == 0:
+
+    # Handle empty state
+    if best_on is None and best_off is None:
         ax.text(0.5, 0.5, "No usable telemetry after filtering", ha="center", va="center")
         ax.set_axis_off()
         if out_path:
             savefig(fig, out_path, dpi=params.dpi)
         return fig, ax
-    # Plot OFF first
-    if off_med.size:
-        ax.plot(x_grid, off_med, label="DRS OFF", linewidth=2.0)
-        if off_iqr.size:
-            q25 = off_med - 0.5 * off_iqr
-            q75 = off_med + 0.5 * off_iqr
-            ax.fill_between(x_grid, q25, q75, alpha=0.20, linewidth=0)
-    # Plot ON
-    if on_med.size:
-        ax.plot(x_grid, on_med, label="DRS ON", linewidth=2.2)
-        if on_iqr.size:
-            q25 = on_med - 0.5 * on_iqr
-            q75 = on_med + 0.5 * on_iqr
-            ax.fill_between(x_grid, q25, q75, alpha=0.20, linewidth=0)
-    # Delta trace on secondary axis
-    if on_med.size and off_med.size:
-        delta = on_med - off_med
+
+    if best_on is not None and not off_windows:
+        pass  # nothing to do
+    elif best_on is not None:
+        d0_on, d1_on = best_on.d_start, best_on.d_end
+        for win_off in off_windows:
+            # slice the OFF window to ON's distance span
+            w = win_off[
+                (pd.to_numeric(win_off["Distance"], errors="coerce") >= d0_on)
+                & (pd.to_numeric(win_off["Distance"], errors="coerce") <= d1_on)
+            ].copy()
+            if len(w) < 5:
+                # If the original OFF window is slightly wider, try re-slicing from the full tel segment
+                # (optional) but generally skip if too sparse
+                continue
+            w = w.sort_values("Distance")
+            xo, so, do = _resample_normalized(w, params.n_points)
+            # ensure it's truly OFF within this span
+            if float(do.mean()) > MAX_OPEN_RATIO_OFF:
+                continue
+            to = _window_time_seconds(w)
+            if not np.isfinite(to):
+                continue
+            if (best_off is None) or (to < best_off.time_sec):
+                best_off = _BestLap(
+                    xo, so, do, to, d0_on, d1_on, best_on.turn_start, best_on.turn_end
+                )
+
+    if best_off is not None:
+        ax.plot(
+            best_off.x,
+            best_off.speed,
+            label="Fastest DRS OFF",
+            linewidth=2.0,
+            color="#ff6b81",  # pink
+        )
+
+    if best_on is not None:
+        ax.plot(
+            best_on.x,
+            best_on.speed,
+            label="Fastest DRS ON",
+            linewidth=2.2,
+            color="#2ecc71",  # green
+        )
+
+    if best_on is not None and best_on.turn_start is not None and best_on.turn_end is not None:
+        ax.text(
+            0.015,
+            0.90,
+            f"Selected straight: Turn {best_on.turn_start} \u2192 Turn {best_on.turn_end}",
+            transform=ax.transAxes,
+            ha="left",
+            va="top",
+            fontsize=10,
+            color="#CCCCCC",
+        )
+
+    ax.set_xlabel("Normalized distance along selected straight (0 → 1)")
+    ax.set_ylabel("Speed (km/h)")
+
+    # Dotted Δ line (right axis) if both present
+    ax2 = None
+    if (best_on is not None) and (best_off is not None):
+        delta = best_on.speed - best_off.speed
         ax2 = ax.twinx()
-        ax2.plot(x_grid, delta, linewidth=1.2, alpha=0.8, linestyle=":", label="Δ speed (ON−OFF)")
+        ax2.plot(
+            best_on.x,
+            delta,
+            linewidth=1.2,
+            alpha=0.85,
+            linestyle=":",
+            label="Δ speed (ON−OFF) (right axis)",
+        )
         ax2.set_ylabel("Δ speed (km/h)")
         ax2.grid(False)
-    else:
-        ax2 = None
 
-    # Small caption: what the shaded bands mean (top-left of main axes)
-    ax.text(
-        0.015,
-        0.97,
-        "Shaded bands = interquartile range (25–75%)",
-        transform=ax.transAxes,
-        ha="left",
-        va="top",
-        fontsize=9,
-        color="#CCCCCC",
-    )
-    # If we drew the delta line on ax2, include it in the legend
+        # Time saved annotation
+        time_saved = best_off.time_sec - best_on.time_sec  # >0 → ON faster
+        ax.text(
+            0.015,
+            0.97,
+            f"Best-lap time gain across straight: {time_saved:+.3f} s",
+            transform=ax.transAxes,
+            ha="left",
+            va="top",
+            fontsize=10,
+            color="#CCCCCC",
+        )
+
+    # Legend (merge both axes so dotted line appears)
     if ax2 is not None:
         h1, l1 = ax.get_legend_handles_labels()
         h2, l2 = ax2.get_legend_handles_labels()
@@ -468,23 +647,25 @@ def build_drs_effectiveness_distance(
     else:
         ax.legend(loc="lower right", frameon=False)
 
-    # Title and labels
+    # Title
     if params.title:
         title = params.title
     else:
         try:
-            title = f"{session.event.year} {session.event['EventName']} – DRS Effectiveness (Main Straight) – {drv}"
+            title = f"{session.event.year} {session.event['EventName']} – DRS Effectiveness (Best-Lap) – {drv}"
         except Exception:
-            title = f"DRS Effectiveness – {drv}"
+            title = f"DRS Effectiveness (Best-Lap) – {drv}"
     ax.set_title(title)
-    ax.set_xlabel("Normalized distance along main straight (0 → 1)")
-    ax.set_ylabel("Speed (km/h)")
+
     ax.margins(x=0.01)
-    # Activation annotation
-    if params.show_annotations and on_drsbin:
-        act = _median_activation_point(on_drsbin, x_grid)
-        if act is not None:
-            ax.axvline(act, color="#888888", linewidth=1.0, linestyle="--", alpha=0.6)
+
+    # Optional activation marker (if you want to keep it for the ON trace)
+    if params.show_annotations and (best_on is not None):
+        idx_on = np.where(best_on.drs_bin > 0.5)[0]
+        if idx_on.size:
+            act_x = float(best_on.x[idx_on[0]])
+            ax.axvline(act_x, color="#888888", linewidth=1.0, linestyle="--", alpha=0.6)
+
     if out_path:
         savefig(fig, out_path, dpi=params.dpi)
     return fig, ax
