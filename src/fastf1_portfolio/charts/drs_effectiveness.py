@@ -2,34 +2,21 @@
 DRS Effectiveness Chart
 -----------------------
 
-This module implements a distance‑aligned view of the effect of DRS (Drag
-Reduction System) along the main straight of a race track.  It aggregates
-telemetry from multiple laps for a single driver, separates laps into those
-where DRS was active during the straight and those where it was not, and
-visualizes the median speed traces with interquartile range (IQR) bands.
-A thin band underneath the main traces shows the pointwise speed delta (ON
-minus OFF).  The design reflects user preferences:
-
-* Only race laps are considered by default.
-* In‑ and out‑laps as well as safety car/virtual safety car/yellow flag laps
-  are excluded.
-* A sustained deceleration threshold (rolling dV/dt) identifies the end of
-  the main straight.  The first segment where dV/dt is below a threshold
-  for at least ``sustain_sec`` seconds marks the braking point.
-* Laps are labelled "DRS ON" if any telemetry sample in the window has
-  ``DRS > 0``, else "DRS OFF".
-* Each lap’s window is resampled to a fixed number of points on a 0–1
-  normalized distance axis; median and IQR are computed across laps for
-  ON and OFF classes separately.
-* If a race yields no DRS‑ON laps (e.g. driver never had DRS on the straight),
-  the fallback reference is the driver’s fastest valid qualifying lap for
-  the same event and year.
+This module provides a “best‑lap” view of the effect of DRS (Drag
+Reduction System) on a race track.  It locates the straight on each lap where
+the DRS flap is actually open and selects the fastest such lap along with
+the fastest lap without DRS.  Both laps are resampled onto a common
+distance grid and plotted together to visualise the pointwise speed
+difference and total time gain.  Only race laps are considered by default
+and laps under pit, safety car or yellow flag conditions are excluded.  If
+no DRS‑enabled lap is found in the race, the driver’s fastest valid
+qualifying lap is used as the DRS reference.
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Tuple, Optional, List, cast, NamedTuple
+from typing import Any, Tuple, Optional, cast, NamedTuple
 
 import numpy as np
 import pandas as pd
@@ -71,6 +58,13 @@ class DRSEffectivenessParams:
     title: Optional[str] = None
     show_annotations: bool = False
 
+    #: Minimum fraction of the window that must have the DRS flap open to
+    #: classify a lap as "DRS ON".  Values should be in the range [0, 1].
+    min_open_ratio_on: float = 0.15
+    #: Maximum fraction of the window that may have the DRS flap open to
+    #: classify a lap as "DRS OFF".  Values should be in the range [0, 1].
+    max_open_ratio_off: float = 0.02
+
 
 # -----------------------------------------------------------------------------
 # Lap filtering helpers
@@ -110,60 +104,6 @@ def _clean_laps(session: Any, driver: str) -> pd.DataFrame:
 # -----------------------------------------------------------------------------
 
 
-def _first_sustained_brake_idx(
-    tel: pd.DataFrame,
-    accel_threshold_kmh_s: float,
-    sustain_sec: float,
-) -> Optional[int]:
-    """Return the row index where sustained braking starts, else None.
-
-    A sustained braking event is detected when the rolling mean of d(Speed)/dt
-    (in km/h/s) over a time window of ``sustain_sec`` seconds falls below
-    ``accel_threshold_kmh_s``.
-    """
-    if tel is None or len(tel) == 0:
-        return None
-    df = tel[["Time", "Speed"]].dropna().copy()
-    if df.empty:
-        return None
-    df = _ensure_timedelta_index(df)
-    # Convert to floats
-    v = df["Speed"].astype(float)
-    # Time values for derivative calculation
-    idx_ns = df.index.to_numpy(dtype="timedelta64[ns]").astype("int64")
-    t_seconds = idx_ns.astype(float) / 1e9
-    dv = v.diff().to_numpy()
-    dt = np.diff(t_seconds, prepend=t_seconds[0])
-    with np.errstate(divide="ignore", invalid="ignore"):
-        a_vals = np.divide(dv, dt, out=np.zeros_like(dv), where=dt != 0)
-    # Rolling mean over the sustain window
-    a = pd.Series(a_vals, index=df.index, dtype=float)
-
-    # Time-based rolling mean of acceleration (uses TimedeltaIndex)
-    a_roll = a.rolling(f"{sustain_sec}s").mean()
-    a_roll_np = a_roll.to_numpy(dtype=float)
-
-    hits = np.where(a_roll_np < float(accel_threshold_kmh_s))[0]
-    return int(hits[0]) if len(hits) else None
-
-
-def _slice_main_straight_window(tel: pd.DataFrame, brake_idx: Optional[int]) -> pd.DataFrame:
-    """Slice telemetry to the main straight window.
-
-    Returns data from the start/finish (Distance near 0) up to ``brake_idx``.
-    If ``brake_idx`` is None or out of bounds, returns the full telemetry.
-    """
-    if tel is None or len(tel) == 0:
-        return tel
-    cols_needed = [c for c in ("Distance", "Speed", "DRS", "Time") if c in tel.columns]
-    df = tel[cols_needed].dropna(subset=[c for c in cols_needed if c != "DRS"]).copy()
-    if brake_idx is not None and 0 <= brake_idx < len(df):
-        df = df.iloc[: brake_idx + 1]
-    # Sort by distance and deduplicate on Distance for safety
-    df = df.sort_values("Distance").drop_duplicates(subset=["Distance"], keep="first")
-    return df.reset_index(drop=True)
-
-
 def _resample_normalized(
     df: pd.DataFrame, n_points: int
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
@@ -195,36 +135,48 @@ def _resample_normalized(
     return x, speed_i, drs_i
 
 
-def _aggregate_class(samples: List[np.ndarray]) -> Tuple[np.ndarray, np.ndarray]:
-    """Return (median, IQR) across a list of aligned 1D arrays."""
-    if not samples:
-        return np.array([]), np.array([])
-    arr = np.vstack(samples)
-    med = np.nanmedian(arr, axis=0)
-    q25 = np.nanpercentile(arr, 25, axis=0)
-    q75 = np.nanpercentile(arr, 75, axis=0)
-    iqr = q75 - q25
-    return med, iqr
-
-
-def _median_activation_point(drs_traces: List[np.ndarray], x: np.ndarray) -> Optional[float]:
-    """Return the median normalized activation distance across DRS‑ON laps."""
-    if not drs_traces:
-        return None
-    starts = []
-    for b in drs_traces:
-        idx = np.where(b > 0.5)[0]
-        if len(idx):
-            starts.append(float(x[idx[0]]))
-    return float(np.median(starts)) if starts else None
-
-
 def _drs_open_flags(df: pd.DataFrame) -> np.ndarray:
     """Return 1 when the DRS flap is actually open (codes 12 or 14), else 0."""
     if "DRS" not in df.columns:
         return np.zeros(len(df), dtype=float)
     drs_raw = pd.to_numeric(df["DRS"], errors="coerce").fillna(0).astype(int).to_numpy()
     return np.isin(drs_raw, (12, 14)).astype(float)
+
+
+def _drs_zone_bounds(win: pd.DataFrame) -> Optional[tuple[float, float]]:
+    """Return (d_start, d_end) for the longest contiguous region where DRS is open (codes 12/14).
+    If none found, return None.
+    """
+    if "Distance" not in win.columns:
+        return None
+    d = pd.to_numeric(win["Distance"], errors="coerce").to_numpy(dtype=float)
+    drs = _drs_open_flags(win)  # 1 for open, 0 otherwise
+    if d.size == 0 or drs.size == 0 or np.all(drs == 0):
+        return None
+
+    # find contiguous runs where drs == 1
+    runs = []
+    i = 0
+    n = drs.size
+    while i < n:
+        if drs[i] >= 0.5:
+            j = i
+            while j + 1 < n and drs[j + 1] >= 0.5:
+                j += 1
+            runs.append((i, j))
+            i = j + 1
+        else:
+            i += 1
+    if not runs:
+        return None
+
+    # choose the run with the largest distance span
+    best = max(runs, key=lambda ij: d[ij[1]] - d[ij[0]])
+    i0, i1 = best
+    d0, d1 = float(d[i0]), float(d[i1])
+    if d1 <= d0:
+        return None
+    return d0, d1
 
 
 def _ensure_timedelta_index(df: pd.DataFrame) -> pd.DataFrame:
@@ -389,26 +341,33 @@ class _BestLap(NamedTuple):
     turn_end: Optional[int]
 
 
-def _window_time_seconds(win: pd.DataFrame) -> float:
-    """Duration across the selected straight window."""
-    # Prefer Time column if it’s Timedelta
-    if "Time" in win.columns and is_timedelta64_dtype(win["Time"]):
-        t = win["Time"].dt.total_seconds().to_numpy(dtype=float)
-        if t.size >= 2:
-            return float(np.nanmax(t) - np.nanmin(t))
+class _LapMeta(NamedTuple):
+    lap_no: int
+    lap_time_s: Optional[float]
+    stint: Optional[int]
+    compound: Optional[str]
+    session: str  # "R" or "Q"
 
-    # Fallback: integrate Δd / v (robust if Time missing)
-    d = pd.to_numeric(win["Distance"], errors="coerce").to_numpy(dtype=float)
-    s_kmh = pd.to_numeric(win["Speed"], errors="coerce").to_numpy(dtype=float)
-    m = np.isfinite(d) & np.isfinite(s_kmh)
-    d = d[m]
-    s_kmh = s_kmh[m]
-    if d.size < 2:
+
+def _time_from_resampled(distance_m: float, speed_kmh: np.ndarray) -> float:
+    """Compute time (s) by integrating over the resampled speed trace.
+    Assumes the x-grid is uniform in distance from d_start to d_end.
+    """
+    if not np.isfinite(distance_m) or distance_m <= 0 or speed_kmh.size < 2:
         return float("nan")
-    v_ms = np.maximum(s_kmh, 1e-3) * (1000.0 / 3600.0)  # clamp to avoid div/0
-    dd = np.diff(d)
+    v_ms = np.maximum(speed_kmh, 1e-3) * (1000.0 / 3600.0)  # km/h -> m/s, clamp
+    seg_len = distance_m / (speed_kmh.size - 1)  # equal Δd per segment
     v_mid = 0.5 * (v_ms[1:] + v_ms[:-1])
-    return float(np.sum(dd / v_mid))
+    return float(np.sum(seg_len / v_mid))
+
+
+def _fmt_meta(m: _LapMeta | None) -> str:
+    if m is None:
+        return "n/a"
+    lt = f"{m.lap_time_s:.3f}s" if (m.lap_time_s is not None) else "n/a"
+    st = f"{m.stint}" if (m.stint is not None) else "n/a"
+    cp = m.compound or "n/a"
+    return f"Lap {m.lap_no} (session={m.session}, lap_time={lt}, stint={st}, compound={cp})"
 
 
 # -----------------------------------------------------------------------------
@@ -437,11 +396,14 @@ def build_drs_effectiveness_distance(
     # Track best ON and OFF windows (by minimal time across the straight)
     best_on: _BestLap | None = None
     best_off: _BestLap | None = None
-    off_windows: list[pd.DataFrame] = []
+    off_windows: list[dict[str, Any]] = []  # will store {"win": DataFrame, "meta": _LapMeta}
 
-    # thresholds for classification (keep tight to avoid glitches)
-    MIN_OPEN_RATIO_ON = 0.15  # ≥15% of window open → ON
-    MAX_OPEN_RATIO_OFF = 0.02  # ≤2% open → OFF
+    best_on_meta: _LapMeta | None = None
+    best_off_meta: _LapMeta | None = None
+
+    # thresholds for classification come from the params dataclass
+    MIN_OPEN_RATIO_ON = params.min_open_ratio_on
+    MAX_OPEN_RATIO_OFF = params.max_open_ratio_off
 
     for _, lap in laps.iterrows():
         try:
@@ -463,6 +425,10 @@ def build_drs_effectiveness_distance(
 
         win = win.sort_values("Distance")
 
+        # determine the physical bounds of this straight window
+        # (we compute these before resampling so we can derive a time from the full length)
+        d0 = float(pd.to_numeric(win["Distance"], errors="coerce").iloc[0])
+        d1 = float(pd.to_numeric(win["Distance"], errors="coerce").iloc[-1])
         # resample to normalized grid
         x_i, s_i, drs_i = _resample_normalized(win, params.n_points)
         if np.all(np.isnan(s_i)):
@@ -470,9 +436,24 @@ def build_drs_effectiveness_distance(
 
         # classify and time the window
         open_ratio = float(drs_i.mean())
-        t_sec = _window_time_seconds(win)
+        # compute the time across the full window using the resampled speeds
+        t_sec = _time_from_resampled(d1 - d0, s_i)
         if not np.isfinite(t_sec):
             continue
+
+        # --- collect lap metadata ---
+        lap_no = int(lap["LapNumber"]) if "LapNumber" in lap else -1
+        lap_time_s = None
+        if "LapTime" in lap and pd.notna(lap["LapTime"]):
+            try:
+                lap_time_s = float(lap["LapTime"].total_seconds())
+            except Exception:
+                lap_time_s = None
+        stint = int(lap["Stint"]) if "Stint" in lap and pd.notna(lap["Stint"]) else None
+        compound = str(lap["Compound"]) if "Compound" in lap and pd.notna(lap["Compound"]) else None
+        meta = _LapMeta(
+            lap_no=lap_no, lap_time_s=lap_time_s, stint=stint, compound=compound, session="R"
+        )
 
         if open_ratio >= MIN_OPEN_RATIO_ON:
             # distance bounds of THIS ON window
@@ -485,10 +466,34 @@ def build_drs_effectiveness_distance(
             )
             t_s, t_e = tp if tp is not None else (None, None)
 
-            if (best_on is None) or (t_sec < best_on.time_sec):
-                best_on = _BestLap(x_i, s_i, drs_i, t_sec, d0, d1, t_s, t_e)
+            # tighten straight to the actual DRS zone
+            zone = _drs_zone_bounds(win)
+            if zone is not None:
+                zd0, zd1 = zone
+                win_zone = win[
+                    (pd.to_numeric(win["Distance"], errors="coerce") >= zd0)
+                    & (pd.to_numeric(win["Distance"], errors="coerce") <= zd1)
+                ].copy()
+                if len(win_zone) >= 5:
+                    win_zone = win_zone.sort_values("Distance")
+                    xz, sz, dz = _resample_normalized(win_zone, params.n_points)
+                    tz = _time_from_resampled(zd1 - zd0, sz)
+                    # Note: dz.mean() should be close to 1.0 by construction
+                    if (best_on is None) or (tz < best_on.time_sec):
+                        best_on = _BestLap(xz, sz, dz, tz, zd0, zd1, t_s, t_e)
+                        best_on_meta = meta  # (or Q meta in the fallback)
+            else:
+                # Fallback: no DRS-adjacent zone found; keep the whole straight window (rare)
+                if (best_on is None) or (t_sec < best_on.time_sec):
+                    best_on = _BestLap(x_i, s_i, drs_i, t_sec, d0, d1, t_s, t_e)
+                    best_on_meta = meta
+
         elif open_ratio <= MAX_OPEN_RATIO_OFF:
-            off_windows.append(win)
+            # Skip Lap 1 for DRS OFF
+            if meta.lap_no == 1:
+                pass
+            else:
+                off_windows.append({"tel": tel, "meta": meta})
 
     # Fallback: if no ON in race, try fastest valid qualifying lap (same auto-straight)
     if best_on is None:
@@ -499,13 +504,12 @@ def build_drs_effectiveness_distance(
         except Exception:
             qual = None
         if qual is not None:
-            qlaps = qual.laps.pick_drivers(drv).copy()
+            qlaps = qual.laps.pick_drivers([drv]).copy()
             qlap = None
             try:
                 qlap = qlaps.pick_quicklaps().sort_values("LapTime").iloc[0]
             except Exception:
-                if len(qlaps):
-                    qlap = qlaps.sort_values("LapTime").iloc[0]
+                qlap = qlaps.sort_values("LapTime").iloc[0] if len(qlaps) else None
             if qlap is not None:
                 try:
                     qtel = qlap.get_car_data().add_distance()
@@ -527,15 +531,35 @@ def build_drs_effectiveness_distance(
                         )
                         xq, sq, dq = _resample_normalized(qwin, params.n_points)
                         open_ratio_q = float(dq.mean())
-                        tq = _window_time_seconds(qwin)
+                        # compute distance bounds for the qualifying window
+                        d0 = float(pd.to_numeric(qwin["Distance"], errors="coerce").iloc[0])
+                        d1 = float(pd.to_numeric(qwin["Distance"], errors="coerce").iloc[-1])
+                        tq = _time_from_resampled(d1 - d0, sq)
                         if open_ratio_q >= MIN_OPEN_RATIO_ON and np.isfinite(tq):
-                            d0 = float(pd.to_numeric(qwin["Distance"], errors="coerce").iloc[0])
-                            d1 = float(pd.to_numeric(qwin["Distance"], errors="coerce").iloc[-1])
                             tp = _turn_pair_for_segment(
                                 qtel, qs, qe, params.accel_threshold_kmh_s, params.sustain_sec
                             )
                             t_s, t_e = tp if tp is not None else (None, None)
                             best_on = _BestLap(xq, sq, dq, tq, d0, d1, t_s, t_e)
+                            best_on_meta = _LapMeta(
+                                lap_no=int(qlap["LapNumber"]) if "LapNumber" in qlap else -1,
+                                lap_time_s=(
+                                    float(qlap["LapTime"].total_seconds())
+                                    if "LapTime" in qlap and pd.notna(qlap["LapTime"])
+                                    else None
+                                ),
+                                stint=(
+                                    int(qlap["Stint"])
+                                    if "Stint" in qlap and pd.notna(qlap["Stint"])
+                                    else None
+                                ),
+                                compound=(
+                                    str(qlap["Compound"])
+                                    if "Compound" in qlap and pd.notna(qlap["Compound"])
+                                    else None
+                                ),
+                                session="Q",
+                            )
                 except Exception:
                     pass
 
@@ -552,32 +576,73 @@ def build_drs_effectiveness_distance(
 
     if best_on is not None and not off_windows:
         pass  # nothing to do
-    elif best_on is not None:
+    elif best_on is not None and off_windows:
         d0_on, d1_on = best_on.d_start, best_on.d_end
-        for win_off in off_windows:
-            # slice the OFF window to ON's distance span
-            w = win_off[
-                (pd.to_numeric(win_off["Distance"], errors="coerce") >= d0_on)
-                & (pd.to_numeric(win_off["Distance"], errors="coerce") <= d1_on)
+        for cand in off_windows:
+            tel_off = cand["tel"]
+            meta_off = cand["meta"]
+
+            # never use Lap 1 for OFF
+            if meta_off.lap_no == 1:
+                continue
+
+            if "Distance" not in tel_off.columns:
+                continue  # safety guard
+
+            # require the same compound for both laps
+            if best_on_meta is not None and best_on_meta.compound:
+                comp_on = str(best_on_meta.compound).strip().upper()
+                comp_off = str(meta_off.compound).strip().upper() if meta_off.compound else ""
+                if comp_off != comp_on:
+                    continue
+
+            w = tel_off[
+                (pd.to_numeric(tel_off["Distance"], errors="coerce") >= d0_on)
+                & (pd.to_numeric(tel_off["Distance"], errors="coerce") <= d1_on)
             ].copy()
+
             if len(w) < 5:
-                # If the original OFF window is slightly wider, try re-slicing from the full tel segment
-                # (optional) but generally skip if too sparse
                 continue
             w = w.sort_values("Distance")
+
             xo, so, do = _resample_normalized(w, params.n_points)
+
             # ensure it's truly OFF within this span
             if float(do.mean()) > MAX_OPEN_RATIO_OFF:
+                print(
+                    f"Skip OFF candidate (Lap {meta_off.lap_no}): DRS open {float(do.mean()):.0%} in ON zone"
+                )
                 continue
-            to = _window_time_seconds(w)
+
+            to = _time_from_resampled(d1_on - d0_on, so)
             if not np.isfinite(to):
                 continue
+
             if (best_off is None) or (to < best_off.time_sec):
                 best_off = _BestLap(
                     xo, so, do, to, d0_on, d1_on, best_on.turn_start, best_on.turn_end
                 )
+                best_off_meta = meta_off
 
     if best_off is not None:
+        off_avg_speed = float(np.nanmean(best_off.speed))
+        off_open_ratio = float(np.nanmean(best_off.drs_bin))
+        turns = (
+            f"T{best_on.turn_start}→T{best_on.turn_end}"
+            if (
+                best_on is not None
+                and best_on.turn_start is not None
+                and best_on.turn_end is not None
+            )
+            else "n/a"
+        )
+        print(
+            f"[DRS OFF] {_fmt_meta(best_off_meta)} | "
+            f"window_time={best_off.time_sec:.3f}s | "
+            f"avg_speed={off_avg_speed:.1f} km/h | "
+            f"open_ratio={off_open_ratio:.1%} | "
+            f"straight={turns}"
+        )
         ax.plot(
             best_off.x,
             best_off.speed,
@@ -587,6 +652,22 @@ def build_drs_effectiveness_distance(
         )
 
     if best_on is not None:
+        on_avg_speed = float(np.nanmean(best_on.speed))
+        on_open_ratio = float(np.nanmean(best_on.drs_bin))
+        turns = (
+            f"T{best_on.turn_start}→T{best_on.turn_end}"
+            if (best_on.turn_start is not None and best_on.turn_end is not None)
+            else "n/a"
+        )
+        print(
+            f"[DRS ON]  {_fmt_meta(best_on_meta)} | "
+            f"window_time={best_on.time_sec:.3f}s | "
+            f"avg_speed={on_avg_speed:.1f} km/h | "
+            f"open_ratio={on_open_ratio:.1%} | "
+            f"straight={turns}"
+        )
+        span_m = best_on.d_end - best_on.d_start
+        print(f"DRS-zone distance used: {span_m:.1f} m (T{best_on.turn_start}→T{best_on.turn_end})")
         ax.plot(
             best_on.x,
             best_on.speed,
@@ -595,11 +676,26 @@ def build_drs_effectiveness_distance(
             color="#2ecc71",  # green
         )
 
+    if best_on is not None and best_off is None:
+        msg = "No valid DRS-OFF candidate found within the ON window"
+        if best_on_meta is not None and best_on_meta.compound:
+            msg += f" (compound={best_on_meta.compound} enforced)"
+        msg += "."
+        print(msg)
+
     if best_on is not None and best_on.turn_start is not None and best_on.turn_end is not None:
         ax.text(
             0.015,
             0.90,
-            f"Selected straight: Turn {best_on.turn_start} \u2192 Turn {best_on.turn_end}",
+            (
+                f"Selected DRS zone: Turn {best_on.turn_start} \u2192 Turn {best_on.turn_end}"
+                if (
+                    best_on is not None
+                    and best_on.turn_start is not None
+                    and best_on.turn_end is not None
+                )
+                else "Selected DRS zone"
+            ),
             transform=ax.transAxes,
             ha="left",
             va="top",
@@ -613,21 +709,29 @@ def build_drs_effectiveness_distance(
     # Dotted Δ line (right axis) if both present
     ax2 = None
     if (best_on is not None) and (best_off is not None):
-        delta = best_on.speed - best_off.speed
+        # cumulative time gain along the DRS zone (ON faster -> positive)
+        v_on_ms = np.maximum(best_on.speed, 1e-3) * (1000.0 / 3600.0)
+        v_off_ms = np.maximum(best_off.speed, 1e-3) * (1000.0 / 3600.0)
+        seg_len = (best_on.d_end - best_on.d_start) / (best_on.speed.size - 1)
+        v_on_mid = 0.5 * (v_on_ms[1:] + v_on_ms[:-1])
+        v_off_mid = 0.5 * (v_off_ms[1:] + v_off_ms[:-1])
+        dt_diff = seg_len * (1.0 / v_off_mid - 1.0 / v_on_mid)  # seconds per segment
+        cum_dt = np.concatenate([[0.0], np.cumsum(dt_diff)])
+
         ax2 = ax.twinx()
         ax2.plot(
             best_on.x,
-            delta,
+            cum_dt,
             linewidth=1.2,
-            alpha=0.85,
+            alpha=0.9,
             linestyle=":",
-            label="Δ speed (ON−OFF) (right axis)",
+            label="Cumulative time gain (s) (right axis)",
         )
-        ax2.set_ylabel("Δ speed (km/h)")
+        ax2.set_ylabel("Cumulative time gain (s)")
         ax2.grid(False)
 
-        # Time saved annotation
-        time_saved = best_off.time_sec - best_on.time_sec  # >0 → ON faster
+        # Time saved annotation from the same cumulative curve
+        time_saved = float(cum_dt[-1])
         ax.text(
             0.015,
             0.97,
