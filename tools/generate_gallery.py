@@ -1,12 +1,26 @@
 from __future__ import annotations
 
 from pathlib import Path
+import subprocess
 import yaml
 
 GALLERY_MD = Path("docs/gallery.md")
 ASSETS_DIR = Path("docs/assets/gallery")
 BEGIN = "<!-- AUTO-GALLERY:BEGIN -->"
 END = "<!-- AUTO-GALLERY:END -->"
+REPO = "ksherr0/fastf1_portfolio"
+
+
+def _current_branch(default: str = "main") -> str:
+    """Return the current git branch, falling back to 'main'."""
+    try:
+        out = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"]).decode().strip()
+        return out or default
+    except Exception:
+        return default
+
+
+BRANCH = _current_branch()
 
 
 def load_items() -> list[dict]:
@@ -24,16 +38,23 @@ def render_gallery(items: list[dict]) -> str:
         subtitle = it.get("subtitle", "")
         img = it["image"]
         code = it.get("code_path", "")
+        code_url = it.get("code_url", "")
+        # Build a GitHub URL if only code_path is present
+        if not code_url and code:
+            code_url = f"https://github.com/{REPO}/blob/{BRANCH}/{str(code).replace('\\\\','/')}"
         params = it.get("params", {})
         # Compact param preview
         ppreview = ", ".join(f"{k}={v}" for k, v in params.items())
+        # Make the title itself a hyperlink to source, when available
+        title_line = f"- :material-chart-bar: **{title}**"
         lines += [
-            f"- :material-chart-bar: **{title}**",
+            title_line,
             "  ---",
             f"  [![{title}]({img}){{ loading=lazy }}]({img}){{ .glightbox }}",
             f"  _{subtitle}_",
             "",
-            f"  `Source:` `{code}`  ",
+            # Keep a source line for quick scanning; prefer a clickable link
+            (f"  `Source:` [{code}]({code_url})  " if code_url else f"  `Source:` `{code}`  "),
             f"  `Params:` `{ppreview}`",
             "",
         ]
