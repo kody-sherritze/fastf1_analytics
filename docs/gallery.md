@@ -14,6 +14,14 @@ and a YAML sidecar under `docs/assets/gallery/`.
   `Source:` `tools/plots/driver_championship.py`  
   `Params:` `year=2024, include_sprints=True, color_variant=secondary, min_total_points=0.0, dpi=220`
 
+- :material-chart-bar: **2025 Italian Grand Prix – DRS effect on main straight (VER)**
+  ---
+  [![2025 Italian Grand Prix – DRS effect on main straight (VER)](assets/gallery/italian_grand_prix_2025_drs_effect_VER.png){ loading=lazy }](assets/gallery/italian_grand_prix_2025_drs_effect_VER.png){ .glightbox }
+  _Median speed traces along main straight (DRS ON/OFF)_
+
+  `Source:` `tools/plots/drs_effectiveness.py`  
+  `Params:` `year=2025, gp=Italian Grand Prix, session=R, driver=VER, n_points=200, accel_threshold_kmh_s=-8.0, sustain_sec=0.3`
+
 - :material-chart-bar: **2025 Italian Grand Prix – Tyre Strategy**
   ---
   [![2025 Italian Grand Prix – Tyre Strategy](assets/gallery/italian_grand_prix_2025_tyre_strategy.png){ loading=lazy }](assets/gallery/italian_grand_prix_2025_tyre_strategy.png){ .glightbox }
