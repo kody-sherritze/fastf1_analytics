@@ -15,23 +15,64 @@
 Analyses and reusable helpers built on [FastF1](https://docs.fastf1.dev/) to showcase race strategy, telemetry, and season-long insights.
 
 - [CI](https://github.com/ksherr0/fastf1_portfolio/actions/workflows/ci.yml)
-- [Docs (Github Pages)](https://ksherr0.github.io/fastf1_portfolio/)
+- [Docs (GitHub Pages)](https://ksherr0.github.io/fastf1_portfolio/)
 
 ## Table of Contents:
-- [Docs overview (Github Pages)](#docs-overview-github-pages)
+- [Quickstart](#quickstart)
+- [Repository Directory](#repository-directory)
+- [Docs Overview (GitHub Pages)](#docs-overview-github-pages)
 - [Requirements](#requirements)
 - [Install](#install)
 - [Pre-checks (what CI runs)](#pre-checks-what-ci-runs)
-- [Generate the plots (CLI)](#generate-the-plots-cli)
+- [Generate the Plots (CLI)](#generate-the-plots-cli)
     - [Tyre Strategy](#tyre-strategy)
     - [DRS Effectiveness](#drs-effectiveness)
-    - [Drivers' championship points](#drivers-championship-points)
-    - [Update the Gallery page](#update-the-gallery-page)
-    - [Where to find outputs](#where-to-find-outputs)
-- [Programmatic usage (quick examples)](#programmatic-usage-quick-examples)
-- [Troubleshooting & tips](#troubleshooting--tips)
+    - [Drivers' Phampionship Points](#drivers-championship-points)
+    - [Update the Gallery Page](#update-the-gallery-page)
+    - [Where to find Outputs](#where-to-find-outputs)
+- [Programmatic Usage (quick examples)](#programmatic-usage-quick-examples)
+- [Troubleshooting & Tips](#troubleshooting--tips)
 
-## Docs overview (Github Pages)
+## Quickstart
+```bash
+# 1) Clone & install (Python 3.13+)
+git clone https://github.com/ksherr0/fastf1_portfolio.git
+cd fastf1_portfolio
+
+# 2) Create Virual Environment (optional, but recommended)
+python -m venv .venv
+
+# Windows (PowerShell)
+.venv\Scripts\Activate 
+# macOS/Linux
+source .venv/bin/activate
+
+# 3) Install project dependencies
+pip install -e . # run pip install -e .[dev] for optional dependencies
+
+# 4) Generate a plot (writes PNG+YAML to docs/assets/gallery/)
+python tools/plots/tyre_strategy.py --year 2025 --event "Italian Grand Prix" --cache .fastf1-cache
+
+# 5) Update gallery and preview docs
+python tools/generate_gallery.py
+mkdocs serve  # open http://127.0.0.1:8000
+```
+
+## Repository Directory
+```text
+fastf1_portfolio/
+├─ src/fastf1_portfolio/           # library code
+│  ├─ charts/                      # chart builders (Matplotlib)
+│  ├─ plotting.py                  # style/colors/helpers
+│  └─ session_loader.py            # load_session()
+├─ tools/
+│  ├─ plots/                       # CLI plot scripts (3 examples)
+│  └─ generate_gallery.py          # rebuilds docs/gallery.md from YAML sidecars
+├─ docs/                           # GitHub Pages (MkDocs)
+└─ tests/                          # minimal tests used by CI
+```
+
+## Docs Overview (GitHub Pages)
 If you’re not sure where something lives in the docs, use this map:
 - **Home (Quickstart):** install, run 1-2 plots, rebuild gallery, preview site
     - https://ksherr0.github.io/fastf1_portfolio/
@@ -54,8 +95,12 @@ If you’re not sure where something lives in the docs, use this map:
 ```bash
 git clone https://github.com/ksherr0/fastf1_portfolio.git
 cd fastf1_portfolio
+python -m venv .venv
 
-python -m venv .venv && source .venv\Scripts\activate  # Linux: .venv/bin/activate
+# Windows (PowerShell)
+.venv\Scripts\Activate 
+# macOS/Linux
+source .venv/bin/activate
 
 # editable install with dev extras (linters, tests, docs)
 pip install -e .[dev]
@@ -69,15 +114,13 @@ black --check .
 pytest -q
 ```
 
-<div style="page-break-after: always"></div>
-
-## Generate the plots (CLI)
+## Generate the Plots (CLI)
 Example plot scripts live in `tools/plots/`. They write:
-- a **PNG** to `docs/assets/gallery/_`
+- a **PNG** to `docs/assets/gallery/`
 - a **YAML** sidecar with metadata (title, params, code path)
 > Tip: the first run may download data; use `--cache .fastf1-cache` for speed on subsequent runs.
 
-### Tyre strategy
+### Tyre Strategy
 ```bash
 python tools/plots/tyre_strategy.py \
   --year 2025 \
@@ -117,14 +160,14 @@ python tools/plots/driver_championship.py \
 - `--color-variant`=`primary`|`secondary`
 - `--min-total-points`,`--dpi`,`--title`,`--outdir`
 
-## Update the Gallery page
+## Update the Gallery Page
 After generating/refreshing plots:
 ```bash
 python tools/generate_gallery.py
 ```
 This reads all YAML sidecars and **rewrites the cards** in `docs/gallery.md` between the `AUTO-GALLERY` markers.
 
-## Where to find outputs
+## Where to Find Outputs
 - Images: `docs/assets/gallery/*.png`
 - YAML sidecars: `docs/assets/gallery/*.yml`
 - Docs preview: `mkdocs serve` → open http://127.0.0.1:8000
@@ -156,7 +199,7 @@ fig, ax = build_tyre_strategy(
 )
 ```
 
-## Troubleshooting & tips
+## Troubleshooting & Tips
 - **Cache:** pass `--cache .fastf1-cache` (or another path). Delete the folder to refresh data.
 - **Gallery not updating:** re-run `python tools/generate_gallery.py` after creating PNG/YAML.
 - **Docs:** `mkdocs serve` to preview, `mkdocs build` for the static site.
