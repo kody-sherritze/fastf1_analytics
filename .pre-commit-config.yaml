@@ -8,3 +8,11 @@
     rev: 24.8.0
     hooks:
       - id: black
+  - repo: local
+    hooks:
+      - id: pytest
+        name: pytest
+        entry: pytest -q
+        language: system         # use your current venv (so deps are already installed)
+        pass_filenames: false    # pytest decides what to run; don't pass changed files
+        stages: [pre-push]
