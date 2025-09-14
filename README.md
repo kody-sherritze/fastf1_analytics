@@ -2,7 +2,15 @@
 
 [![CI](https://github.com/ksherr0/fastf1_portfolio/actions/workflows/ci.yml/badge.svg)](https://github.com/ksherr0/fastf1_portfolio/actions/workflows/ci.yml)
 [![Docs](https://github.com/ksherr0/fastf1_portfolio/actions/workflows/docs.yml/badge.svg)](https://ksherr0.github.io/fastf1_portfolio/)
+[![Website](https://img.shields.io/website?url=https%3A%2F%2Fksherr0.github.io%2Ffastf1_portfolio%2F)](https://ksherr0.github.io/fastf1_portfolio/)
+[![Made with: Material for MkDocs](https://img.shields.io/badge/docs-Material%20for%20MkDocs-000?logo=materialformkdocs)](https://squidfunk.github.io/mkdocs-material/)
+
+![Python](https://img.shields.io/badge/python-3.13%2B-blue)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Lint: ruff](https://img.shields.io/badge/lint-ruff-0055A4?logo=ruff&logoColor=white)](https://github.com/astral-sh/ruff)
+[![Tests: pytest](https://img.shields.io/badge/tests-pytest-0A9EDC?logo=pytest&logoColor=white)](https://docs.pytest.org/)
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://pre-commit.com/)
+
 
 Analyses and reusable helpers built on [FastF1](https://docs.fastf1.dev/) to showcase race strategy, telemetry, and season-long insights.
 
