@@ -7,7 +7,7 @@ name = "fastf1-portfolio"
 version = "0.1.0"
 description = "Reusable FastF1 helpers and a gallery of analyses"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 license = {text = "MIT"}
 authors = [{ name = "ksherr0"}]
 dependencies = [
