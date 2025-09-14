@@ -8,7 +8,6 @@ version = "0.1.0"
 description = "Reusable FastF1 helpers and a gallery of analyses"
 readme = "README.md"
 requires-python = ">=3.12"
-license = {text = "MIT"}
 authors = [{ name = "ksherr0"}]
 dependencies = [
   "fastf1>=3.2.1",
@@ -41,7 +40,7 @@ line-length = 100
 
 [tool.black]
 line-length = 100
-target-version = ["py310"]
+target-version = ["py313"]
 
 [tool.mypy]
 python_version = "3.13"
