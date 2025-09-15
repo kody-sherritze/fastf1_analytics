@@ -25,7 +25,7 @@ BRANCH = _current_branch()
 
 def load_items() -> list[dict]:
     items: list[dict] = []
-    for yml in sorted(ASSETS_DIR.glob("*.yml")):
+    for yml in sorted(ASSETS_DIR.glob("*.yaml")):
         with yml.open("r", encoding="utf-8") as f:
             items.append(yaml.safe_load(f))
     return items
