@@ -28,6 +28,7 @@ Analyses and reusable helpers built on [FastF1](https://docs.fastf1.dev/) to sho
     - [Tyre Strategy](#tyre-strategy)
     - [DRS Effectiveness](#drs-effectiveness)
     - [Drivers' Phampionship Points](#drivers-championship-points)
+    - [Common Flags](#common-flags)
     - [Update the Gallery Page](#update-the-gallery-page)
     - [Where to find Outputs](#where-to-find-outputs)
 - [Programmatic Usage (quick examples)](#programmatic-usage-quick-examples)
@@ -127,10 +128,9 @@ python tools/plots/tyre_strategy.py \
   --event "Italian Grand Prix" \
   --cache .fastf1-cache
 ```
-#### Common params
+#### Plot Params
 - `--event` (e.g., "Monaco" or "Italian Grand Prix")
 - `--driver-order` = `results`|`alpha`|comma list (`VER,LEC,HAM`)
-- `--dpi`,`--title`,`--outdir`
 
 ### DRS Effectiveness
 ```bash
@@ -141,10 +141,9 @@ python tools/plots/drs_effectiveness.py \
   --driver VER \
   --cache .fastf1-cache
 ```
-#### Common params
+#### Plot Params
 - `--driver` (3-letter code), `--session` (default `R`)
 - `--n-points`,`--accel-threshold-kmh-s`,`--sustain-sec`
-- `--dpi`,`--title`,`--outdir`
 
 ### Drivers' Championship Points
 ```bash
@@ -155,10 +154,16 @@ python tools/plots/driver_championship.py \
   --min-total-points 0 \
   --cache .fastf1-cache
 ```
-#### Common params
+#### Plot Params
 - `--include-sprints` (include sprint points)
 - `--color-variant`=`primary`|`secondary`
-- `--min-total-points`,`--dpi`,`--title`,`--outdir`
+- `--min-total-points`
+
+### Common Flags
+- `--cache PATH`              # FastF1 cache dir
+- `--outdir DIR`              # Output for PNG/YAML
+- `--title TEXT`              # Override default title
+- `--dpi INT`                 # image DPI
 
 ## Update the Gallery Page
 After generating/refreshing plots:
