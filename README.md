@@ -1,7 +1,7 @@
 ﻿# FastF1 Portfolio
 
-[![CI](https://github.com/ksherr0/fastf1_portfolio/actions/workflows/ci.yml/badge.svg)](https://github.com/ksherr0/fastf1_portfolio/actions/workflows/ci.yml)
-[![Docs](https://github.com/ksherr0/fastf1_portfolio/actions/workflows/docs.yml/badge.svg)](https://ksherr0.github.io/fastf1_portfolio/)
+[![CI](https://github.com/ksherr0/fastf1_portfolio/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/ksherr0/fastf1_portfolio/actions/workflows/ci.yaml)
+[![Docs](https://github.com/ksherr0/fastf1_portfolio/actions/workflows/docs.yaml/badge.svg?branch=main)](https://ksherr0.github.io/fastf1_portfolio/)
 [![Website](https://img.shields.io/website?url=https%3A%2F%2Fksherr0.github.io%2Ffastf1_portfolio%2F)](https://ksherr0.github.io/fastf1_portfolio/)
 [![Made with: Material for MkDocs](https://img.shields.io/badge/docs-Material%20for%20MkDocs-000?logo=materialformkdocs)](https://squidfunk.github.io/mkdocs-material/)
 
