@@ -16,6 +16,11 @@ dependencies = [
   "numpy>=1.24",
   "scipy>=1.10",
   "tqdm>=4.65",
+  "PyYAML>=6.0.2",
+  "mkdocs>=1.6",
+  "mkdocs-material>=9.5.0",
+  "mkdocstrings[python]>=0.24.0",
+  "mkdocs-glightbox>=0.3.7",
 ]
 
 [project.optional-dependencies]
@@ -27,12 +32,7 @@ dev = [
   "black>=24.3.0",
   "pre-commit>=3.6.0",
   "nbstripout>=0.7.1",
-  "mkdocs>=1.6",
-  "mkdocs-material>=9.5.0",
-  "mkdocstrings[python]>=0.24.0",
-  "mkdocs-glightbox>=0.3.7",
   "pymdown-extensions>=10.8",
-  "PyYAML>=6.0.2",
 ]
 
 [tool.ruff]
