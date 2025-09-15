@@ -21,7 +21,7 @@ def main() -> None:
         description="Generate distance-aligned DRS effectiveness chart + YAML for the gallery."
     )
     ap.add_argument("--year", type=int, required=True)
-    ap.add_argument("--gp", required=True, help="Grand Prix name as FastF1 expects it")
+    ap.add_argument("--event", required=True, help="Grand Prix name as FastF1 expects it")
     ap.add_argument("--session", default="R", help="R (race) by default")
     ap.add_argument("--driver", required=True, help="Driver abbreviation, e.g. VER")
     ap.add_argument("--cache", default=".fastf1-cache")
@@ -36,7 +36,7 @@ def main() -> None:
     outdir = Path(args.outdir)
     outdir.mkdir(parents=True, exist_ok=True)
 
-    session = load_session(args.year, args.gp, args.session, cache=args.cache)
+    session = load_session(args.year, args.event, args.session, cache=args.cache)
 
     params = DRSEffectivenessParams(
         n_points=args.n_points,
@@ -47,7 +47,7 @@ def main() -> None:
         dpi=220,
     )
 
-    slug = _slug(args.year, args.gp, args.driver)
+    slug = _slug(args.year, args.event, args.driver)
     png = outdir / f"{slug}.png"
     yml = outdir / f"{slug}.yml"
 
@@ -67,7 +67,7 @@ def main() -> None:
         "function": "fastf1_portfolio.charts.drs_effectiveness.build_drs_effectiveness_distance",
         "params": {
             "year": args.year,
-            "gp": args.gp,
+            "event": args.event,
             "session": args.session,
             "driver": args.driver.upper(),
             "n_points": params.n_points,

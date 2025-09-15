@@ -27,7 +27,7 @@ Analyses and reusable helpers built on [FastF1](https://docs.fastf1.dev/) to sho
 - [Generate the Plots (CLI)](#generate-the-plots-cli)
     - [Tyre Strategy](#tyre-strategy)
     - [DRS Effectiveness](#drs-effectiveness)
-    - [Drivers' Phampionship Points](#drivers-championship-points)
+    - [Drivers' Championship Points](#drivers-championship-points)
     - [Common Flags](#common-flags)
     - [Update the Gallery Page](#update-the-gallery-page)
     - [Where to find Outputs](#where-to-find-outputs)
@@ -129,21 +129,23 @@ python tools/plots/tyre_strategy.py \
   --cache .fastf1-cache
 ```
 #### Plot Params
-- `--event` (e.g., "Monaco" or "Italian Grand Prix")
-- `--driver-order` = `results`|`alpha`|comma list (`VER,LEC,HAM`)
+- `--driver-order` | Order drivers by: `results` (finish order) | `alpha` (alphabetical) | comma list (`VER,LEC,HAM`)
 
 ### DRS Effectiveness
 ```bash
 python tools/plots/drs_effectiveness.py \
   --year 2025 \
-  --gp "Italian Grand Prix" \
+  --event "Italian Grand Prix" \
   --session R \
   --driver VER \
   --cache .fastf1-cache
 ```
 #### Plot Params
-- `--driver` (3-letter code), `--session` (default `R`)
-- `--n-points`,`--accel-threshold-kmh-s`,`--sustain-sec`
+- `--session` | Session code (`R` = Race, `Q` = Qualifying, `S` = Sprint); default `R`
+- `--driver` | 3-letter driver code (`VER`,`HAM`,`PIA`)
+- `--n-points` | Samples along the straight when aligning speed traces (higher → smoother line)
+- `--accel-threshold-kmh-s` | Acceleration threshold used to detect DRS engagement/region
+- `--sustain-sec` | Minimum duration for DRS activation
 
 ### Drivers' Championship Points
 ```bash
@@ -155,15 +157,17 @@ python tools/plots/driver_championship.py \
   --cache .fastf1-cache
 ```
 #### Plot Params
-- `--include-sprints` (include sprint points)
-- `--color-variant`=`primary`|`secondary`
-- `--min-total-points`
+- `--include-sprints` | Include sprint points in season totals
+- `--color-variant` | `primary` (team color) | `secondary` (lightened variant)
+- `--min-total-points` | Hide drivers whose season points are ≤ this threshold
 
 ### Common Flags
-- `--cache PATH`              # FastF1 cache dir
-- `--outdir DIR`              # Output for PNG/YAML
-- `--title TEXT`              # Override default title
-- `--dpi INT`                 # image DPI
+- `--year` | Season
+- `--event` | e.g., "Monaco" or "Italian Grand Prix"
+- `--cache PATH` | FastF1 cache dir
+- `--outdir DIR` | Output for PNG/YAML
+- `--title TEXT` | Override default title
+- `--dpi INT` | Image DPI
 
 ## Update the Gallery Page
 After generating/refreshing plots:

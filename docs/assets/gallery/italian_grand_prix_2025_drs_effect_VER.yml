@@ -5,7 +5,7 @@ code_path: tools/plots/drs_effectiveness.py
 function: fastf1_portfolio.charts.drs_effectiveness.build_drs_effectiveness_distance
 params:
   year: 2025
-  gp: Italian Grand Prix
+  event: Italian Grand Prix
   session: R
   driver: VER
   n_points: 200
