@@ -1,0 +1,60 @@
+version: 2
+updates:
+  # Keep GitHub Actions up to date
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+      time: "09:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    labels: ["dependencies", "github-actions"]
+    groups:
+      actions-minor-and-patch:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+
+  # Keep Python deps (reads pyproject.toml at repo root)
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "daily"
+      time: "09:30"
+      timezone: "UTC"
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    labels: ["dependencies", "python"]
+    # Group routine bumps to cut PR noise; majors stay separate
+    groups:
+      runtime-minor-and-patch:
+        update-types: ["minor", "patch"]
+        patterns:
+          - "fastf1*"
+          - "matplotlib*"
+          - "pandas*"
+          - "numpy*"
+          - "scipy*"
+          - "tqdm*"
+          - "PyYAML*"
+      docs-minor-and-patch:
+        update-types: ["minor", "patch"]
+        patterns:
+          - "mkdocs*"
+          - "mkdocstrings*"
+          - "mkdocs-glightbox*"
+          - "mkdocs-material*"
+      devtools-minor-and-patch:
+        update-types: ["minor", "patch"]
+        patterns:
+          - "black*"
+          - "ruff*"
+          - "mypy*"
+          - "pre-commit*"
+          - "pytest*"
+          - "nbstripout*"
+          - "pymdown-extensions*"
