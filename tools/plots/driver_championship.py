@@ -104,7 +104,7 @@ def main() -> None:
     points_cum = _season_points_table(args.year, args.include_sprints, cache=args.cache)
 
     png = outdir / f"{_slug(args.year)}.png"
-    yml = outdir / f"{_slug(args.year)}.yml"
+    yml = outdir / f"{_slug(args.year)}.yaml"
 
     params = DriverPointsParams(
         color_variant=args.color_variant,

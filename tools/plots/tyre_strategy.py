@@ -37,7 +37,7 @@ def main() -> None:
     outdir.mkdir(parents=True, exist_ok=True)
     s = slug(args.year, session.event["EventName"])
     png = outdir / f"{s}_tyre_strategy.png"
-    yml = outdir / f"{s}_tyre_strategy.yml"
+    yml = outdir / f"{s}_tyre_strategy.yaml"
 
     params = TyreStrategyParams(
         driver_order=order, title=args.title, dpi=args.dpi, annotate_compound=True

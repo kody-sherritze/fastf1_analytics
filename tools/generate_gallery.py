@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from pathlib import Path
-import subprocess
 import yaml
 from typing import Any
 
@@ -10,18 +9,6 @@ ASSETS_DIR = Path("docs/assets/gallery")
 BEGIN = "<!-- AUTO-GALLERY:BEGIN -->"
 END = "<!-- AUTO-GALLERY:END -->"
 REPO = "ksherr0/fastf1_portfolio"
-
-
-def _current_branch(default: str = "main") -> str:
-    """Return the current git branch, falling back to 'main'."""
-    try:
-        out = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"]).decode().strip()
-        return out or default
-    except Exception:
-        return default
-
-
-BRANCH = _current_branch()
 
 
 def load_items() -> list[dict[str, Any]]:
@@ -42,7 +29,7 @@ def render_gallery(items: list[dict[str, Any]]) -> str:
         code_url = it.get("code_url", "")
         # Build a GitHub URL if only code_path is present
         if not code_url and code:
-            code_url = f"https://github.com/{REPO}/blob/{BRANCH}/{str(code).replace('\\\\','/')}"
+            code_url = f"https://github.com/{REPO}/blob/main/{str(code).replace('\\\\','/')}"
         params = it.get("params", {})
         # Compact param preview
         ppreview = ", ".join(f"{k}={v}" for k, v in params.items())
