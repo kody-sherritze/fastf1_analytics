@@ -6,8 +6,8 @@ function: fastf1_portfolio.charts.driver_points.build_driver_points_chart
 params:
   year: 2024
   include_sprints: true
-  color_variant: secondary
-  min_total_points: 0.0
+  color_variant: primary
+  min_total_points: 1.0
   dpi: 220
 tags:
 - season

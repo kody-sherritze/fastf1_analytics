@@ -49,7 +49,7 @@ def main() -> None:
 
     slug = _slug(args.year, args.event, args.driver)
     png = outdir / f"{slug}.png"
-    yml = outdir / f"{slug}.yml"
+    yml = outdir / f"{slug}.yaml"
 
     build_drs_effectiveness_distance(
         session,
