@@ -149,31 +149,61 @@ def build_tyre_performance(
     bar_colors = [get_compound_color(c) for c in xcats]
     ax.bar(xs, medians, width=0.65, edgecolor="#222", linewidth=0.8, color=bar_colors, alpha=0.9)
 
-    # Dots = each driver's aggregated lap time (team-colored, jittered)
-    jitter = (np.random.rand(len(per_driver)) - 0.5) * 0.15
+    SWARM_WIDTH = 0.15  # max horizontal spread (in x-axis category units)
+    EPS_SECONDS = 0.25  # points within this lap-time window are considered overlapping
+
     x_map = {c: i for i, c in enumerate(xcats)}
-    per_driver = per_driver[per_driver["Compound"].isin(xcats)]
+    per_driver = per_driver[per_driver["Compound"].isin(xcats)].copy()
 
-    xpts = per_driver["Compound"].map(x_map).to_numpy(dtype=float) + jitter
-    ypts = per_driver["laptime_s"].to_numpy()
+    # Build x/y arrays and also keep row indices for annotations
+    comp_arr = per_driver["Compound"].map(x_map).to_numpy(dtype=float)
+    y_arr = per_driver["laptime_s"].to_numpy()
     colors = per_driver["dot_color"].to_numpy()
+    drivers = per_driver["Driver"].to_numpy()
 
+    # Compute horizontal offsets per compound so close-in-y points are spread
+    x_offsets = np.zeros_like(y_arr, dtype=float)
+
+    for c_idx in range(len(xcats)):
+        mask = comp_arr == c_idx
+        if not mask.any():
+            continue
+        y_grp = y_arr[mask]
+
+        # cluster by lap-time proximity (round onto EPS-sized bins)
+        bins = np.round(y_grp / EPS_SECONDS).astype(int)
+        x_off_grp = np.zeros_like(y_grp, dtype=float)
+
+        # for each bin (cluster of near-overlapping points), spread them across [-W, +W]
+        for b in np.unique(bins):
+            idx = np.where(mask)[0][bins == b]  # indices into the full arrays
+            n = len(idx)
+            if n == 1:
+                continue
+            x_off_grp[bins == b] = np.linspace(-SWARM_WIDTH, SWARM_WIDTH, n)
+
+        x_offsets[mask] = x_off_grp
+
+    # Final coordinates
+    xpts = comp_arr + x_offsets
+    ypts = y_arr
+
+    # Plot points (team-colored)
     ax.scatter(xpts, ypts, s=28, alpha=0.95, c=colors, edgecolor="#111", linewidth=0.5)
 
-    # Annotate each dot with the driver code
-    for xi, yi, drv in zip(xpts, ypts, per_driver["Driver"].to_numpy()):
+    # Annotate each dot with the driver code, nudged left/right to match offset
+    for xi, yi, drv, xo in zip(xpts, ypts, drivers, x_offsets):
         ax.annotate(
             drv,
             (xi, yi),
-            xytext=(4, 0),
+            xytext=(6 if xo >= 0 else -6, 0),  # push label away from the dot
             textcoords="offset points",
             fontsize=8,
-            ha="left",
+            ha="left" if xo >= 0 else "right",
             va="center",
             color="#EEEEEE",
             clip_on=True,
         )
-
     ax.set_xticks(xs, [c.title() for c in xcats])
     ax.set_ylabel("Lap Time")
     ax.yaxis.set_major_formatter(seconds_formatter())
