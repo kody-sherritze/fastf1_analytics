@@ -36,7 +36,7 @@ and a YAML sidecar under `docs/assets/gallery/`.
   _Bars = median across drivers; dots = each driver (team-colored), annotated by driver code_
 
   `Source:` [tools/plots/tyre_performance.py](https://github.com/ksherr0/fastf1_analytics/blob/main/tools/plots/tyre_performance.py)  
-  `Params:` `year=2025, event=Italian Grand Prix, min_laps_per_compound=5, aggregate=median, include_inter_wet=False, dpi=220`
+  `Params:` `year=2025, event=Italian Grand Prix, min_laps_per_compound=1, aggregate=median, include_inter_wet=False, dpi=220`
 
 - :material-chart-bar: **2025 Italian Grand Prix – Tyre Strategy**
   ---
