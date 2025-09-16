@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 import subprocess
 import yaml
+from typing import Any
 
 GALLERY_MD = Path("docs/gallery.md")
 ASSETS_DIR = Path("docs/assets/gallery")
@@ -23,15 +24,15 @@ def _current_branch(default: str = "main") -> str:
 BRANCH = _current_branch()
 
 
-def load_items() -> list[dict]:
-    items: list[dict] = []
+def load_items() -> list[dict[str, Any]]:
+    items: list[dict[str, Any]] = []
     for yml in sorted(ASSETS_DIR.glob("*.yaml")):
         with yml.open("r", encoding="utf-8") as f:
             items.append(yaml.safe_load(f))
     return items
 
 
-def render_gallery(items: list[dict]) -> str:
+def render_gallery(items: list[dict[str, Any]]) -> str:
     lines = ['<div class="grid cards" markdown>', ""]
     for it in items:
         title = it["title"]

@@ -1,4 +1,4 @@
-﻿def test_package_imports():
+﻿def test_package_imports() -> None:
     """Test that the package can be imported and has expected attributes."""
     import fastf1_portfolio
 
