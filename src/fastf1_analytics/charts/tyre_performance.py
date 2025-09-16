@@ -92,8 +92,9 @@ def _per_driver_compound_laptime(
     out = pd.concat([agg.rename("laptime_s"), counts], axis=1).reset_index()
     out = out[out["n"] >= min_laps_per_compound].drop(columns="n")
 
-    # stable order
-    out["Compound"] = pd.Categorical(out["Compound"], categories=COMPOUND_ORDER, ordered=True)
+    # stable order (extend with inter/wet only when requested)
+    order = COMPOUND_ORDER + (["INTERMEDIATE", "WET"] if include_inter_wet else [])
+    out["Compound"] = pd.Categorical(out["Compound"], categories=order, ordered=True)
     return out.sort_values(["Compound", "Driver"]).reset_index(drop=True)
 
 
