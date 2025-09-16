@@ -9,7 +9,7 @@ from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 from matplotlib.patches import Rectangle
 
-from fastf1_portfolio.plotting import apply_style, savefig, get_compound_color
+from fastf1_analytics.plotting import apply_style, savefig, get_compound_color
 
 
 def _eligible_drivers(session: Any) -> list[str]:

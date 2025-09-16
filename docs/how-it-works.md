@@ -2,7 +2,7 @@
 
 ## Pipeline
 1. **Plot script** in `tools/plots/*.py` loads data (via `session_loader.load_session`), calls a chart
-   function from `src/fastf1_portfolio/charts/*`, and writes:
+   function from `src/fastf1_analytics/charts/*`, and writes:
    - a **PNG** to `docs/assets/gallery/…`
    - a **YAML** sidecar with title, code path, and parameters.
 2. **Gallery generator** (`tools/generate_gallery.py`) reads all sidecars and rewrites the card grid
@@ -14,7 +14,7 @@
 - Scripts create the cache directory if missing.
 
 ## Consistent look & colors
-- `fastf1_portfolio.plotting` centralizes:
+- `fastf1_analytics.plotting` centralizes:
   - `apply_style`, `savefig`
   - `get_team_color`, `get_compound_color`, `lighten_color`
 

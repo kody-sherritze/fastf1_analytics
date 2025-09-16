@@ -14,7 +14,7 @@ def apply_style(
     color_scheme: str | None = "fastf1",
     timedelta_support: bool = True,
 ) -> None:
-    """Apply a consistent, portfolio-ready Matplotlib style.
+    """Apply a consistent Matplotlib style.
 
     Uses FastF1's built-in styling (dark theme by default) and a few readability tweaks.
     """

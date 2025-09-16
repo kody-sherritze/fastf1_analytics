@@ -2,7 +2,7 @@ title: "2025 Italian Grand Prix \u2013 Tyre Strategy"
 subtitle: Stints and compounds by driver
 image: assets/gallery/italian_grand_prix_2025_tyre_strategy.png
 code_path: tools/plots/tyre_strategy.py
-function: fastf1_portfolio.charts.tyre_strategy.build_tyre_strategy
+function: fastf1_analytics.charts.tyre_strategy.build_tyre_strategy
 params:
   driver_order: results
   bar_height: 0.6

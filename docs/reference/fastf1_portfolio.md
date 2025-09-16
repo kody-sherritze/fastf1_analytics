@@ -1,3 +1,3 @@
 # API Reference
 
-::: fastf1_portfolio
+::: fastf1_analytics

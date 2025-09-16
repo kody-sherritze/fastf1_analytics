@@ -7,12 +7,12 @@ from typing import Literal, Tuple
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 
-from fastf1_portfolio.plotting import (
+from fastf1_analytics.plotting import (
     apply_style,
     get_team_color,
     savefig,
 )
-from fastf1_portfolio.plotting import lighten_color  # secondary variant helper
+from fastf1_analytics.plotting import lighten_color  # secondary variant helper
 
 
 @dataclass(frozen=True)

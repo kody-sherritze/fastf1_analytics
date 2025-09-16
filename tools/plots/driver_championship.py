@@ -8,8 +8,8 @@ import pandas as pd
 import yaml
 import fastf1
 
-from fastf1_portfolio.session_loader import load_session
-from fastf1_portfolio.charts.driver_points import (
+from fastf1_analytics.session_loader import load_session
+from fastf1_analytics.charts.driver_points import (
     DriverPointsParams,
     build_driver_points_chart,
 )
@@ -121,7 +121,7 @@ def main() -> None:
         "subtitle": "Total points by race (lines per driver)",
         "image": f"assets/gallery/{png.name}",
         "code_path": "tools/plots/driver_championship.py",
-        "function": "fastf1_portfolio.charts.driver_points.build_driver_points_chart",
+        "function": "fastf1_analytics.charts.driver_points.build_driver_points_chart",
         "params": {
             "year": args.year,
             "include_sprints": bool(args.include_sprints),

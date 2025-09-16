@@ -4,8 +4,8 @@ import argparse
 from pathlib import Path
 import yaml
 
-from fastf1_portfolio.session_loader import load_session
-from fastf1_portfolio.charts.drs_effectiveness import (
+from fastf1_analytics.session_loader import load_session
+from fastf1_analytics.charts.drs_effectiveness import (
     DRSEffectivenessParams,
     build_drs_effectiveness_distance,
 )
@@ -64,7 +64,7 @@ def main() -> None:
         "subtitle": "Median speed traces along main straight (DRS ON/OFF)",
         "image": f"assets/gallery/{png.name}",
         "code_path": "tools/plots/drs_effectiveness.py",
-        "function": "fastf1_portfolio.charts.drs_effectiveness.build_drs_effectiveness_distance",
+        "function": "fastf1_analytics.charts.drs_effectiveness.build_drs_effectiveness_distance",
         "params": {
             "year": args.year,
             "event": args.event,
