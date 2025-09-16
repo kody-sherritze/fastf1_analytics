@@ -1,0 +1,18 @@
+title: "2025 Italian Grand Prix \u2013 Tyre lap times (clean race laps)"
+subtitle: Bars = median across drivers; dots = each driver (team-colored), annotated
+  by driver code
+image: assets/gallery/italian_grand_prix_2025_tyre_performance.png
+code_path: tools/plots/tyre_performance.py
+function: fastf1_analytics.charts.tyre_performance.build_tyre_performance
+params:
+  year: 2025
+  event: Italian Grand Prix
+  min_laps_per_compound: 5
+  aggregate: median
+  include_inter_wet: false
+  dpi: 220
+tags:
+- race
+- tyres
+- performance
+- lap times
