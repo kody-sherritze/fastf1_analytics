@@ -14,7 +14,7 @@ from fastf1_analytics.plotting import (
     savefig,
     get_compound_color,
     seconds_formatter,
-    get_team_color,  # uses your existing helper
+    get_driver_color,  # FastF1-first; team color via driver+session
 )
 
 # Track status codes for SC/VSC/yellows to exclude
@@ -127,7 +127,9 @@ def build_tyre_performance(
         .reset_index()
     )
     per_driver = per_driver.merge(teams, on="Driver", how="left")
-    per_driver["dot_color"] = per_driver["Team"].apply(lambda t: get_team_color(t, session=session))
+    per_driver["dot_color"] = per_driver["Driver"].apply(
+        lambda t: get_driver_color(t, session=session)
+    )
 
     # Median lap time across drivers per compound (for the bars)
     comp_stats = (

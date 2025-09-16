@@ -7,7 +7,7 @@ function: fastf1_analytics.charts.tyre_performance.build_tyre_performance
 params:
   year: 2025
   event: Italian Grand Prix
-  min_laps_per_compound: 5
+  min_laps_per_compound: 1
   aggregate: median
   include_inter_wet: false
   dpi: 220
