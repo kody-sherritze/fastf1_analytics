@@ -146,12 +146,13 @@ def build_tyre_performance(
     xcats = comp_stats["Compound"].tolist()
     xs = np.arange(len(xcats))
     medians = comp_stats["median_s"].to_numpy()
+    bar_top_by_compound = {c: m for c, m in zip(xcats, medians)}
 
     # Bars = median lap time across drivers
     bar_colors = [get_compound_color(c) for c in xcats]
     ax.bar(xs, medians, width=0.65, edgecolor="#222", linewidth=0.8, color=bar_colors, alpha=0.9)
 
-    SWARM_WIDTH = 0.15  # max horizontal spread (in x-axis category units)
+    SWARM_WIDTH = 0.18  # max horizontal spread (in x-axis category units)
     EPS_SECONDS = 0.25  # points within this lap-time window are considered overlapping
 
     x_map = {c: i for i, c in enumerate(xcats)}
@@ -193,8 +194,14 @@ def build_tyre_performance(
     # Plot points (team-colored)
     ax.scatter(xpts, ypts, s=28, alpha=0.95, c=colors, edgecolor="#111", linewidth=0.5)
 
-    # Annotate each dot with the driver code, nudged left/right to match offset
-    for xi, yi, drv, xo in zip(xpts, ypts, drivers, x_offsets):
+    compounds = per_driver["Compound"].to_numpy()
+
+    # Annotate each dot with the driver code; black text on Medium/Hard for contrast
+    for xi, yi, drv, xo, comp in zip(xpts, ypts, drivers, x_offsets, compounds):
+        # inside the bar if the point's y is <= the bar top for its compound
+        bar_top = bar_top_by_compound.get(comp, float("inf"))
+        inside_bar = yi <= (bar_top - 0.01)
+        label_color = "#000000" if (comp in ("MEDIUM", "HARD") and inside_bar) else "#EEEEEE"
         ax.annotate(
             drv,
             (xi, yi),
@@ -203,7 +210,7 @@ def build_tyre_performance(
             fontsize=8,
             ha="left" if xo >= 0 else "right",
             va="center",
-            color="#EEEEEE",
+            color=label_color,
             clip_on=True,
         )
     ax.set_xticks(xs, [c.title() for c in xcats])
