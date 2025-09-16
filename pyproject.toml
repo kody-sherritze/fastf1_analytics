@@ -3,7 +3,7 @@ requires = ["setuptools>=69", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "fastf1-portfolio"
+name = "fastf1-analytics"
 version = "0.1.0"
 description = "Reusable FastF1 helpers and a gallery of analyses"
 readme = "README.md"
@@ -51,4 +51,4 @@ module = ["fastf1", "fastf1.*"]
 ignore_missing_imports = true
 
 [project.scripts]
-f1-portfolio-monaco = "fastf1_portfolio.cli:monaco_main"
+f1-analytics-monaco = "fastf1_analytics.cli:monaco_main"

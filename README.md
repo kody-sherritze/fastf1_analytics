@@ -1,8 +1,8 @@
-﻿# FastF1 Portfolio
+﻿# FastF1 Analytics
 
-[![CI](https://github.com/ksherr0/fastf1_portfolio/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/ksherr0/fastf1_portfolio/actions/workflows/ci.yaml)
-[![Docs](https://github.com/ksherr0/fastf1_portfolio/actions/workflows/docs.yaml/badge.svg?branch=main)](https://ksherr0.github.io/fastf1_portfolio/)
-[![Website](https://img.shields.io/website?url=https%3A%2F%2Fksherr0.github.io%2Ffastf1_portfolio%2F)](https://ksherr0.github.io/fastf1_portfolio/)
+[![CI](https://github.com/ksherr0/fastf1_analytics/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/ksherr0/fastf1_analytics/actions/workflows/ci.yaml)
+[![Docs](https://github.com/ksherr0/fastf1_analytics/actions/workflows/docs.yaml/badge.svg?branch=main)](https://ksherr0.github.io/fastf1_analytics/)
+[![Website](https://img.shields.io/website?url=https%3A%2F%2Fksherr0.github.io%fastf1_analytics%2F)](https://ksherr0.github.io/fastf1_analytics/)
 [![Made with: Material for MkDocs](https://img.shields.io/badge/docs-Material%20for%20MkDocs-000?logo=materialformkdocs)](https://squidfunk.github.io/mkdocs-material/)
 
 ![Python](https://img.shields.io/badge/python-3.13%2B-blue)
@@ -14,8 +14,8 @@
 
 Analyses and reusable helpers built on [FastF1](https://docs.fastf1.dev/) to showcase race strategy, telemetry, and season-long insights.
 
-- [CI](https://github.com/ksherr0/fastf1_portfolio/actions/workflows/ci.yml)
-- [Docs (GitHub Pages)](https://ksherr0.github.io/fastf1_portfolio/)
+- [CI](https://github.com/ksherr0/fastf1_analytics/actions/workflows/ci.yml)
+- [Docs (GitHub Pages)](https://ksherr0.github.io/fastf1_analytics/)
 
 ## Table of Contents:
 - [Quickstart](#quickstart)
@@ -37,8 +37,8 @@ Analyses and reusable helpers built on [FastF1](https://docs.fastf1.dev/) to sho
 ## Quickstart
 ```bash
 # 1) Clone & install (Python 3.13+)
-git clone https://github.com/ksherr0/fastf1_portfolio.git
-cd fastf1_portfolio
+git clone https://github.com/ksherr0/fastf1_analytics.git
+cd fastf1_analytics
 
 # 2) Create Virual Environment (optional, but recommended)
 python -m venv .venv
@@ -61,8 +61,8 @@ mkdocs serve  # open http://127.0.0.1:8000
 
 ## Repository Directory
 ```text
-fastf1_portfolio/
-├─ src/fastf1_portfolio/           # library code
+fastf1_analytics/
+├─ src/fastf1_analytics/           # library code
 │  ├─ charts/                      # chart builders (Matplotlib)
 │  ├─ plotting.py                  # style/colors/helpers
 │  └─ session_loader.py            # load_session()
@@ -76,17 +76,17 @@ fastf1_portfolio/
 ## Docs Overview (GitHub Pages)
 If you’re not sure where something lives in the docs, use this map:
 - **Home (Quickstart):** install, run 1-2 plots, rebuild gallery, preview site
-    - https://ksherr0.github.io/fastf1_portfolio/
+    - https://ksherr0.github.io/fastf1_analytics/
 - **Gallery:** all pre-rendered visuals; each card shows the script + params used
-    - https://ksherr0.github.io/fastf1_portfolio/gallery/
+    - https://ksherr0.github.io/fastf1_analytics/gallery/
 - **How it works:** pipeline (plot script → PNG+YAML → gallery generator → MkDocs), caching notes
-    - https://ksherr0.github.io/fastf1_portfolio/how-it-works/
+    - https://ksherr0.github.io/fastf1_analytics/how-it-works/
 - **API → Session Loader:** `load_session(year, gp, session, *, cache)`
-    - https://ksherr0.github.io/fastf1_portfolio/api/session_loader/
+    - https://ksherr0.github.io/fastf1_analytics/api/session_loader/
 - **API → Plotting Helpers:** `apply_style, get_team_color, get_compound_color, savefig`, etc
-    - https://ksherr0.github.io/fastf1_portfolio/api/plotting/
-- **Reference (module index):** top-level functions in `fastf1_portfolio`
-    - https://ksherr0.github.io/fastf1_portfolio/reference/fastf1_portfolio/
+    - https://ksherr0.github.io/fastf1_analytics/api/plotting/
+- **Reference (module index):** top-level functions in `fastf1_analytics`
+    - https://ksherr0.github.io/fastf1_analytics/reference/fastf1_analytics/
 
 ## Requirements
 - **Python:** 3.13+
@@ -94,8 +94,8 @@ If you’re not sure where something lives in the docs, use this map:
 
 ## Install
 ```bash
-git clone https://github.com/ksherr0/fastf1_portfolio.git
-cd fastf1_portfolio
+git clone https://github.com/ksherr0/fastf1_analytics.git
+cd fastf1_analytics
 python -m venv .venv
 
 # Windows (PowerShell)
@@ -185,8 +185,8 @@ This reads all YAML sidecars and **rewrites the cards** in `docs/gallery.md` bet
 Short notebook/script examples that mirror the CLI outputs.
 1) Load a session & apply style
 ```python
-from fastf1_portfolio import apply_style
-from fastf1_portfolio.session_loader import load_session
+from fastf1_analytics import apply_style
+from fastf1_analytics.session_loader import load_session
 
 apply_style()
 session = load_session(2024, "Monaco", "R", cache=".fastf1-cache")
@@ -194,8 +194,8 @@ print(session.event["EventName"], session.name)  # e.g., "Monaco Grand Prix R"
 ```
 2) Build a chart in Python (tyre strategy)
 ```python
-from fastf1_portfolio.session_loader import load_session
-from fastf1_portfolio.charts.tyre_strategy import (
+from fastf1_analytics.session_loader import load_session
+from fastf1_analytics.charts.tyre_strategy import (
     TyreStrategyParams, build_tyre_strategy
 )
 

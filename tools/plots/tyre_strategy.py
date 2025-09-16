@@ -3,8 +3,8 @@ import argparse
 from pathlib import Path
 import yaml
 
-from fastf1_portfolio.session_loader import load_session
-from fastf1_portfolio.charts.tyre_strategy import TyreStrategyParams, build_tyre_strategy
+from fastf1_analytics.session_loader import load_session
+from fastf1_analytics.charts.tyre_strategy import TyreStrategyParams, build_tyre_strategy
 
 
 def slug(year: int, event: str) -> str:
@@ -49,7 +49,7 @@ def main() -> None:
         "subtitle": "Stints and compounds by driver",
         "image": f"assets/gallery/{png.name}",
         "code_path": "tools/plots/tyre_strategy.py",
-        "function": "fastf1_portfolio.charts.tyre_strategy.build_tyre_strategy",
+        "function": "fastf1_analytics.charts.tyre_strategy.build_tyre_strategy",
         "params": {
             "driver_order": order if isinstance(order, list) else str(order),
             "bar_height": params.bar_height,

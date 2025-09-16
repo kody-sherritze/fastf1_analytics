@@ -1,5 +1,5 @@
-﻿site_name: FastF1 Portfolio
-repo_url: https://github.com/ksherr0/fastf1_portfolio
+﻿site_name: FastF1 Analytics
+repo_url: https://github.com/ksherr0/fastf1_analytics
 edit_uri: edit/main/docs/
 
 theme:
@@ -42,4 +42,4 @@ nav:
   - API:
       - Session Loader: api/session_loader.md
       - Plotting: api/plotting.md
-      - fastf1_portfolio: reference/fastf1_portfolio.md
+      - fastf1_analytics: reference/fastf1_analytics.md

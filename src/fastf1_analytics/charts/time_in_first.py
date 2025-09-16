@@ -7,7 +7,7 @@ driver spent in first place across a Formula 1 season.  Times are
 accumulated per race and plotted cumulatively by round, resulting in a
 chart similar to the Drivers' Championship points graph.  Each
 driver’s line is coloured according to their team’s primary colour
-using :func:`fastf1_portfolio.plotting.get_team_color`.  A secondary
+using :func:`fastf1_analytics.plotting.get_team_color`.  A secondary
 variant is available which lightens the colours for an alternate look.
 
 The expected input is a pandas DataFrame with one row per driver per
@@ -26,7 +26,7 @@ import pandas as pd
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 
-from fastf1_portfolio.plotting import apply_style, get_team_color, lighten_color, savefig
+from fastf1_analytics.plotting import apply_style, get_team_color, lighten_color, savefig
 
 
 @dataclass(frozen=True)
@@ -38,7 +38,7 @@ class TimeInFirstParams:
     color_variant:
         Choose between the team's primary colour (``"primary"``) and a
         lightened variant (``"secondary"``).  Secondary colours are
-        derived via :func:`fastf1_portfolio.plotting.lighten_color`.
+        derived via :func:`fastf1_analytics.plotting.lighten_color`.
 
     annotate_last:
         Whether to annotate the final cumulative time for each driver.
@@ -92,7 +92,7 @@ def build_time_in_first_chart(
 
     out_path:
         If provided, the plot is saved to this path using
-        :func:`fastf1_portfolio.plotting.savefig` with the DPI defined in
+        :func:`fastf1_analytics.plotting.savefig` with the DPI defined in
         ``params``.
 
     Returns

@@ -1,4 +1,4 @@
-﻿# FastF1 Portfolio
+﻿# FastF1 Analytics
 
 High-quality analyses and reusable helpers built on [FastF1](https://docs.fastf1.dev/).
 

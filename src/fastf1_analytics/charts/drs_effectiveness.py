@@ -25,8 +25,8 @@ import matplotlib.pyplot as plt
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 
-from fastf1_portfolio.plotting import apply_style, savefig
-from fastf1_portfolio.session_loader import load_session
+from fastf1_analytics.plotting import apply_style, savefig
+from fastf1_analytics.session_loader import load_session
 
 
 # -----------------------------------------------------------------------------

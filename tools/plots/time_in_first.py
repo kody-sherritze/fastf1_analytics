@@ -5,7 +5,7 @@ This module provides a command line interface to generate a season‑long
 plot showing how much time each driver spent in first place.  The
 script computes a long‑form DataFrame of cumulative minutes led per
 driver per round, delegates rendering to
-``fastf1_portfolio.charts.time_in_first.build_time_in_first_chart`` and
+``fastf1_analytics.charts.time_in_first.build_time_in_first_chart`` and
 writes both a PNG image and a YAML sidecar into the gallery assets
 folder.  The YAML metadata is used by the MkDocs gallery generator to
 build cards for the web site.
@@ -21,8 +21,8 @@ import pandas as pd
 import yaml
 import fastf1
 
-from fastf1_portfolio.session_loader import load_session
-from fastf1_portfolio.charts.time_in_first import (
+from fastf1_analytics.session_loader import load_session
+from fastf1_analytics.charts.time_in_first import (
     TimeInFirstParams,
     build_time_in_first_chart,
 )
@@ -38,7 +38,7 @@ def _season_lead_time_table(year: int, cache: str) -> pd.DataFrame:
 
     cache:
         Path to the FastF1 cache directory.  Pass through to
-        :func:`fastf1_portfolio.session_loader.load_session`.
+        :func:`fastf1_analytics.session_loader.load_session`.
 
     Returns
     -------
@@ -186,7 +186,7 @@ def main() -> None:
         "subtitle": "Cumulative minutes led by race (lines per driver)",
         "image": f"assets/gallery/{png.name}",
         "code_path": "tools/plots/time_in_first.py",
-        "function": "fastf1_portfolio.charts.time_in_first.build_time_in_first_chart",
+        "function": "fastf1_analytics.charts.time_in_first.build_time_in_first_chart",
         "params": {
             "year": args.year,
             "color_variant": params.color_variant,
