@@ -30,6 +30,14 @@ and a YAML sidecar under `docs/assets/gallery/`.
   `Source:` [tools/plots/drs_effectiveness.py](https://github.com/ksherr0/fastf1_analytics/blob/main/tools/plots/drs_effectiveness.py)  
   `Params:` `year=2025, event=Italian Grand Prix, session=R, driver=VER, n_points=200, accel_threshold_kmh_s=-8.0, sustain_sec=0.3`
 
+- :material-chart-bar: **2025 Italian Grand Prix – Tyre lap times (clean race laps)**
+  ---
+  [![2025 Italian Grand Prix – Tyre lap times (clean race laps)](assets/gallery/italian_grand_prix_2025_tyre_performance.png){ loading=lazy }](assets/gallery/italian_grand_prix_2025_tyre_performance.png){ .glightbox }
+  _Bars = median across drivers; dots = each driver (team-colored), annotated by driver code_
+
+  `Source:` [tools/plots/tyre_performance.py](https://github.com/ksherr0/fastf1_analytics/blob/main/tools/plots/tyre_performance.py)  
+  `Params:` `year=2025, event=Italian Grand Prix, min_laps_per_compound=1, aggregate=median, include_inter_wet=False, dpi=220`
+
 - :material-chart-bar: **2025 Italian Grand Prix – Tyre Strategy**
   ---
   [![2025 Italian Grand Prix – Tyre Strategy](assets/gallery/italian_grand_prix_2025_tyre_strategy.png){ loading=lazy }](assets/gallery/italian_grand_prix_2025_tyre_strategy.png){ .glightbox }

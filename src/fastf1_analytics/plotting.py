@@ -55,20 +55,36 @@ def get_team_color(team: str, *, session: Any | None = None) -> str:
 
 
 _TEAM_COLOR_FALLBACK = {
-    # Common 2024/2025 team names and aliases (normalized keys below)
+    # Redbull
     "redbull": "#0600EF",
+    "redbullracing": "#0600EF",
     "oracleredbullracing": "#0600EF",
+    "rbf1team": "#143CFF",
+    "rb": "#143CFF",
+    # Ferrari
     "ferrari": "#DC0000",
     "scuderiaferrari": "#DC0000",
+    # Mercedes
     "mercedes": "#00D2BE",
     "mercedesamgpetronas": "#00D2BE",
+    # McLaren
     "mclaren": "#FF8700",
+    # Aston Martin
     "astonmartin": "#006F62",
+    # Alpine
     "alpine": "#0090FF",
+    # Williams
     "williams": "#005AFF",
-    "rb": "#143CFF",
+    # Racing Bulls
+    "racingbulls": "#143CFF",
     "visacashapprb": "#143CFF",
+    "visacashapprbf1team": "#143CFF",
+    "visacashapp_rb": "#143CFF",
+    "visa_cash_app_rb": "#143CFF",
+    # Haas
     "haas": "#B6BABD",
+    "haasf1team": "#B6BABD",
+    # Sauber
     "sauber": "#00E701",
     "kicksauber": "#00E701",
     "stake": "#00E701",

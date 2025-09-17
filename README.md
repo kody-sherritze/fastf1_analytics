@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/ksherr0/fastf1_analytics/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/ksherr0/fastf1_analytics/actions/workflows/ci.yaml)
 [![Docs](https://github.com/ksherr0/fastf1_analytics/actions/workflows/docs.yaml/badge.svg?branch=main)](https://ksherr0.github.io/fastf1_analytics/)
-[![Website](https://img.shields.io/website?url=https%3A%2F%2Fksherr0.github.io%fastf1_analytics%2F)](https://ksherr0.github.io/fastf1_analytics/)
+[![Website](https://img.shields.io/website?url=https%3A%2F%2Fksherr0.github.io%2Ffastf1_analytics%2F)](https://ksherr0.github.io/fastf1_analytics/)
 [![Made with: Material for MkDocs](https://img.shields.io/badge/docs-Material%20for%20MkDocs-000?logo=materialformkdocs)](https://squidfunk.github.io/mkdocs-material/)
 
 ![Python](https://img.shields.io/badge/python-3.13%2B-blue)
