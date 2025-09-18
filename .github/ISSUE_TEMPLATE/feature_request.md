@@ -3,7 +3,7 @@ name: Feature request
 about: Suggest new ideas for the project
 title: ''
 labels: enhancement
-assignees: ksherr0
+assignees: kody-sherritze
 
 ---
 

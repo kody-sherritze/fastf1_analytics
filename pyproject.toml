@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "Reusable FastF1 helpers and a gallery of analyses"
 readme = "README.md"
 requires-python = ">=3.12"
-authors = [{ name = "ksherr0"}]
+authors = [{ name = "kody-sherritze"}]
 dependencies = [
   "fastf1>=3.2.1",
   "matplotlib>=3.7",

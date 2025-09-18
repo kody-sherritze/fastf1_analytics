@@ -1,8 +1,8 @@
 ﻿# FastF1 Analytics
 
-[![CI](https://github.com/ksherr0/fastf1_analytics/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/ksherr0/fastf1_analytics/actions/workflows/ci.yaml)
-[![Docs](https://github.com/ksherr0/fastf1_analytics/actions/workflows/docs.yaml/badge.svg?branch=main)](https://ksherr0.github.io/fastf1_analytics/)
-[![Website](https://img.shields.io/website?url=https%3A%2F%2Fksherr0.github.io%2Ffastf1_analytics%2F)](https://ksherr0.github.io/fastf1_analytics/)
+[![CI](https://github.com/kody-sherritze/fastf1_analytics/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/kody-sherritze/fastf1_analytics/actions/workflows/ci.yaml)
+[![Docs](https://github.com/kody-sherritze/fastf1_analytics/actions/workflows/docs.yaml/badge.svg?branch=main)](https://kody-sherritze.github.io/fastf1_analytics/)
+[![Website](https://img.shields.io/website?url=https%3A%2F%kody-sherritze.github.io%2Ffastf1_analytics%2F)](https://kody-sherritze.github.io/fastf1_analytics/)
 [![Made with: Material for MkDocs](https://img.shields.io/badge/docs-Material%20for%20MkDocs-000?logo=materialformkdocs)](https://squidfunk.github.io/mkdocs-material/)
 
 ![Python](https://img.shields.io/badge/python-3.13%2B-blue)
@@ -14,8 +14,8 @@
 
 Analyses and reusable helpers built on [FastF1](https://docs.fastf1.dev/) to showcase race strategy, telemetry, and season-long insights.
 
-- [CI](https://github.com/ksherr0/fastf1_analytics/actions/workflows/ci.yml)
-- [Docs (GitHub Pages)](https://ksherr0.github.io/fastf1_analytics/)
+- [CI](https://github.com/kody-sherritze/fastf1_analytics/actions/workflows/ci.yml)
+- [Docs (GitHub Pages)](https://kody-sherritze.github.io/fastf1_analytics/)
 
 ## Table of Contents:
 - [Quickstart](#quickstart)
@@ -37,7 +37,7 @@ Analyses and reusable helpers built on [FastF1](https://docs.fastf1.dev/) to sho
 ## Quickstart
 ```bash
 # 1) Clone & install (Python 3.13+)
-git clone https://github.com/ksherr0/fastf1_analytics.git
+git clone https://github.com/kody-sherritze/fastf1_analytics.git
 cd fastf1_analytics
 
 # 2) Create Virual Environment (optional, but recommended)
@@ -76,17 +76,17 @@ fastf1_analytics/
 ## Docs Overview (GitHub Pages)
 If you’re not sure where something lives in the docs, use this map:
 - **Home (Quickstart):** install, run 1-2 plots, rebuild gallery, preview site
-    - https://ksherr0.github.io/fastf1_analytics/
+    - https://kody-sherritze.github.io/fastf1_analytics/
 - **Gallery:** all pre-rendered visuals; each card shows the script + params used
-    - https://ksherr0.github.io/fastf1_analytics/gallery/
+    - https://kody-sherritze.github.io/fastf1_analytics/gallery/
 - **How it works:** pipeline (plot script → PNG+YAML → gallery generator → MkDocs), caching notes
-    - https://ksherr0.github.io/fastf1_analytics/how-it-works/
+    - https://kody-sherritze.github.io/fastf1_analytics/how-it-works/
 - **API → Session Loader:** `load_session(year, gp, session, *, cache)`
-    - https://ksherr0.github.io/fastf1_analytics/api/session_loader/
+    - https://kody-sherritze.github.io/fastf1_analytics/api/session_loader/
 - **API → Plotting Helpers:** `apply_style, get_team_color, get_compound_color, savefig`, etc
-    - https://ksherr0.github.io/fastf1_analytics/api/plotting/
+    - https://kody-sherritze.github.io/fastf1_analytics/api/plotting/
 - **Reference (module index):** top-level functions in `fastf1_analytics`
-    - https://ksherr0.github.io/fastf1_analytics/reference/fastf1_analytics/
+    - https://kody-sherritze.github.io/fastf1_analytics/reference/fastf1_analytics/
 
 ## Requirements
 - **Python:** 3.13+
@@ -94,7 +94,7 @@ If you’re not sure where something lives in the docs, use this map:
 
 ## Install
 ```bash
-git clone https://github.com/ksherr0/fastf1_analytics.git
+git clone https://github.com/kody-sherritze/fastf1_analytics.git
 cd fastf1_analytics
 python -m venv .venv
 
