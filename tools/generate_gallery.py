@@ -8,7 +8,7 @@ GALLERY_MD = Path("docs/gallery.md")
 ASSETS_DIR = Path("docs/assets/gallery")
 BEGIN = "<!-- AUTO-GALLERY:BEGIN -->"
 END = "<!-- AUTO-GALLERY:END -->"
-REPO = "ksherr0/fastf1_analytics"
+REPO = "kody-sherritze/fastf1_analytics"
 
 
 def load_items() -> list[dict[str, Any]]:
