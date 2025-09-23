@@ -15,9 +15,6 @@ __pycache__/
 # FastF1 cache + data
 .fastf1-cache/
 .fastf1/
-data/
-!data/raw/.gitkeep
-!data/processed/.gitkeep
 
 # Notebooks
 .ipynb_checkpoints/
