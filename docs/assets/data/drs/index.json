@@ -1,0 +1,16 @@
+{
+  "sessions": [
+    {
+      "year": 2025,
+      "event_name": "Italian Grand Prix",
+      "event_slug": "italian_grand_prix",
+      "session": "R",
+      "drivers": [
+        "VER"
+      ],
+      "files": {
+        "VER": "assets/data/drs/italian_grand_prix_2025_drs_effect_VER.json"
+      }
+    }
+  ]
+}

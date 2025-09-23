@@ -15,6 +15,11 @@ theme:
       primary: red
       accent: red
 
+extra_javascript:
+  - https://cdn.plot.ly/plotly-2.35.2.min.js
+  - javascripts/gallery_bootstrap.js
+  - javascripts/gallery/drs_effectiveness.js
+
 plugins:
   - search
   - mkdocstrings:
