@@ -3,9 +3,10 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Tuple, cast
 
 import numpy as np
+import numpy.typing as npt
 import pandas as pd
 
 from fastf1_analytics.session_loader import load_session
@@ -16,7 +17,6 @@ from fastf1_analytics.session_loader import load_session
 
 def _slugify_event(name: str) -> str:
     s = (name or "").strip().lower().replace(" ", "_")
-    # keep alnum and underscores only
     return "".join(ch for ch in s if ch.isalnum() or ch == "_")
 
 
@@ -25,17 +25,19 @@ def _clean_laps(laps: pd.DataFrame, driver: str) -> pd.DataFrame:
     Filter laps to a single driver and remove pit in/out and SC/VSC laps.
     Works across FastF1 versions where columns differ in dtype.
     """
-    df = laps.pick_drivers(driver).copy()
+    # FastF1's pick_drivers returns a DataFrame-like; cast to satisfy mypy.
+    picked = getattr(laps, "pick_drivers")(driver)
+    df: pd.DataFrame = cast(pd.DataFrame, picked).copy()
 
     # 1) Drop pit in/out laps (handle datetime-like or boolean flags)
     for col in ("PitInTime", "PitOutTime"):
         if col in df.columns:
-            if pd.api.types.is_datetime64_any_dtype(df[col]) or pd.api.types.is_timedelta64_dtype(
-                df[col]
-            ):
-                df = df[df[col].isna()]
+            s: pd.Series = df[col]
+            if pd.api.types.is_datetime64_any_dtype(s) or pd.api.types.is_timedelta64_dtype(s):
+                df = df[s.isna()]
             else:
-                df = df[~df[col].astype(bool).fillna(False)]
+                # Treat truthy as pit lap; keep rows where value is falsy or NA
+                df = df[~s.astype(bool).fillna(False)]
 
     # Optional flags if present
     for col in ("InLap", "OutLap"):
@@ -44,25 +46,36 @@ def _clean_laps(laps: pd.DataFrame, driver: str) -> pd.DataFrame:
 
     # 2) Drop laps under SC/VSC using TrackStatus (tokens like "1+2+4")
     if "TrackStatus" in df.columns:
-        bad = {"4", "5"}  # 4=SC, 5=VSC
-        ts = df["TrackStatus"].astype(str).fillna("")
-        keep = ~ts.apply(lambda s: any(part.strip() in bad for part in s.split("+") if part))
-        df = df[keep]
+        ts_str: pd.Series = df["TrackStatus"].astype("string").fillna("")
+        # Vectorized contains for tokens 4 or 5 delimited by start/end or '+'
+        # Matches: 4 or 5 as whole tokens in strings like "1+2+4"
+        mask_sc_vsc: pd.Series = ts_str.str.contains(
+            r"(?:(?:^|\+)(?:4|5)(?=$|\+))", regex=True, na=False
+        )
+        df = df[~mask_sc_vsc]
 
     return df.reset_index(drop=True)
 
 
 def _lap_meta(lap: pd.Series) -> Dict[str, Any]:
-    lap_no = int(lap.get("LapNumber", -1)) if pd.notna(lap.get("LapNumber", None)) else None
-    stint = int(lap.get("Stint", -1)) if pd.notna(lap.get("Stint", None)) else None
-    compound = str(lap.get("Compound")) if pd.notna(lap.get("Compound", None)) else None
-    lap_time_s = None
+    lap_number_val = lap.get("LapNumber", None)
+    lap_no: int | None = int(lap_number_val) if pd.notna(lap_number_val) else None
+
+    stint_val = lap.get("Stint", None)
+    stint: int | None = int(stint_val) if pd.notna(stint_val) else None
+
+    comp_val = lap.get("Compound", None)
+    compound: str | None = str(comp_val) if pd.notna(comp_val) else None
+
+    lap_time_s: float | None = None
     lt = lap.get("LapTime", None)
     if pd.notna(lt):
         try:
-            lap_time_s = float(lt.total_seconds())
+            # FastF1 LapTime is typically pandas.Timedelta
+            lap_time_s = float(getattr(lt, "total_seconds")())
         except Exception:
             pass
+
     return {
         "lap": lap_no,
         "lap_time_s": lap_time_s,
@@ -71,16 +84,21 @@ def _lap_meta(lap: pd.Series) -> Dict[str, Any]:
     }
 
 
-def _quantize(arr: np.ndarray, decimals: int) -> List[float]:
-    if arr is None or len(arr) == 0:
+def _quantize(arr: npt.ArrayLike, decimals: int) -> List[float]:
+    if arr is None:
         return []
-    return np.round(np.asarray(arr, dtype=float), decimals=decimals).astype(float).tolist()
+    a = np.asarray(arr, dtype=float)
+    if a.size == 0:
+        return []
+    q = np.round(a, decimals=decimals).astype(float)
+    return [float(x) for x in q.tolist()]
 
 
-def _event_fields(session) -> Tuple[int, str, str]:
+def _event_fields(session: Any) -> Tuple[int, str, str]:
     # year
+    year: int
     try:
-        year = int(session.event.year)
+        year = int(getattr(session.event, "year"))
     except Exception:
         try:
             year = int(session.event.get("Year"))
@@ -137,8 +155,10 @@ def export(
 
     # Build per-lap series
     for _, lap in laps.iterrows():
+        # lap.get_car_data() is a FastF1 API; type is dynamic at type-check time
         try:
-            tel = lap.get_car_data().add_distance()
+            car_data = getattr(lap, "get_car_data")()
+            tel = getattr(car_data, "add_distance")()
         except Exception:
             continue
 
@@ -153,24 +173,25 @@ def export(
         # Relative seconds (0 at start of this lap telemetry)
         if "Time" in t.columns:
             try:
-                t_s = (t["Time"] - t["Time"].iloc[0]).dt.total_seconds().to_numpy()
+                t0 = t["Time"].iloc[0]
+                # Support both datetime64 and timedelta64-like
+                t_s = (t["Time"] - t0).dt.total_seconds().to_numpy()
             except Exception:
-                # Some versions/materialize Time as timedelta already
                 t_s = pd.to_timedelta(t["Time"]).dt.total_seconds().to_numpy()
         else:
-            # Fallback: synthetic time step
             t_s = np.arange(len(t), dtype=float) * 0.001
 
         dist = (
             t["Distance"].to_numpy() if "Distance" in t.columns else np.arange(len(t), dtype=float)
         )
         speed = t["Speed"].to_numpy() if "Speed" in t.columns else np.zeros(len(t), dtype=float)
+
         if "DRS" in t.columns:
-            drs = t["DRS"].fillna(0).to_numpy()
-            # Ensure numeric 0/1
-            drs = np.array([int(x) if pd.notna(x) else 0 for x in drs], dtype=int)
+            drs_series: pd.Series = t["DRS"].fillna(0)
+            drs_np = drs_series.to_numpy()
+            drs_list: List[int] = [int(x) if pd.notna(x) else 0 for x in drs_np]
         else:
-            drs = np.zeros(len(t), dtype=int)
+            drs_list = [0] * len(t)
 
         obj["laps"].append(
             {
@@ -178,7 +199,7 @@ def export(
                 "t_s": _quantize(t_s, 3),
                 "dist_m": _quantize(dist, 2),
                 "speed_kmh": _quantize(speed, 2),
-                "drs": drs.astype(int).tolist(),
+                "drs": drs_list,
             }
         )
 
