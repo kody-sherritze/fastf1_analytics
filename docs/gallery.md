@@ -9,7 +9,6 @@ and a YAML sidecar under `docs/assets/gallery/`.
 
 - :material-chart-bar: **2024 Drivers' Championship – Cumulative points**
   ---
-  [![2024 Drivers' Championship – Cumulative points](assets/gallery/2024_drivers_championship_points.png){ loading=lazy }](assets/gallery/2024_drivers_championship_points.png){ .glightbox }
   _Total points by race (lines per driver)_
 
   `Source:` [tools/plots/driver_championship.py](https://github.com/kody-sherritze/fastf1_analytics/blob/main/tools/plots/driver_championship.py)
@@ -17,7 +16,6 @@ and a YAML sidecar under `docs/assets/gallery/`.
 
 - :material-chart-bar: **2024 Time Spent Leading – Cumulative**
   ---
-  [![2024 Time Spent Leading – Cumulative](assets/gallery/2024_drivers_time_in_first.png){ loading=lazy }](assets/gallery/2024_drivers_time_in_first.png){ .glightbox }
   _Cumulative minutes led by race (lines per driver)_
 
   `Source:` [tools/plots/time_in_first.py](https://github.com/kody-sherritze/fastf1_analytics/blob/main/tools/plots/time_in_first.py)
@@ -25,7 +23,7 @@ and a YAML sidecar under `docs/assets/gallery/`.
 
 - :material-chart-bar: **2025 Italian Grand Prix – DRS effect on main straight (VER)**
   ---
-  <div class="drs-widget" data-index="assets/data/drs/index.json" data-default-year="2025" data-default-event="italian_grand_prix" data-default-driver="VER"></div>
+  <div class="drs-widget" data-base="{{ base_url }}" data-index="{{ base_url }}/assets/data/drs/index.json" data-default-year="2025" data-default-event="italian_grand_prix" data-default-driver="VER"></div>
   _Median speed traces along main straight (DRS ON/OFF)_
 
   `Source:` [tools/plots/drs_effectiveness.py](https://github.com/kody-sherritze/fastf1_analytics/blob/main/tools/plots/drs_effectiveness.py)
@@ -33,7 +31,6 @@ and a YAML sidecar under `docs/assets/gallery/`.
 
 - :material-chart-bar: **2025 Italian Grand Prix – Tyre lap times (clean race laps)**
   ---
-  [![2025 Italian Grand Prix – Tyre lap times (clean race laps)](assets/gallery/italian_grand_prix_2025_tyre_performance.png){ loading=lazy }](assets/gallery/italian_grand_prix_2025_tyre_performance.png){ .glightbox }
   _Bars = median across drivers; dots = each driver (team-colored), annotated by driver code_
 
   `Source:` [tools/plots/tyre_performance.py](https://github.com/kody-sherritze/fastf1_analytics/blob/main/tools/plots/tyre_performance.py)
@@ -41,7 +38,6 @@ and a YAML sidecar under `docs/assets/gallery/`.
 
 - :material-chart-bar: **2025 Italian Grand Prix – Tyre Strategy**
   ---
-  [![2025 Italian Grand Prix – Tyre Strategy](assets/gallery/italian_grand_prix_2025_tyre_strategy.png){ loading=lazy }](assets/gallery/italian_grand_prix_2025_tyre_strategy.png){ .glightbox }
   _Stints and compounds by driver_
 
   `Source:` [tools/plots/tyre_strategy.py](https://github.com/kody-sherritze/fastf1_analytics/blob/main/tools/plots/tyre_strategy.py)

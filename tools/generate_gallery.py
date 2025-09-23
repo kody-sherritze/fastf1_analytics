@@ -61,14 +61,15 @@ def render_gallery(items: List[dict[str, Any]]) -> str:
             default_driver = params.get("driver", "")
             lines.append(
                 f'  <div class="drs-widget" '
-                f'data-index="assets/data/drs/index.json" '
+                f'data-base="{{{{ base_url }}}}" '
+                f'data-index="{{{{ base_url }}}}/assets/data/drs/index.json" '
                 f'data-default-year="{default_year}" '
                 f'data-default-event="{default_event}" '
                 f'data-default-driver="{default_driver}"></div>'
             )
         else:
             # Static image card w/ lightbox
-            lines.append(f"  [![{title}]({img}){{ loading=lazy }}]({img}){{ .glightbox }}")
+            f"  [![{title}]({{{{ base_url }}}}/{img}){{ loading=lazy }}]({{{{ base_url }}}}/{img}){{ .glightbox }}"
 
         # Meta lines (kept minimal and on separate lines for readability)
         if subtitle:
