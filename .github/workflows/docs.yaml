@@ -1,4 +1,4 @@
-﻿name: Docs
+name: Docs
 on:
   push:
     branches: [main]
@@ -22,7 +22,7 @@ jobs:
           cache: "pip"
       - run: pip install -e .[dev]
       - run: mkdocs build
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v4
         with:
           path: ./site
 
