@@ -14,6 +14,7 @@ from fastf1_analytics.plotting import apply_style, get_compound_color, savefig
 
 tyre_logger = logging.getLogger(__name__ + ".tyre_strategy")
 
+
 def _eligible_drivers(session: Any) -> list[str]:
     """Drivers who actually started: exclude 'F' in ClassifiedPosition and zero-lap entries."""
     laps = getattr(session, "laps", None)
@@ -103,7 +104,9 @@ def build_tyre_strategy(
             exc_info=True,
         )
         try:
-            total_laps = int((laps[["Driver", "LapNumber"]].groupby("Driver")["LapNumber"].max()).max())
+            total_laps = int(
+                (laps[["Driver", "LapNumber"]].groupby("Driver")["LapNumber"].max()).max()
+            )
         except Exception as exc2:
             tyre_logger.warning(
                 "Fallback computation of total_laps failed; defaulting to 0: %s",

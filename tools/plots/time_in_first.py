@@ -30,6 +30,7 @@ from fastf1_analytics.session_loader import load_session
 
 logger = logging.getLogger(__name__ + ".time_in_first")
 
+
 def _season_lead_time_table(year: int, cache: str) -> pd.DataFrame:
     """Build a DataFrame of cumulative minutes spent leading per driver per round.
 
@@ -68,7 +69,13 @@ def _season_lead_time_table(year: int, cache: str) -> pd.DataFrame:
         try:
             race = load_session(year, event, "R", cache=cache)
         except (AttributeError, OSError, KeyError, TypeError, ValueError) as exc:
-            logger.debug("Skipping round %s (%s) because race session couldn't be loaded: %s", rnd, event, exc, exc_info=True)
+            logger.debug(
+                "Skipping round %s (%s) because race session couldn't be loaded: %s",
+                rnd,
+                event,
+                exc,
+                exc_info=True,
+            )
 
         laps = getattr(race, "laps", None)
         results = getattr(race, "results", None)
@@ -83,7 +90,13 @@ def _season_lead_time_table(year: int, cache: str) -> pd.DataFrame:
             try:
                 lap_times = pd.to_timedelta(laps["LapTime"], errors="coerce")
             except (KeyError, TypeError, ValueError) as exc:
-                logger.debug("LapTime conversion failed for round %s (%s): %s", rnd, event, exc, exc_info=True)
+                logger.debug(
+                    "LapTime conversion failed for round %s (%s): %s",
+                    rnd,
+                    event,
+                    exc,
+                    exc_info=True,
+                )
                 # If LapTime column is missing or conversion fails, fill zeros so chart logic can continue
                 lap_times = pd.Series([pd.Timedelta(0) for _ in range(len(laps))])
             laps["LapTime_timedelta"] = lap_times

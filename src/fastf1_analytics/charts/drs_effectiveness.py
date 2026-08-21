@@ -411,7 +411,11 @@ def build_drs_effectiveness_distance(
     MAX_OPEN_RATIO_OFF = params.max_open_ratio_off
 
     for _, lap in laps.iterrows():
-        lap_no = int(lap["LapNumber"]) if "LapNumber" in lap and pd.notna(lap["LapNumber"]) else "unknown"
+        lap_no = (
+            int(lap["LapNumber"])
+            if "LapNumber" in lap and pd.notna(lap["LapNumber"])
+            else "unknown"
+        )
         try:
             tel = lap.get_car_data().add_distance()
         except (AttributeError, KeyError, TypeError, ValueError) as exc:
@@ -528,7 +532,9 @@ def build_drs_effectiveness_distance(
             try:
                 qlap = qlaps.pick_quicklaps().sort_values("LapTime").iloc[0]
             except (AttributeError, IndexError, KeyError, TypeError, ValueError) as exc:
-                logger.debug("Qualifying lap fallback for %s was required: %s", drv, exc, exc_info=True)
+                logger.debug(
+                    "Qualifying lap fallback for %s was required: %s", drv, exc, exc_info=True
+                )
                 qlap = qlaps.sort_values("LapTime").iloc[0] if len(qlaps) else None
             if qlap is not None:
                 try:
@@ -583,7 +589,11 @@ def build_drs_effectiveness_distance(
                 except (AttributeError, IndexError, KeyError, TypeError, ValueError) as exc:
                     logger.debug(
                         "Qualifying lap %s for %s could not be processed: %s",
-                        int(qlap["LapNumber"]) if "LapNumber" in qlap and pd.notna(qlap["LapNumber"]) else "unknown",
+                        (
+                            int(qlap["LapNumber"])
+                            if "LapNumber" in qlap and pd.notna(qlap["LapNumber"])
+                            else "unknown"
+                        ),
                         drv,
                         exc,
                         exc_info=True,

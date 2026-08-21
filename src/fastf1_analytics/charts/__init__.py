@@ -8,5 +8,5 @@ __all__ = [
     "TyreStrategyParams",
     "build_driver_points_chart",
     "build_time_in_first_chart",
-    "build_tyre_strategy"
+    "build_tyre_strategy",
 ]

@@ -13,6 +13,7 @@ from matplotlib.ticker import FuncFormatter
 
 logger = logging.getLogger(__name__ + ".plotting")
 
+
 def apply_style(
     color_scheme: str | None = "fastf1",
     timedelta_support: bool = True,

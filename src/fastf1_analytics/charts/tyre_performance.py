@@ -101,7 +101,7 @@ def _per_driver_compound_laptime(
 def build_tyre_performance(
     session: Any,
     *,
-    params: TyrePerformanceParams | None= None,
+    params: TyrePerformanceParams | None = None,
     out_path: str | None = None,
 ) -> tuple[Figure, Axes]:
     """Plot actual lap times per compound (bars = median across drivers; dots = each driver)."""

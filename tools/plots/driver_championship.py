@@ -55,7 +55,14 @@ def _season_points_table(year: int, include_sprints: bool, cache: str) -> pd.Dat
             except (AttributeError, KeyError, TypeError, ValueError, OSError) as exc:
 
                 # no sprint for this event; log at debug so caller can inspect if desired
-                logger.debug("No sprint results for %s %s (event=%s): %s", year, event, "S", exc, exc_info=True)
+                logger.debug(
+                    "No sprint results for %s %s (event=%s): %s",
+                    year,
+                    event,
+                    "S",
+                    exc,
+                    exc_info=True,
+                )
                 continue
 
         # Snapshot totals after this round
