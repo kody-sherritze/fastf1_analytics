@@ -1,7 +1,9 @@
-﻿from pathlib import Path
-import argparse
+﻿import argparse
+from pathlib import Path
+
 import matplotlib.pyplot as plt
-from . import load_session, apply_style
+
+from . import apply_style, load_session
 
 
 def monaco_main() -> None:

@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 from pathlib import Path
-import yaml
 from typing import Any
+
+import yaml
 
 GALLERY_MD = Path("docs/gallery.md")
 ASSETS_DIR = Path("docs/assets/gallery")
@@ -29,7 +30,7 @@ def render_gallery(items: list[dict[str, Any]]) -> str:
         code_url = it.get("code_url", "")
         # Build a GitHub URL if only code_path is present
         if not code_url and code:
-            code_url = f"https://github.com/{REPO}/blob/main/{str(code).replace('\\\\','/')}"
+            code_url = f"https://github.com/{REPO}/blob/main/{str(code).replace('\\','/')}"
         params = it.get("params", {})
         # Compact param preview
         ppreview = ", ".join(f"{k}={v}" for k, v in params.items())

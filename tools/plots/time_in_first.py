@@ -14,18 +14,21 @@ build cards for the web site.
 from __future__ import annotations
 
 import argparse
+import logging
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any
 
+import fastf1
 import pandas as pd
 import yaml
-import fastf1
 
-from fastf1_analytics.session_loader import load_session
 from fastf1_analytics.charts.time_in_first import (
     TimeInFirstParams,
     build_time_in_first_chart,
 )
+from fastf1_analytics.session_loader import load_session
+
+logger = logging.getLogger(__name__ + ".time_in_first")
 
 
 def _season_lead_time_table(year: int, cache: str) -> pd.DataFrame:
@@ -51,28 +54,34 @@ def _season_lead_time_table(year: int, cache: str) -> pd.DataFrame:
     """
     # Get the official event schedule (exclude testing sessions)
     sched = fastf1.get_event_schedule(year, include_testing=False)
-    rounds: List[Tuple[int, str]] = [
+    rounds: list[tuple[int, str]] = [
         (int(row["RoundNumber"]), str(row["EventName"]))
         for _, row in sched.sort_values("RoundNumber").iterrows()
         if str(row.get("EventName", "")).strip()
     ]
 
-    rows: List[Dict[str, Any]] = []
+    rows: list[dict[str, Any]] = []
     # Running tally of total minutes led per driver
-    by_driver_total: Dict[str, float] = {}
+    by_driver_total: dict[str, float] = {}
 
     for rnd, event in rounds:
         # Load race session; if session fails (e.g. cancelled event), skip
         try:
             race = load_session(year, event, "R", cache=cache)
-        except Exception:
-            # If the race cannot be loaded, skip this round
+        except (AttributeError, OSError, KeyError, TypeError, ValueError) as exc:
+            logger.debug(
+                "Skipping round %s (%s) because race session couldn't be loaded: %s",
+                rnd,
+                event,
+                exc,
+                exc_info=True,
+            )
             continue
 
         laps = getattr(race, "laps", None)
         results = getattr(race, "results", None)
 
-        time_by_driver: Dict[str, float] = {}
+        time_by_driver: dict[str, float] = {}
         if laps is not None and not laps.empty:
             # Ensure LapTime is a timedelta; convert to minutes
             # Some versions of FastF1 already provide timedelta; others provide
@@ -81,8 +90,15 @@ def _season_lead_time_table(year: int, cache: str) -> pd.DataFrame:
             laps = laps.copy()
             try:
                 lap_times = pd.to_timedelta(laps["LapTime"], errors="coerce")
-            except Exception:
-                # If LapTime column is missing or conversion fails, skip
+            except (KeyError, TypeError, ValueError) as exc:
+                logger.debug(
+                    "LapTime conversion failed for round %s (%s): %s",
+                    rnd,
+                    event,
+                    exc,
+                    exc_info=True,
+                )
+                # If LapTime column is missing or conversion fails, fill zeros so chart logic can continue
                 lap_times = pd.Series([pd.Timedelta(0) for _ in range(len(laps))])
             laps["LapTime_timedelta"] = lap_times
 
@@ -111,8 +127,15 @@ def _season_lead_time_table(year: int, cache: str) -> pd.DataFrame:
                     rows_matching = results[results["Abbreviation"] == drv]
                     if len(rows_matching) > 0:
                         team = str(rows_matching.iloc[-1].get("TeamName", ""))
-                except Exception:
-                    pass
+                except (KeyError, IndexError, TypeError) as exc:
+                    logger.debug(
+                        "Couldn't determine TeamName for driver %s in round %s (%s): %s",
+                        drv,
+                        rnd,
+                        event,
+                        exc,
+                        exc_info=True,
+                    )
 
             rows.append(
                 {
@@ -196,6 +219,7 @@ def main() -> None:
         "tags": ["season", "drivers", "lead", "time"],
     }
     yml.write_text(yaml.safe_dump(meta, sort_keys=False), encoding="utf-8")
+    logger.info("Wrote %s and %s", png, yml)
     print(f"Wrote {png} and {yml}")
 
 

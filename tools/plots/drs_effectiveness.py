@@ -2,13 +2,14 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
+
 import yaml
 
-from fastf1_analytics.session_loader import load_session
 from fastf1_analytics.charts.drs_effectiveness import (
     DRSEffectivenessParams,
     build_drs_effectiveness_distance,
 )
+from fastf1_analytics.session_loader import load_session
 
 
 def _slug(year: int, gp: str, driver: str) -> str:
