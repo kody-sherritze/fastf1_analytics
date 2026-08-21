@@ -1,14 +1,17 @@
 ﻿from __future__ import annotations
 
-from typing import Any, cast
+import logging
 import re
 from pathlib import Path
-from matplotlib.figure import Figure
-import matplotlib.pyplot as plt
-from matplotlib.ticker import FuncFormatter
-from matplotlib.colors import to_hex, to_rgb
-import fastf1.plotting as f1plot
+from typing import Any, cast
 
+import fastf1.plotting as f1plot
+import matplotlib.pyplot as plt
+from matplotlib.colors import to_hex, to_rgb
+from matplotlib.figure import Figure
+from matplotlib.ticker import FuncFormatter
+
+logger = logging.getLogger(__name__ + ".plotting")
 
 def apply_style(
     color_scheme: str | None = "fastf1",
@@ -45,12 +48,14 @@ def get_team_color(team: str, *, session: Any | None = None) -> str:
     try:
         # Prefer FastF1 when available; it knows historic liveries/aliases.
         return cast(str, f1plot.get_team_color(team, session=session))
-    except Exception:
+    except (AttributeError, KeyError, TypeError, ValueError) as exc:
         # Public mapping if present in this FastF1 version
         mapping = getattr(f1plot, "TEAM_COLORS", None)
         if isinstance(mapping, dict) and team in mapping:
+            logger.debug("Using f1plot.TEAM_COLORS fallback for team %s", team)
             return cast(str, mapping[team])
         # Normalize and try our local fallback
+        logger.debug("Falling back to a local team color for %s: %s", team, exc)
         return _TEAM_COLOR_FALLBACK.get(_norm_key(team), "#888888")
 
 
@@ -132,8 +137,8 @@ def get_compound_color(compound: str) -> str:
         if isinstance(mapping, dict):
             # keys in FastF1 are typically 'SOFT','MEDIUM','HARD','INTERMEDIATE','WET'
             return cast(str, mapping.get(c, _COMPOUND_FALLBACK.get(c, "#888888")))
-    except Exception:
-        pass
+    except (AttributeError, TypeError) as exc:
+        logger.debug("Could not read COMPOUND_COLORS from fastf1.plotting: %s", exc, exc_info=True)
     return _COMPOUND_FALLBACK.get(c, "#888888")
 
 
@@ -155,7 +160,7 @@ def savefig(fig: Figure, path: str | Path, *, dpi: int = 220) -> Path:
     p.parent.mkdir(parents=True, exist_ok=True)
     try:
         fig.tight_layout()
-    except Exception:
-        pass
+    except (ValueError, RuntimeError, TypeError) as exc:
+        logger.debug("tight_layout() failed for %s: %s", p, exc, exc_info=True)
     fig.savefig(p, dpi=dpi)
     return p
