@@ -1,18 +1,19 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
+from typing import Literal
+
 import matplotlib.pyplot as plt
 import pandas as pd
-from dataclasses import dataclass
-from typing import Literal, Tuple
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 
 from fastf1_analytics.plotting import (
     apply_style,
     get_team_color,
+    lighten_color,  # secondary variant helper
     savefig,
 )
-from fastf1_analytics.plotting import lighten_color  # secondary variant helper
 
 
 @dataclass(frozen=True)
@@ -31,9 +32,9 @@ def build_driver_points_chart(
     points_cum: pd.DataFrame,
     *,
     year: int,
-    params: DriverPointsParams = DriverPointsParams(),
+    params: DriverPointsParams | None = None,
     out_path: str | None = None,
-) -> Tuple[Figure, Axes]:
+) -> tuple[Figure, Axes]:
     """Plot cumulative Drivers' Championship points by race.
 
     Args:
@@ -46,6 +47,8 @@ def build_driver_points_chart(
     Returns:
         (Figure, Axes)
     """
+    if params is None:
+        params = DriverPointsParams()
     apply_style()
 
     # Filter low scorers if requested
