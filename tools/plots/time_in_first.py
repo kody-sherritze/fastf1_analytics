@@ -76,6 +76,7 @@ def _season_lead_time_table(year: int, cache: str) -> pd.DataFrame:
                 exc,
                 exc_info=True,
             )
+            continue
 
         laps = getattr(race, "laps", None)
         results = getattr(race, "results", None)
