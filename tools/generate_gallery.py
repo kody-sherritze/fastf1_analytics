@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 from pathlib import Path
-import yaml
 from typing import Any
+
+import yaml
 
 GALLERY_MD = Path("docs/gallery.md")
 ASSETS_DIR = Path("docs/assets/gallery")
