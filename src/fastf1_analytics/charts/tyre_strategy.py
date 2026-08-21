@@ -1,16 +1,18 @@
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Tuple
+from typing import Any
 
 import matplotlib.pyplot as plt
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 from matplotlib.patches import Rectangle
 
-from fastf1_analytics.plotting import apply_style, savefig, get_compound_color
+from fastf1_analytics.plotting import apply_style, get_compound_color, savefig
 
+tyre_logger = logging.getLogger(__name__ + ".tyre_strategy")
 
 def _eligible_drivers(session: Any) -> list[str]:
     """Drivers who actually started: exclude 'F' in ClassifiedPosition and zero-lap entries."""
@@ -67,27 +69,48 @@ def _driver_sort_order(session: Any, order: str | list[str]) -> list[str]:
         res = session.results.sort_values("Position")
         ordered = [str(x) for x in res["Abbreviation"].tolist()]
         return [d for d in ordered if d in eligible]
-    except Exception:
+    except (AttributeError, KeyError, TypeError, ValueError) as exc:
+        tyre_logger.debug(
+            "Falling back to alphabetical driver order because results ordering failed: %s",
+            exc,
+            exc_info=True,
+        )
         return sorted(eligible)
 
 
 def build_tyre_strategy(
     session: Any,
     *,
-    params: TyreStrategyParams = TyreStrategyParams(),
+    params: TyreStrategyParams | None = None,
     out_path: str | Path | None = None,
-) -> Tuple[Figure, Axes]:
+) -> tuple[Figure, Axes]:
     """Plot tyre strategy bars by stint for each driver in a race session.
 
     Colors reflect Pirelli compound (Soft/Medium/Hard/Inter/Wet). The x-axis is laps.
     """
+
+    if params is None:
+        params = TyreStrategyParams()
     apply_style()
     laps = session.laps
     # Compute total race laps for x-axis max
     try:
         total_laps = int(laps["LapNumber"].max())
-    except Exception:
-        total_laps = int((laps[["Driver", "LapNumber"]].groupby("Driver")["LapNumber"].max()).max())
+    except (KeyError, TypeError, ValueError) as exc:
+        tyre_logger.debug(
+            "Could not compute total_laps from LapNumber.max(); falling back to per-driver max: %s",
+            exc,
+            exc_info=True,
+        )
+        try:
+            total_laps = int((laps[["Driver", "LapNumber"]].groupby("Driver")["LapNumber"].max()).max())
+        except Exception as exc2:
+            tyre_logger.warning(
+                "Fallback computation of total_laps failed; defaulting to 0: %s",
+                exc2,
+                exc_info=True,
+            )
+            total_laps = 0
 
     # Stints per driver: count consecutive laps with same 'Stint' and carry compound label
     stints = (
