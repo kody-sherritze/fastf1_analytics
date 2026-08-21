@@ -19,7 +19,7 @@ how to build this table from FastF1 data.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Dict, Literal, Tuple
+from typing import Literal
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -72,9 +72,9 @@ def build_time_in_first_chart(
     time_cum: pd.DataFrame,
     *,
     year: int,
-    params: TimeInFirstParams = TimeInFirstParams(),
+    params: TimeInFirstParams | None = None,
     out_path: str | None = None,
-) -> Tuple[Figure, Axes]:
+) -> tuple[Figure, Axes]:
     """Plot cumulative time spent leading by round.
 
     Parameters
@@ -100,6 +100,9 @@ def build_time_in_first_chart(
     (Figure, Axes)
         The Matplotlib figure and axes objects.
     """
+
+    if params is None:
+        params = TimeInFirstParams()
     apply_style()
 
     # Filter out drivers below the threshold on their final total
@@ -108,7 +111,7 @@ def build_time_in_first_chart(
     df = time_cum[time_cum["Driver"].isin(keep)].copy()
 
     # Map each driver to a constant colour based on their latest team
-    color_by_driver: Dict[str, str] = {}
+    color_by_driver: dict[str, str] = {}
     for drv, grp in df.groupby("Driver", sort=False):
         drv_str = str(drv)
         team = str(grp.iloc[-1]["TeamName"] or "")
