@@ -15,19 +15,21 @@ qualifying lap is used as the DRS reference.
 
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass
-from typing import Any, Tuple, Optional, cast, NamedTuple
+from typing import Any, NamedTuple, cast
 
-import numpy as np
-import pandas as pd
-from pandas.api.types import is_timedelta64_dtype
 import matplotlib.pyplot as plt
+import numpy as np
+
+logger = logging.getLogger(__name__)
+import pandas as pd
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
+from pandas.api.types import is_timedelta64_dtype
 
 from fastf1_analytics.plotting import apply_style, savefig
 from fastf1_analytics.session_loader import load_session
-
 
 # -----------------------------------------------------------------------------
 # Parameters
@@ -55,7 +57,7 @@ class DRSEffectivenessParams:
     accel_threshold_kmh_s: float = -8.0
     sustain_sec: float = 0.30
     dpi: int = 220
-    title: Optional[str] = None
+    title: str | None = None
     show_annotations: bool = False
 
     #: Minimum fraction of the window that must have the DRS flap open to
@@ -90,7 +92,7 @@ def _clean_laps(session: Any, driver: str) -> pd.DataFrame:
     # Remove laps with dangerous track status codes (SC/VSC/Yellow)
     if "TrackStatus" in laps.columns:
 
-        def _ok(ts: str | float | int) -> bool:
+        def _ok(ts: str | float) -> bool:
             s = str(ts) if pd.notna(ts) else ""
             parts = {p.strip() for p in s.split("+") if p.strip()}
             return parts.isdisjoint(_DANGER_CODES)
@@ -143,7 +145,7 @@ def _drs_open_flags(df: pd.DataFrame) -> np.ndarray:
     return np.isin(drs_raw, (12, 14)).astype(float)
 
 
-def _drs_zone_bounds(win: pd.DataFrame) -> Optional[tuple[float, float]]:
+def _drs_zone_bounds(win: pd.DataFrame) -> tuple[float, float] | None:
     """Return (d_start, d_end) for the longest contiguous region where DRS is open (codes 12/14).
     If none found, return None.
     """
@@ -337,15 +339,15 @@ class _BestLap(NamedTuple):
     time_sec: float
     d_start: float
     d_end: float
-    turn_start: Optional[int]
-    turn_end: Optional[int]
+    turn_start: int | None
+    turn_end: int | None
 
 
 class _LapMeta(NamedTuple):
     lap_no: int
-    lap_time_s: Optional[float]
-    stint: Optional[int]
-    compound: Optional[str]
+    lap_time_s: float | None
+    stint: int | None
+    compound: str | None
     session: str  # "R" or "Q"
 
 
@@ -379,14 +381,17 @@ def build_drs_effectiveness_distance(
     session: Any,
     *,
     driver: str,
-    params: DRSEffectivenessParams = DRSEffectivenessParams(),
-    out_path: Optional[str] = None,
-) -> Tuple[Figure, Axes]:
+    params: DRSEffectivenessParams | None = None,
+    out_path: str | None = None,
+) -> tuple[Figure, Axes]:
     """Best-case DRS effectiveness on the auto-selected DRS straight.
 
     Compares the fastest DRS-ON straight vs the fastest DRS-OFF straight
     (per-lap windows selected automatically where DRS is actually used).
     """
+
+    if params is None:
+        params = DRSEffectivenessParams()
     apply_style()
     drv = str(driver).upper()
 
@@ -406,9 +411,16 @@ def build_drs_effectiveness_distance(
     MAX_OPEN_RATIO_OFF = params.max_open_ratio_off
 
     for _, lap in laps.iterrows():
+        lap_no = int(lap["LapNumber"]) if "LapNumber" in lap and pd.notna(lap["LapNumber"]) else "unknown"
         try:
             tel = lap.get_car_data().add_distance()
-        except Exception:
+        except (AttributeError, KeyError, TypeError, ValueError) as exc:
+            logger.warning(
+                "Skipping lap %s because telemetry data was unavailable: %s",
+                lap_no,
+                exc,
+                exc_info=True,
+            )
             continue
 
         sel = _select_drs_straight_indices(tel, params.accel_threshold_kmh_s, params.sustain_sec)
@@ -447,7 +459,13 @@ def build_drs_effectiveness_distance(
         if "LapTime" in lap and pd.notna(lap["LapTime"]):
             try:
                 lap_time_s = float(lap["LapTime"].total_seconds())
-            except Exception:
+            except (AttributeError, TypeError, ValueError) as exc:
+                logger.debug(
+                    "Lap %s has an unusable lap time value: %s",
+                    lap_no,
+                    exc,
+                    exc_info=True,
+                )
                 lap_time_s = None
         stint = int(lap["Stint"]) if "Stint" in lap and pd.notna(lap["Stint"]) else None
         compound = str(lap["Compound"]) if "Compound" in lap and pd.notna(lap["Compound"]) else None
@@ -501,14 +519,16 @@ def build_drs_effectiveness_distance(
             qual = load_session(
                 session.event.year, session.event["EventName"], "Q", cache=str(session._api.path)
             )
-        except Exception:
+        except (AttributeError, KeyError, OSError, TypeError, ValueError) as exc:
+            logger.debug("Unable to load qualifying session for %s: %s", drv, exc, exc_info=True)
             qual = None
         if qual is not None:
             qlaps = qual.laps.pick_drivers([drv]).copy()
             qlap = None
             try:
                 qlap = qlaps.pick_quicklaps().sort_values("LapTime").iloc[0]
-            except Exception:
+            except (AttributeError, IndexError, KeyError, TypeError, ValueError) as exc:
+                logger.debug("Qualifying lap fallback for %s was required: %s", drv, exc, exc_info=True)
                 qlap = qlaps.sort_values("LapTime").iloc[0] if len(qlaps) else None
             if qlap is not None:
                 try:
@@ -560,8 +580,14 @@ def build_drs_effectiveness_distance(
                                 ),
                                 session="Q",
                             )
-                except Exception:
-                    pass
+                except (AttributeError, IndexError, KeyError, TypeError, ValueError) as exc:
+                    logger.debug(
+                        "Qualifying lap %s for %s could not be processed: %s",
+                        int(qlap["LapNumber"]) if "LapNumber" in qlap and pd.notna(qlap["LapNumber"]) else "unknown",
+                        drv,
+                        exc,
+                        exc_info=True,
+                    )
 
     # Build the figure
     fig, ax = plt.subplots(figsize=(10, 6))
@@ -757,7 +783,8 @@ def build_drs_effectiveness_distance(
     else:
         try:
             title = f"{session.event.year} {session.event['EventName']} – DRS Effectiveness (Best-Lap) – {drv}"
-        except Exception:
+        except (AttributeError, KeyError, TypeError, ValueError) as exc:
+            logger.debug("Using default chart title for %s: %s", drv, exc, exc_info=True)
             title = f"DRS Effectiveness (Best-Lap) – {drv}"
     ax.set_title(title)
 
