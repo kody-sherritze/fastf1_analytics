@@ -1,18 +1,21 @@
 from __future__ import annotations
 
 import argparse
-from typing import Any
+import logging
 from pathlib import Path
+from typing import Any
 
+import fastf1
 import pandas as pd
 import yaml
-import fastf1
 
-from fastf1_analytics.session_loader import load_session
 from fastf1_analytics.charts.driver_points import (
     DriverPointsParams,
     build_driver_points_chart,
 )
+from fastf1_analytics.session_loader import load_session
+
+logger = logging.getLogger(__name__ + ".driver_championship")
 
 
 def _season_points_table(year: int, include_sprints: bool, cache: str) -> pd.DataFrame:
@@ -49,9 +52,11 @@ def _season_points_table(year: int, include_sprints: bool, cache: str) -> pd.Dat
                         pts = float(r.get("Points", 0.0))
                         team = str(r.get("TeamName", ""))
                         by_driver_total[drv] = by_driver_total.get(drv, 0.0) + pts
-            except Exception:
-                # no sprint for this event
-                pass
+            except (AttributeError, KeyError, TypeError, ValueError, OSError) as exc:
+
+                # no sprint for this event; log at debug so caller can inspect if desired
+                logger.debug("No sprint results for %s %s (event=%s): %s", year, event, "S", exc, exc_info=True)
+                continue
 
         # Snapshot totals after this round
         for drv, total in by_driver_total.items():
@@ -63,9 +68,15 @@ def _season_points_table(year: int, include_sprints: bool, cache: str) -> pd.Dat
                     team_rows = race_res[race_res["Abbreviation"] == drv]
                     if len(team_rows) > 0:
                         team = str(team_rows.iloc[-1]["TeamName"])
-                except Exception:
-                    pass
-
+                except (KeyError, IndexError, TypeError) as exc:
+                    logger.debug(
+                        "Could not determine team name for driver %s in %s/%s: %s",
+                        drv,
+                        rnd,
+                        event,
+                        exc,
+                        exc_info=True,
+                    )
             rows.append(
                 {
                     "Round": rnd,
@@ -132,6 +143,7 @@ def main() -> None:
         "tags": ["season", "drivers", "points"],
     }
     yml.write_text(yaml.safe_dump(meta, sort_keys=False), encoding="utf-8")
+    logger.info("Wrote %s and %s", png, yml)
     print(f"Wrote {png} and {yml}")
 
 
