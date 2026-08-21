@@ -1,0 +1,57 @@
+from pathlib import Path
+
+import matplotlib
+import matplotlib.pyplot as plt
+import pandas as pd
+
+matplotlib.use("Agg")
+
+from fastf1_analytics.plotting import (
+    _norm_key,
+    fmt_laptime_seconds,
+    get_compound_color,
+    get_team_color,
+    lighten_color,
+    savefig,
+)
+from fastf1_analytics.utils import ensure_list
+
+
+def test_ensure_list_normalizes_common_inputs() -> None:
+    assert ensure_list(None) == []
+    assert ensure_list("VER") == ["VER"]
+    assert ensure_list(("VER", "HAM")) == ["VER", "HAM"]
+    assert ensure_list({"VER"}) == ["VER"]
+
+
+def test_norm_key_removes_case_and_separators() -> None:
+    assert _norm_key("Visa Cash App RB") == "visacashapprb"
+
+
+def test_fallback_colors_cover_known_and_unknown_values() -> None:
+    assert get_team_color("Ferrari") == "#DC0000"
+    assert get_team_color("unknown team") == "#888888"
+    assert get_team_color("") == "#888888"
+    assert get_compound_color("soft") == "#EA3223"
+    assert get_compound_color("unknown") == "#888888"
+
+
+def test_lap_time_and_lighten_color_are_deterministic() -> None:
+    assert fmt_laptime_seconds(73.456) == "1:13.456"
+    assert lighten_color("#000000", amount=0) == "#000000"
+    assert lighten_color("#000000", amount=1) == "#ffffff"
+
+
+def test_savefig_creates_parent_and_writes_figure(tmp_path: Path) -> None:
+    fig = plt.figure()
+    try:
+        output = savefig(fig, tmp_path / "nested" / "plot.png", dpi=40)
+        assert output.exists()
+        assert output.stat().st_size > 0
+    finally:
+        plt.close(fig)
+
+
+def test_timedelta_values_are_compatible_with_expected_plot_inputs() -> None:
+    values = pd.to_timedelta(["0 days 00:01:13.456", "0 days 00:01:14.000"])
+    assert values.total_seconds().tolist() == [73.456, 74.0]
