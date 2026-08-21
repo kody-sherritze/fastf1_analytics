@@ -1,13 +1,15 @@
 from __future__ import annotations
+
 import argparse
 from pathlib import Path
+
 import yaml
 
-from fastf1_analytics.session_loader import load_session
 from fastf1_analytics.charts.tyre_performance import (
     TyrePerformanceParams,
     build_tyre_performance,
 )
+from fastf1_analytics.session_loader import load_session
 
 
 def slug(year: int, event: str) -> str:

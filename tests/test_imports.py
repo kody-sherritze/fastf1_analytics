@@ -5,3 +5,6 @@
     assert hasattr(fastf1_analytics, "load_session")
     assert hasattr(fastf1_analytics, "apply_style")
     assert hasattr(fastf1_analytics, "__version__")
+
+    assert callable(fastf1_analytics.load_session)
+    assert callable(fastf1_analytics.apply_style)

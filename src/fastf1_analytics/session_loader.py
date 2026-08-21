@@ -1,7 +1,9 @@
 ﻿from __future__ import annotations
-import fastf1
-from typing import Any
+
 from pathlib import Path
+from typing import Any
+
+import fastf1
 
 
 def load_session(

@@ -1,10 +1,12 @@
 from __future__ import annotations
+
 import argparse
 from pathlib import Path
+
 import yaml
 
-from fastf1_analytics.session_loader import load_session
 from fastf1_analytics.charts.tyre_strategy import TyreStrategyParams, build_tyre_strategy
+from fastf1_analytics.session_loader import load_session
 
 
 def slug(year: int, event: str) -> str:

@@ -1,20 +1,20 @@
 from __future__ import annotations
+
 from dataclasses import dataclass
 from typing import Any, Literal, cast
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-from matplotlib.figure import Figure
 from matplotlib.axes import Axes
-
+from matplotlib.figure import Figure
 
 from fastf1_analytics.plotting import (
     apply_style,
-    savefig,
     get_compound_color,
-    seconds_formatter,
     get_driver_color,  # FastF1-first; team color via driver+session
+    savefig,
+    seconds_formatter,
 )
 
 # Track status codes for SC/VSC/yellows to exclude
@@ -49,7 +49,7 @@ def _clean_race_laps(session: Any) -> pd.DataFrame:
     # drop unsafe track status
     if "TrackStatus" in laps.columns:
 
-        def _ok(ts: str | float | int) -> bool:
+        def _ok(ts: str | float) -> bool:
             s = str(ts) if pd.notna(ts) else ""
             parts = {p.strip() for p in s.split("+") if p.strip()}
             return parts.isdisjoint(_DANGER_CODES)
@@ -101,10 +101,13 @@ def _per_driver_compound_laptime(
 def build_tyre_performance(
     session: Any,
     *,
-    params: TyrePerformanceParams = TyrePerformanceParams(),
+    params: TyrePerformanceParams | None = None,
     out_path: str | None = None,
 ) -> tuple[Figure, Axes]:
     """Plot actual lap times per compound (bars = median across drivers; dots = each driver)."""
+
+    if params is None:
+        params = TyrePerformanceParams()
     apply_style()
 
     laps = _clean_race_laps(session)

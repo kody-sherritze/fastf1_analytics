@@ -7,7 +7,7 @@ name = "fastf1-analytics"
 version = "0.1.0"
 description = "Reusable FastF1 helpers and a gallery of analyses"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.13"
 authors = [{ name = "kody-sherritze"}]
 dependencies = [
   "fastf1>=3.2.1",
