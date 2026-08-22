@@ -14,7 +14,7 @@
 
 Analyses and reusable helpers built on [FastF1](https://docs.fastf1.dev/) to showcase race strategy, telemetry, and season-long insights.
 
-- [CI](https://github.com/kody-sherritze/fastf1_analytics/actions/workflows/ci.yml)
+- [CI](https://github.com/kody-sherritze/fastf1_analytics/actions/workflows/ci.yaml)
 - [Docs (GitHub Pages)](https://kody-sherritze.github.io/fastf1_analytics/)
 
 ## Table of Contents:
@@ -178,7 +178,7 @@ This reads all YAML sidecars and **rewrites the cards** in `docs/gallery.md` bet
 
 ## Where to Find Outputs
 - Images: `docs/assets/gallery/*.png`
-- YAML sidecars: `docs/assets/gallery/*.yml`
+- YAML sidecars: `docs/assets/gallery/*.yaml`
 - Docs preview: `mkdocs serve` → open http://127.0.0.1:8000
 
 ## Programmatic Usage (quick examples)
