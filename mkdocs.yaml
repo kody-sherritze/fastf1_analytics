@@ -47,9 +47,6 @@ nav:
       - 2025 Italian Grand Prix DRS Effect on Main Straight Ver: case-studies/2025-italian-grand-prix-drs-effect-on-main-straight-ver.md
       - 2025 Italian Grand Prix Tyre Lap Times Clean Race Laps: case-studies/2025-italian-grand-prix-tyre-lap-times-clean-race-laps.md
       - 2025 Italian Grand Prix Tyre Strategy: case-studies/2025-italian-grand-prix-tyre-strategy.md
-      - Italian Grand Prix 2025 DRS Effect on Main Straight Ver: case-studies/italian-grand-prix-2025-drs-effect-on-main-straight-ver.md
-      - Italian Grand Prix 2025 Tyre Lap Times Clean Race Laps: case-studies/italian-grand-prix-2025-tyre-lap-times-clean-race-laps.md
-      - Italian Grand Prix 2025 Tyre Strategy: case-studies/italian-grand-prix-2025-tyre-strategy.md
   - Creating New Visuals:
       - Overview: creating-new-visuals/index.md
       - Loading Data and Managing Cache: creating-new-visuals/data-and-cache.md
@@ -57,6 +54,7 @@ nav:
       - Designing and Customizing Charts: creating-new-visuals/chart-design.md
       - Publishing Visuals: creating-new-visuals/publishing.md
       - Testing and Quality Checks: creating-new-visuals/quality-checks.md
+      - Style and Pre-commit: creating-new-visuals/style-and-pre-commit.md
   - API:
       - Session Loader: api/session_loader.md
       - Plotting: api/plotting.md
