@@ -1,15 +1,15 @@
-"""
+﻿"""
 DRS Effectiveness Chart
 -----------------------
 
-This module provides a “best‑lap” view of the effect of DRS (Drag
+This module provides a "best-lap" view of the effect of DRS (Drag
 Reduction System) on a race track.  It locates the straight on each lap where
 the DRS flap is actually open and selects the fastest such lap along with
 the fastest lap without DRS.  Both laps are resampled onto a common
 distance grid and plotted together to visualise the pointwise speed
 difference and total time gain.  Only race laps are considered by default
 and laps under pit, safety car or yellow flag conditions are excluded.  If
-no DRS‑enabled lap is found in the race, the driver’s fastest valid
+no DRS-enabled lap is found in the race, the driver's fastest valid
 qualifying lap is used as the DRS reference.
 """
 
@@ -22,7 +22,6 @@ from typing import Any, NamedTuple, cast
 import matplotlib.pyplot as plt
 import numpy as np
 
-logger = logging.getLogger(__name__)
 import pandas as pd
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
@@ -30,6 +29,8 @@ from pandas.api.types import is_timedelta64_dtype
 
 from fastf1_analytics.plotting import apply_style, savefig
 from fastf1_analytics.session_loader import load_session
+
+logger = logging.getLogger(__name__)
 
 # -----------------------------------------------------------------------------
 # Parameters
@@ -41,7 +42,7 @@ class DRSEffectivenessParams:
     """Parameters controlling the DRS effectiveness plot.
 
     Attributes:
-        n_points: Number of samples along the normalized 0–1 distance axis.
+        n_points: Number of samples along the normalized 0-1 distance axis.
         accel_threshold_kmh_s: Threshold (in km/h/s) for sustained deceleration
             used to detect the onset of braking.
         sustain_sec: Minimum duration (in seconds) that the deceleration must
@@ -664,7 +665,7 @@ def build_drs_effectiveness_distance(
         off_avg_speed = float(np.nanmean(best_off.speed))
         off_open_ratio = float(np.nanmean(best_off.drs_bin))
         turns = (
-            f"T{best_on.turn_start}→T{best_on.turn_end}"
+            f"T{best_on.turn_start}â†’T{best_on.turn_end}"
             if (
                 best_on is not None
                 and best_on.turn_start is not None
@@ -691,7 +692,7 @@ def build_drs_effectiveness_distance(
         on_avg_speed = float(np.nanmean(best_on.speed))
         on_open_ratio = float(np.nanmean(best_on.drs_bin))
         turns = (
-            f"T{best_on.turn_start}→T{best_on.turn_end}"
+            f"T{best_on.turn_start}â†’T{best_on.turn_end}"
             if (best_on.turn_start is not None and best_on.turn_end is not None)
             else "n/a"
         )
@@ -703,7 +704,9 @@ def build_drs_effectiveness_distance(
             f"straight={turns}"
         )
         span_m = best_on.d_end - best_on.d_start
-        print(f"DRS-zone distance used: {span_m:.1f} m (T{best_on.turn_start}→T{best_on.turn_end})")
+        print(
+            f"DRS-zone distance used: {span_m:.1f} m (T{best_on.turn_start}â†’T{best_on.turn_end})"
+        )
         ax.plot(
             best_on.x,
             best_on.speed,
@@ -739,7 +742,7 @@ def build_drs_effectiveness_distance(
             color="#CCCCCC",
         )
 
-    ax.set_xlabel("Normalized distance along selected straight (0 → 1)")
+    ax.set_xlabel("Normalized distance along selected straight (0 â†’ 1)")
     ax.set_ylabel("Speed (km/h)")
 
     # Dotted Δ line (right axis) if both present
@@ -792,10 +795,10 @@ def build_drs_effectiveness_distance(
         title = params.title
     else:
         try:
-            title = f"{session.event.year} {session.event['EventName']} – DRS Effectiveness (Best-Lap) – {drv}"
+            title = f"{session.event.year} {session.event['EventName']} - DRS Effectiveness (Best-Lap) - {drv}"
         except (AttributeError, KeyError, TypeError, ValueError) as exc:
             logger.debug("Using default chart title for %s: %s", drv, exc, exc_info=True)
-            title = f"DRS Effectiveness (Best-Lap) – {drv}"
+            title = f"DRS Effectiveness (Best-Lap) - {drv}"
     ax.set_title(title)
 
     ax.margins(x=0.01)

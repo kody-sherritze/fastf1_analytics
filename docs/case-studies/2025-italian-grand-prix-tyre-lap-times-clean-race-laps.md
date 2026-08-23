@@ -1,8 +1,8 @@
-# 2025 Italian Grand Prix – Tyre lap times (clean race laps)
+﻿# 2025 Italian Grand Prix - Tyre lap times (clean race laps)
 
 Bars = median across drivers; dots = each driver (team-colored), annotated by driver code
 
-![2025 Italian Grand Prix – Tyre lap times (clean race laps)](../assets/gallery/italian_grand_prix_2025_tyre_performance.png){ loading=lazy }
+![2025 Italian Grand Prix - Tyre lap times (clean race laps)](../assets/gallery/italian_grand_prix_2025_tyre_performance.png){ loading=lazy }
 
 ## Why this matters
 
@@ -26,7 +26,7 @@ This visual addresses a practical decision: what stands out when comparing the s
 
 ## Technical implementation
 
-This was built in Python using the project’s reusable tooling:
+This was built in Python using the project's reusable tooling:
 
 - FastF1 for session loading and telemetry access
 - custom chart helpers from the project library
@@ -54,5 +54,5 @@ python tools/plots/tyre_performance.py --year 2025 --event "Italian Grand Prix" 
 
 ## Related examples
 
-- [How it works](/how-it-works/)
-- [Gallery](/gallery/)
+- [How it works](../how-it-works.md)
+- [Gallery](../gallery.md)

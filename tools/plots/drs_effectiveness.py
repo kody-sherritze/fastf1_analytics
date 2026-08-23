@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import argparse
 from pathlib import Path
@@ -61,7 +61,7 @@ def main() -> None:
 
     meta = {
         "title": params.title
-        or f"{session.event.year} {session.event['EventName']} – DRS effect on main straight ({args.driver.upper()})",
+        or f"{session.event.year} {session.event['EventName']} - DRS effect on main straight ({args.driver.upper()})",
         "subtitle": "Median speed traces along main straight (DRS ON/OFF)",
         "image": f"assets/gallery/{png.name}",
         "code_path": "tools/plots/drs_effectiveness.py",

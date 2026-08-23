@@ -1,6 +1,8 @@
 ﻿site_name: FastF1 Analytics
 repo_url: https://github.com/kody-sherritze/fastf1_analytics
 edit_uri: edit/main/docs/
+exclude_docs: |
+  case-studies/_template.md
 
 theme:
   name: material
@@ -38,9 +40,18 @@ markdown_extensions:
 nav:
   - Home: index.md
   - Gallery: gallery.md
-  - Case Studies: case-studies/index.md
+  - Case Studies:
+      - Overview: case-studies/index.md
+      - 2024 Drivers Championship Cumulative Points: case-studies/2024-drivers-championship-cumulative-points.md
+      - 2024 Time Spent Leading Cumulative: case-studies/2024-time-spent-leading-cumulative.md
+      - 2025 Italian Grand Prix DRS Effect on Main Straight Ver: case-studies/2025-italian-grand-prix-drs-effect-on-main-straight-ver.md
+      - 2025 Italian Grand Prix Tyre Lap Times Clean Race Laps: case-studies/2025-italian-grand-prix-tyre-lap-times-clean-race-laps.md
+      - 2025 Italian Grand Prix Tyre Strategy: case-studies/2025-italian-grand-prix-tyre-strategy.md
+      - Italian Grand Prix 2025 DRS Effect on Main Straight Ver: case-studies/italian-grand-prix-2025-drs-effect-on-main-straight-ver.md
+      - Italian Grand Prix 2025 Tyre Lap Times Clean Race Laps: case-studies/italian-grand-prix-2025-tyre-lap-times-clean-race-laps.md
+      - Italian Grand Prix 2025 Tyre Strategy: case-studies/italian-grand-prix-2025-tyre-strategy.md
   - How it works: how-it-works.md
   - API:
       - Session Loader: api/session_loader.md
       - Plotting: api/plotting.md
-      - fastf1_analytics: reference/fastf1_analytics.md
+      - fastf1_analytics: api/reference/fastf1_analytics.md

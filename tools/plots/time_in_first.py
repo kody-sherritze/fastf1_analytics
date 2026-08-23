@@ -1,9 +1,9 @@
-"""
-CLI script for cumulative time‑in‑first charts.
+﻿"""
+CLI script for cumulative time-in-first charts.
 
-This module provides a command line interface to generate a season‑long
+This module provides a command line interface to generate a season-long
 plot showing how much time each driver spent in first place.  The
-script computes a long‑form DataFrame of cumulative minutes led per
+script computes a long-form DataFrame of cumulative minutes led per
 driver per round, delegates rendering to
 ``fastf1_analytics.charts.time_in_first.build_time_in_first_chart`` and
 writes both a PNG image and a YAML sidecar into the gallery assets
@@ -205,7 +205,7 @@ def main() -> None:
     build_time_in_first_chart(time_cum, year=args.year, params=params, out_path=str(png))
 
     meta = {
-        "title": params.title or f"{args.year} Time Spent Leading – Cumulative",
+        "title": params.title or f"{args.year} Time Spent Leading ‑ Cumulative",
         "subtitle": "Cumulative minutes led by race (lines per driver)",
         "image": f"assets/gallery/{png.name}",
         "code_path": "tools/plots/time_in_first.py",

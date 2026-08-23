@@ -1,4 +1,4 @@
-from types import SimpleNamespace
+﻿from types import SimpleNamespace
 
 import matplotlib
 import pandas as pd
@@ -28,7 +28,7 @@ def test_driver_points_builder_filters_threshold_and_annotations(monkeypatch) ->
         params=driver_points.DriverPointsParams(min_total_points=0),
     )
     try:
-        assert ax.get_title() == "2024 Drivers' Championship – Cumulative points"
+        assert ax.get_title() == "2024 Drivers' Championship - Cumulative points"
         assert ax.get_xlabel() == "Round"
         assert ax.get_ylabel() == "Cumulative points"
         assert len(ax.lines) == 1

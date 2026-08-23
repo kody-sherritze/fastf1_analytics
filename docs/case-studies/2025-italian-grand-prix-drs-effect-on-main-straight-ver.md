@@ -1,8 +1,8 @@
-# 2025 Italian Grand Prix – DRS effect on main straight (VER)
+﻿# 2025 Italian Grand Prix - DRS effect on main straight (VER)
 
 Median speed traces along main straight (DRS ON/OFF)
 
-![2025 Italian Grand Prix – DRS effect on main straight (VER)](../assets/gallery/italian_grand_prix_2025_drs_effect_VER.png){ loading=lazy }
+![2025 Italian Grand Prix - DRS effect on main straight (VER)](../assets/gallery/italian_grand_prix_2025_drs_effect_VER.png){ loading=lazy }
 
 ## Why this matters
 
@@ -26,7 +26,7 @@ This visual addresses a practical decision: what stands out when comparing the s
 
 ## Technical implementation
 
-This was built in Python using the project’s reusable tooling:
+This was built in Python using the project's reusable tooling:
 
 - FastF1 for session loading and telemetry access
 - custom chart helpers from the project library
@@ -54,5 +54,5 @@ python tools/plots/drs_effectiveness.py --year 2025 --event "Italian Grand Prix"
 
 ## Related examples
 
-- [How it works](/how-it-works/)
-- [Gallery](/gallery/)
+- [How it works](../how-it-works.md)
+- [Gallery](../gallery.md)

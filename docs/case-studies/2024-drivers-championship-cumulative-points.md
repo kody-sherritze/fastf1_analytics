@@ -1,8 +1,8 @@
-# 2024 Drivers' Championship – Cumulative points
+﻿# 2024 Drivers' Championship - Cumulative points
 
 Total points by race (lines per driver)
 
-![2024 Drivers' Championship – Cumulative points](../assets/gallery/2024_drivers_championship_points.png){ loading=lazy }
+![2024 Drivers' Championship - Cumulative points](../assets/gallery/2024_drivers_championship_points.png){ loading=lazy }
 
 ## Why this matters
 
@@ -26,7 +26,7 @@ This visual addresses a practical decision: what stands out when comparing the s
 
 ## Technical implementation
 
-This was built in Python using the project’s reusable tooling:
+This was built in Python using the project's reusable tooling:
 
 - FastF1 for session loading and telemetry access
 - custom chart helpers from the project library
@@ -54,5 +54,5 @@ python tools/plots/driver_championship.py --year 2024 --include-sprints --color-
 
 ## Related examples
 
-- [How it works](/how-it-works/)
-- [Gallery](/gallery/)
+- [How it works](../how-it-works.md)
+- [Gallery](../gallery.md)

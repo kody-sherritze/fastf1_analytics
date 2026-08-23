@@ -1,8 +1,8 @@
-# 2025 Italian Grand Prix – Tyre lap times (clean race laps)
+﻿# 2025 Italian Grand Prix - Tyre lap times (clean race laps)
 
 Bars = median across drivers; dots = each driver (team-colored), annotated by driver code
 
-![2025 Italian Grand Prix – Tyre lap times (clean race laps)](../assets/gallery/italian_grand_prix_2025_tyre_performance.png){ loading=lazy }
+![2025 Italian Grand Prix - Tyre lap times (clean race laps)](../assets/gallery/italian_grand_prix_2025_tyre_performance.png){ loading=lazy }
 
 ## Why this matters
 
@@ -26,7 +26,7 @@ This visual addresses a practical decision: how did tyre compounds separate in g
 
 ## Technical implementation
 
-This was built in Python using the project’s reusable tooling:
+This was built in Python using the project's reusable tooling:
 
 - FastF1 for lap-time and tyre data access
 - custom chart helpers for consistent styling and compound color logic
@@ -54,6 +54,6 @@ python tools/plots/tyre_performance.py --year 2025 --event "Italian Grand Prix" 
 
 ## Related examples
 
-- [Gallery](/gallery/)
-- [2025 Italian Grand Prix – Tyre Strategy](./italian-grand-prix-2025-tyre-strategy.md)
-- [How it works](/how-it-works/)
+- [Gallery](../gallery.md)
+- [2025 Italian Grand Prix - Tyre Strategy](./italian-grand-prix-2025-tyre-strategy.md)
+- [How it works](../how-it-works.md)

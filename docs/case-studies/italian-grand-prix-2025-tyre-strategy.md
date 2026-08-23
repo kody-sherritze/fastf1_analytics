@@ -1,8 +1,8 @@
-# 2025 Italian Grand Prix – Tyre Strategy
+﻿# 2025 Italian Grand Prix - Tyre Strategy
 
 Stints and compounds by driver
 
-![2025 Italian Grand Prix – Tyre Strategy](../assets/gallery/italian_grand_prix_2025_tyre_strategy.png){ loading=lazy }
+![2025 Italian Grand Prix - Tyre Strategy](../assets/gallery/italian_grand_prix_2025_tyre_strategy.png){ loading=lazy }
 
 ## Why this matters
 
@@ -26,7 +26,7 @@ This visual addresses a practical decision: which strategies were most competiti
 
 ## Technical implementation
 
-This was built in Python using the project’s reusable tooling:
+This was built in Python using the project's reusable tooling:
 
 - FastF1 for session loading and stint data access
 - custom chart helpers and consistent race styling
@@ -54,6 +54,6 @@ python tools/plots/tyre_strategy.py --year 2025 --event "Italian Grand Prix" --c
 
 ## Related examples
 
-- [Gallery](/gallery/)
-- [2025 Italian Grand Prix – Tyre lap times (clean race laps)](./italian-grand-prix-2025-tyre-lap-times-clean-race-laps.md)
-- [How it works](/how-it-works/)
+- [Gallery](../gallery.md)
+- [2025 Italian Grand Prix - Tyre lap times (clean race laps)](./italian-grand-prix-2025-tyre-lap-times-clean-race-laps.md)
+- [How it works](../how-it-works.md)

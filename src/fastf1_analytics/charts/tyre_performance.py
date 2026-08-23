@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Any, Literal, cast
@@ -223,7 +223,7 @@ def build_tyre_performance(
 
     title = (
         params.title
-        or f"{session.event.year} {session.event['EventName']} – Tyre lap times (clean race laps)"
+        or f"{session.event.year} {session.event['EventName']} - Tyre lap times (clean race laps)"
     )
     ax.set_title(title)
 

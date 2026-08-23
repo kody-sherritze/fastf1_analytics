@@ -72,7 +72,7 @@ def build_index(items: list[dict[str, Any]]) -> str:
     lines = [
         "# Case studies",
         "",
-        "These pages are generated from the same gallery metadata used to build the main gallery grid. They provide a more narrative portfolio-style view of the project’s strongest visuals.",
+        "These pages are generated from the same gallery metadata used to build the main gallery grid. They provide a more narrative portfolio-style view of the project's strongest visuals.",
         "",
         "## Featured analyses",
         "",

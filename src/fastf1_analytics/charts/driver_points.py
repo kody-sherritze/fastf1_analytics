@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Literal
@@ -82,7 +82,7 @@ def build_driver_points_chart(
 
     ax.set_xlabel("Round")
     ax.set_ylabel("Cumulative points")
-    title = params.title or f"{year} Drivers' Championship – Cumulative points"
+    title = params.title or f"{year} Drivers' Championship - Cumulative points"
     ax.set_title(title)
 
     # Annotations at the last point per driver
