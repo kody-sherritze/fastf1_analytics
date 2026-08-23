@@ -1,4 +1,4 @@
-# {title}
+﻿# {title}
 
 {subtitle}
 
@@ -26,7 +26,7 @@ This visual addresses a practical decision: {analytical_question}. It turns raw 
 
 ## Technical implementation
 
-This was built in Python using the project’s reusable tooling:
+This was built in Python using the projectâ€™s reusable tooling:
 
 - FastF1 for session loading and telemetry access
 - custom chart helpers from the project library
@@ -56,3 +56,5 @@ This is the part of the analysis that matters most from a portfolio standpoint: 
 
 - [{related_visual_title}]({related_visual_path})
 - [{related_visual_title_2}]({related_visual_path_2})
+
+
