@@ -142,8 +142,8 @@ def render_case_study(item: dict[str, Any], template: str) -> str:
         "{skill_2}": str(skills[1]),
         "{skill_3}": str(skills[2]),
         "{skill_4}": str(skills[3]) if len(skills) > 3 else str(skills[2]),
-        "{related_visual_title}": "How it works",
-        "{related_visual_path}": "/how-it-works/",
+        "{related_visual_title}": "Creating New Visuals",
+        "{related_visual_path}": "/creating-new-visuals/",
         "{related_visual_title_2}": "Gallery",
         "{related_visual_path_2}": "/gallery/",
     }

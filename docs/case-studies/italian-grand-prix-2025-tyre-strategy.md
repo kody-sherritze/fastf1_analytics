@@ -56,4 +56,4 @@ python tools/plots/tyre_strategy.py --year 2025 --event "Italian Grand Prix" --c
 
 - [Gallery](../gallery.md)
 - [2025 Italian Grand Prix - Tyre lap times (clean race laps)](./italian-grand-prix-2025-tyre-lap-times-clean-race-laps.md)
-- [How it works](../how-it-works.md)
+- [Creating New Visuals](../creating-new-visuals/index.md)

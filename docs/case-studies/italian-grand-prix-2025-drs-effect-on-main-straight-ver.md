@@ -56,4 +56,4 @@ python tools/plots/drs_effectiveness.py --year 2025 --event "Italian Grand Prix"
 
 - [Gallery](../gallery.md)
 - [2025 Italian Grand Prix - Tyre Strategy](./italian-grand-prix-2025-tyre-strategy.md)
-- [How it works](../how-it-works.md)
+- [Creating New Visuals](../creating-new-visuals/index.md)

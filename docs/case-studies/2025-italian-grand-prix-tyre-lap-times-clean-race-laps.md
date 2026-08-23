@@ -54,5 +54,5 @@ python tools/plots/tyre_performance.py --year 2025 --event "Italian Grand Prix" 
 
 ## Related examples
 
-- [How it works](../how-it-works.md)
+- [Creating New Visuals](../creating-new-visuals/index.md)
 - [Gallery](../gallery.md)
