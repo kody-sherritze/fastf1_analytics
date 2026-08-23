@@ -38,6 +38,7 @@ markdown_extensions:
 nav:
   - Home: index.md
   - Gallery: gallery.md
+  - Case Studies: case-studies/index.md
   - How it works: how-it-works.md
   - API:
       - Session Loader: api/session_loader.md
