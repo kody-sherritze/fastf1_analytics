@@ -58,32 +58,6 @@ This project is organized across a few complementary layers:
 - **API Reference:** generated docs for the reusable Python modules
   - https://kody-sherritze.github.io/fastf1_analytics/reference/fastf1_analytics/
 
-## Project Structure
-
-```text
-fastf1_analytics/
-├─ src/fastf1_analytics/           # reusable library code
-│  ├─ charts/                      # chart builders (Matplotlib)
-│  ├─ plotting.py                  # theme and color helpers
-│  └─ session_loader.py            # FastF1 session loader
-├─ tools/
-│  ├─ plots/                       # CLI plot scripts
-│  ├─ generate_gallery.py          # rebuilds docs/gallery.md from YAML sidecars
-│  └─ generate_case_studies.py     # generates narrative case-study stubs
-├─ docs/
-│  ├─ assets/gallery/              # PNG outputs and YAML metadata
-│  ├─ case-studies/                # portfolio-style narrative pages
-│  ├─ api/                         # API docs pages
-│  ├─ gallery.md                   # generated gallery page
-│  ├─ creating-new-visuals/        # architecture and visual workflow
-│  └─ index.md                     # docs landing page
-├─ tests/                          # project checks used by CI
-├─ mkdocs.yaml                     # MkDocs config and navigation
-├─ pyproject.toml                  # packaging and dependency configuration
-├─ README.md                       # repo landing page
-└─ .github/                        # CI and automation config
-```
-
 This project is designed to keep the outputs reproducible, the docs easy to navigate, and the visuals suitable for technical discussion and portfolio presentation.
 
 > Built on [FastF1](https://docs.fastf1.dev/)
