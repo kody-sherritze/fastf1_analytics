@@ -49,6 +49,7 @@ nav:
       - 2025 Italian Grand Prix Tyre Strategy: case-studies/2025-italian-grand-prix-tyre-strategy.md
   - Creating New Visuals:
       - Overview: creating-new-visuals/index.md
+      - Project Structure: creating-new-visuals/project-structure.md
       - Loading Data and Managing Cache: creating-new-visuals/data-and-cache.md
       - Building an Analysis: creating-new-visuals/building-an-analysis.md
       - Designing and Customizing Charts: creating-new-visuals/chart-design.md
