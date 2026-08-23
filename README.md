@@ -47,19 +47,16 @@ mkdocs serve
 
 ## Documentation
 
-This project has a few different documentation layers, each with a clear purpose:
+This project is organized across a few complementary layers:
 
-- **Gallery:** a grid of finished visual outputs
-- https://kody-sherritze.github.io/fastf1_analytics/gallery/
-
-- **Case Studies:** walkthroughs of the most compelling findings and race narratives
-- https://kody-sherritze.github.io/fastf1_analytics/case-studies/
-
-- **How it works:** the pipeline, caching strategy, and project architecture
-- https://kody-sherritze.github.io/fastf1_analytics/how-it-works/
-
+- **Gallery:** a portfolio-style grid of the finished visual outputs
+  - https://kody-sherritze.github.io/fastf1_analytics/gallery/
+- **Featured analyses:** deeper walkthroughs of the strongest race narratives and findings
+  - https://kody-sherritze.github.io/fastf1_analytics/case-studies/
+- **How it works:** the project pipeline, caching strategy, and reproduction workflow
+  - https://kody-sherritze.github.io/fastf1_analytics/how-it-works/
 - **API Reference:** generated docs for the reusable Python modules
-- https://kody-sherritze.github.io/fastf1_analytics/reference/fastf1_analytics/
+  - https://kody-sherritze.github.io/fastf1_analytics/reference/fastf1_analytics/
 
 ## Project Structure
 
@@ -83,61 +80,8 @@ fastf1_analytics/
 ├─ tests/                          # project checks used by CI
 ├─ mkdocs.yaml                     # MkDocs config and navigation
 ├─ pyproject.toml                  # packaging and dependency configuration
-├─ README.md                       # project landing page
+├─ README.md                       # repo landing page
 └─ .github/                        # CI and automation config
-```
-
-## Generate and Preview Visuals
-
-The plot scripts under `tools/plots/` generate the gallery assets. They write:
-
-- a **PNG** file into `docs/assets/gallery/`
-- a **YAML** sidecar with metadata such as title, params, and script path
-
-Common examples:
-
-```bash
-python tools/plots/tyre_strategy.py \
-  --year 2025 \
-  --event "Italian Grand Prix" \
-  --cache .fastf1-cache
-
-python tools/plots/drs_effectiveness.py \
-  --year 2025 \
-  --event "Italian Grand Prix" \
-  --session R \
-  --driver VER \
-  --cache .fastf1-cache
-
-python tools/generate_gallery.py
-mkdocs serve
-```
-
-> The first run may download data; subsequent runs are much faster when you keep a local FastF1 cache.
-
-## Requirements
-
-- **Python:** 3.13+
-- **FastF1:** used for race/session data access
-- **Matplotlib:** final chart rendering
-- **PyYAML:** metadata sidecars for gallery generation
-- **MkDocs + Material + mkdocstrings:** for documentation and API pages
-
-## Troubleshooting
-
-- **Cache issues:** delete `.fastf1-cache` and rerun the plot script
-- **Gallery not updating:** rerun `python tools/generate_gallery.py`
-- **Docs preview not showing changes:** run `mkdocs build` or `mkdocs serve`
-- **Plot script errors:** verify the event name, session flag, and cache path
-
-## CI and Quality Checks
-
-Run locally to match the repo’s quality gates:
-
-```bash
-ruff check .
-black --check .
-pytest -q
 ```
 
 This project is designed to keep the outputs reproducible, the docs easy to navigate, and the visuals suitable for technical discussion and portfolio presentation.
