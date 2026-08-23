@@ -53,8 +53,8 @@ This project is organized across a few complementary layers:
   - https://kody-sherritze.github.io/fastf1_analytics/gallery/
 - **Featured analyses:** deeper walkthroughs of the strongest race narratives and findings
   - https://kody-sherritze.github.io/fastf1_analytics/case-studies/
-- **How it works:** the project pipeline, caching strategy, and reproduction workflow
-  - https://kody-sherritze.github.io/fastf1_analytics/how-it-works/
+- **Creating New Visuals:** the project architecture, data workflow, style choices, and validation process
+  - https://kody-sherritze.github.io/fastf1_analytics/creating-new-visuals/
 - **API Reference:** generated docs for the reusable Python modules
   - https://kody-sherritze.github.io/fastf1_analytics/reference/fastf1_analytics/
 
@@ -75,7 +75,7 @@ fastf1_analytics/
 │  ├─ case-studies/                # portfolio-style narrative pages
 │  ├─ api/                         # API docs pages
 │  ├─ gallery.md                   # generated gallery page
-│  ├─ how-it-works.md              # project pipeline and notes
+│  ├─ creating-new-visuals/        # architecture and visual workflow
 │  └─ index.md                     # docs landing page
 ├─ tests/                          # project checks used by CI
 ├─ mkdocs.yaml                     # MkDocs config and navigation
