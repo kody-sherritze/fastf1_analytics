@@ -57,6 +57,8 @@ nav:
       - Testing and Quality Checks: creating-new-visuals/quality-checks.md
       - Style and Pre-commit: creating-new-visuals/style-and-pre-commit.md
   - API:
+      - Overview: api/index.md
       - Session Loader: api/session_loader.md
       - Plotting: api/plotting.md
-      - fastf1_analytics: api/reference/fastf1_analytics.md
+      - Chart Builders: api/chart-builders.md
+      - Package Reference: api/reference/fastf1_analytics.md
