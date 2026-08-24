@@ -51,4 +51,4 @@ python tools/plots/drs_effectiveness.py --year 2025 --event "Italian Grand Prix"
 ## Related examples
 
 - [Creating New Visuals](../creating-new-visuals/index.md)
-- [Gallery](../gallery.md)
+- [Gallery](../gallery/index.md)

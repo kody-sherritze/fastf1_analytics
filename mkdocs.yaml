@@ -39,7 +39,7 @@ markdown_extensions:
 
 nav:
   - Home: index.md
-  - Gallery: gallery.md
+  - Gallery: gallery/index.md
   - Case Studies: case-studies/index.md
   - Creating New Visuals: creating-new-visuals/index.md
   - API: api/index.md

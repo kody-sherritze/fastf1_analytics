@@ -51,4 +51,4 @@ python tools/plots/driver_championship.py --year 2024 --include-sprints --color-
 ## Related examples
 
 - [Creating New Visuals](../creating-new-visuals/index.md)
-- [Gallery](../gallery.md)
+- [Gallery](../gallery/index.md)

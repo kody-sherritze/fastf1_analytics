@@ -51,4 +51,4 @@ python tools/plots/time_in_first.py --year 2024 --color-variant primary --min-to
 ## Related examples
 
 - [Creating New Visuals](../creating-new-visuals/index.md)
-- [Gallery](../gallery.md)
+- [Gallery](../gallery/index.md)

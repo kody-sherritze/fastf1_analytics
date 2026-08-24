@@ -21,7 +21,7 @@ fastf1_analytics/
 │   ├── case-studies/            narrative visual walkthroughs
 │   ├── creating-new-visuals/    architectural and procedural guide
 │   ├── api/                     API documentation pages
-│   ├── gallery.md               gallery page and generated block
+│   ├── gallery/                 gallery lander and generated chart index
 │   └── index.md                 documentation landing page
 ├── tests/                       automated checks
 ├── mkdocs.yaml                  site configuration and navigation
@@ -54,7 +54,7 @@ The usual source-of-truth sequence is:
 
 1. A script in `tools/plots/` runs library code from `src/fastf1_analytics/`.
 2. The run writes a PNG and YAML sidecar under `docs/assets/gallery/`.
-3. `tools/generate_gallery.py` uses the sidecars to update the marked generated block in `docs/gallery.md`.
+3. `tools/generate_gallery.py` uses the sidecars to update the marked generated block in `docs/gallery/charts.md`.
 4. `tools/generate_case_studies.py` uses the same sidecars and template to write case-study pages.
 5. MkDocs reads the Markdown source and writes the built static site under `site/`.
 

@@ -5,7 +5,7 @@ from typing import Any
 
 import yaml
 
-GALLERY_MD = Path("docs/gallery.md")
+GALLERY_MD = Path("docs/gallery/charts.md")
 ASSETS_DIR = Path("docs/assets/gallery")
 BEGIN = "<!-- AUTO-GALLERY:BEGIN -->"
 END = "<!-- AUTO-GALLERY:END -->"
@@ -26,6 +26,8 @@ def render_gallery(items: list[dict[str, Any]]) -> str:
         title = it["title"]
         subtitle = it.get("subtitle", "")
         img = it["image"]
+        if img.startswith("assets/"):
+            img = f"../{img}"
         code = it.get("code_path", "")
         code_url = it.get("code_url", "")
         # Build a GitHub URL if only code_path is present

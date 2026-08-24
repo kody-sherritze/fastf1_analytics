@@ -1,20 +1,24 @@
 ﻿# FastF1 Analytics
 
+<div class="home-intro" markdown>
+
 ## From race data to readable stories
 
 FastF1 Analytics turns FastF1 session data into focused visual analyses: strategy timelines, tyre comparisons, telemetry studies, and season-long performance views.
+
+</div>
 
 ![2025 Italian Grand Prix tyre strategy](assets/gallery/2025-italian-gp-tyre-strategy.png){ loading=lazy }
 
 _A tyre-strategy timeline from the 2025 Italian Grand Prix, generated from FastF1 race data._
 
-## Take a look around
+## Explore the project
 
 <div class="grid cards" markdown>
 
 - :material-chart-bar: **Finished visuals**
 
-	Browse the [Gallery](gallery.md) for the latest rendered charts, their source scripts, and the parameters used to produce them.
+	Browse the [Gallery](gallery/index.md) for a visual index of the latest rendered charts, source scripts, and production parameters.
 
 - :material-file-document-edit: **Analytical insights**
 
@@ -26,7 +30,7 @@ _A tyre-strategy timeline from the 2025 Italian Grand Prix, generated from FastF
 
 - :material-api: **Reusable Python code**
 
-	Inspect the [API Reference](api/reference/fastf1_analytics.md) for the session loader, plotting helpers, and package modules.
+	Start at the [API Overview](api/index.md) to find the session loader, plotting helpers, chart builders, and generated package reference.
 
 </div>
 

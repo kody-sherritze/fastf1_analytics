@@ -1,6 +1,14 @@
 # Creating New Visuals
 
-This section explains how FastF1 Analytics turns motorsport data into a published visual. It is for readers who are comfortable with Python and the project dependencies and want to understand how the pieces fit together.
+<div class="section-lander" markdown>
+
+**From question to published chart**
+
+This is the project map for readers who want to make a new visual. It connects the finished work in the Gallery to the reusable code in the API, showing where data access, analysis, rendering, and publishing belong.
+
+</div>
+
+## The route through the project
 
 The project separates data access, analysis, chart rendering, and documentation output. A typical run follows this path:
 
@@ -25,6 +33,28 @@ flowchart LR
 - `tools/generate_case_studies.py` uses the same sidecars to create narrative case-study pages.
 
 The [API reference](../api/reference/fastf1_analytics.md) documents callable interfaces; the [case studies](../case-studies/index.md) show the analytical stories produced by them.
+
+## Choose your next stop
+
+<div class="grid cards" markdown>
+
+- :material-database-arrow-right: **[Data and cache](data-and-cache.md)**
+
+    Set up reliable session access and understand where downloaded data lives.
+
+- :material-chart-box-outline: **[Chart design](chart-design.md)**
+
+    Choose a visual form and use the shared plotting language.
+
+- :material-file-document-check-outline: **[Quality checks](quality-checks.md)**
+
+    Validate the analysis, output, and documentation before publishing.
+
+- :material-publish: **[Publishing](publishing.md)**
+
+    Regenerate the Gallery and Case Studies from their metadata.
+
+</div>
 
 ## A practical sequence
 

@@ -51,4 +51,4 @@ python tools/plots/tyre_strategy.py --driver-order results --bar-height 0.6 --ba
 ## Related examples
 
 - [Creating New Visuals](../creating-new-visuals/index.md)
-- [Gallery](../gallery.md)
+- [Gallery](../gallery/index.md)

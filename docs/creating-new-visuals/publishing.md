@@ -10,7 +10,7 @@ The sidecar is the handoff between analysis execution and documentation generati
 
 ## Gallery generation
 
-`python tools/generate_gallery.py` reads all YAML files in `docs/assets/gallery/`, sorts them by filename, and rewrites the content between the `AUTO-GALLERY:BEGIN` and `AUTO-GALLERY:END` markers in `docs/gallery.md`. Content outside those markers is preserved.
+`python tools/generate_gallery.py` reads all YAML files in `docs/assets/gallery/`, sorts them by filename, and rewrites the content between the `AUTO-GALLERY:BEGIN` and `AUTO-GALLERY:END` markers in `docs/gallery/charts.md`. Content outside those markers is preserved.
 
 The generated gallery includes the image, subtitle, source link, and compact parameter preview. Change the sidecar or generator rather than hand-editing the generated block.
 

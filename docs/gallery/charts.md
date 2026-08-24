@@ -1,7 +1,16 @@
-﻿# Gallery
+# Charts
 
-This page lists pre-rendered visuals. Each tile is backed by a reproducible script
-and a YAML sidecar under `docs/assets/gallery/`.
+<div class="section-lander" markdown>
+
+**A visual index of the work**
+
+These charts are the project's finished outputs: each one turns FastF1 session data into a focused comparison, pattern, or story. Open a visual to inspect it, then follow its source and parameters back to the analysis that produced it.
+
+</div>
+
+## Start with a visual
+
+Use the gallery as a quick scan of the project's range, from season-long championship views to race-day telemetry and tyre strategy. Each tile is backed by a reproducible script and a YAML sidecar under `docs/assets/gallery/`.
 
 <!-- AUTO-GALLERY:BEGIN -->
 <div class="grid cards" markdown>
@@ -47,5 +56,9 @@ and a YAML sidecar under `docs/assets/gallery/`.
   `Params:` `driver_order=results, bar_height=0.6, bar_gap=0.35, annotate_compound=True, dpi=220`
 
 </div>
+
+## Go deeper
+
+Pair a chart with its [case study](case-studies/index.md) to read the analytical narrative, or visit [Creating New Visuals](creating-new-visuals/index.md) to follow the path from session data to published image.
 
 <!-- AUTO-GALLERY:END -->
