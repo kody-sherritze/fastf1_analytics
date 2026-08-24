@@ -1,6 +1,6 @@
 title: "2024 Time Spent Leading \u2013 Cumulative"
 subtitle: Cumulative minutes led by race (lines per driver)
-image: assets/gallery/2024_drivers_time_in_first.png
+image: assets/gallery/2024-driver-time-in-first.png
 code_path: tools/plots/time_in_first.py
 function: fastf1_analytics.charts.time_in_first.build_time_in_first_chart
 params:

@@ -1,24 +1,20 @@
-﻿# 2025 Italian Grand Prix - DRS effect on main straight (VER)
+﻿# 2024 Drivers' Championship - Cumulative points
 
-Median speed traces along main straight (DRS ON/OFF)
-
-![2025 Italian Grand Prix - DRS effect on main straight (VER)](../assets/gallery/italian_grand_prix_2025_drs_effect_VER.png){ loading=lazy }
+![2024 Drivers' Championship - Cumulative points](../assets/gallery/2024-driver-championship-points.png){ loading=lazy }
 
 ## Why this matters
-
-Median speed traces along main straight (DRS ON/OFF)
 
 This visual addresses a practical decision: what stands out when comparing the selected metric across the field?. It turns raw telemetry and timing data into a clear, decision-ready view that helps explain what happened and why it mattered.
 
 ## What the chart shows
 
-- Median speed traces along main straight (DRS ON/OFF) highlights the main pattern across the drs, speed comparison.
+- Total points by race (lines per driver) highlights the main pattern across the season, drivers comparison.
 - The chart helps explain how the selected metric changes over the event or across the field.
 - The result is useful for identifying performance gaps, strategy trade-offs, or timing differences.
 
 ## Data and method
 
-- Data source: FastF1 session data for 2025 Italian Grand Prix
+- Data source: FastF1 session data for 2024 selected event
 - Session: R
 - Plot type: race analysis chart
 - Filtering/selection: selected session filters and relevant race laps
@@ -42,7 +38,7 @@ This is the part of the analysis that matters most from a portfolio standpoint: 
 ## Reproduce this chart
 
 ```bash
-python tools/plots/drs_effectiveness.py --year 2025 --event "Italian Grand Prix" --session R --driver VER --n-points 200 --accel-threshold-kmh-s -8.0 --sustain-sec 0.3 --cache .fastf1-cache
+python tools/plots/driver_championship.py --year 2024 --include-sprints --color-variant primary --min-total-points 1.0 --dpi 220 --cache .fastf1-cache
 ```
 
 ## Skills demonstrated

@@ -4,7 +4,7 @@
 
 FastF1 Analytics turns FastF1 session data into focused visual analyses: strategy timelines, tyre comparisons, telemetry studies, and season-long performance views.
 
-![2025 Italian Grand Prix tyre strategy](assets/gallery/italian_grand_prix_2025_tyre_strategy.png){ loading=lazy }
+![2025 Italian Grand Prix tyre strategy](assets/gallery/2025-italian-gp-tyre-strategy.png){ loading=lazy }
 
 _A tyre-strategy timeline from the 2025 Italian Grand Prix, generated from FastF1 race data._
 

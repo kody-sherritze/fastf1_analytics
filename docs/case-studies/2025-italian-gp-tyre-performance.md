@@ -1,12 +1,8 @@
 ﻿# 2025 Italian Grand Prix - Tyre lap times (clean race laps)
 
-Bars = median across drivers; dots = each driver (team-colored), annotated by driver code
-
-![2025 Italian Grand Prix - Tyre lap times (clean race laps)](../assets/gallery/italian_grand_prix_2025_tyre_performance.png){ loading=lazy }
+![2025 Italian Grand Prix - Tyre lap times (clean race laps)](../assets/gallery/2025-italian-gp-tyre-performance.png){ loading=lazy }
 
 ## Why this matters
-
-Bars = median across drivers; dots = each driver (team-colored), annotated by driver code
 
 This visual addresses a practical decision: what stands out when comparing the selected metric across the field?. It turns raw telemetry and timing data into a clear, decision-ready view that helps explain what happened and why it mattered.
 

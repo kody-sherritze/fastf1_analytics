@@ -40,25 +40,6 @@ markdown_extensions:
 nav:
   - Home: index.md
   - Gallery: gallery.md
-  - Case Studies:
-      - Overview: case-studies/index.md
-      - 2024 Drivers Championship Cumulative Points: case-studies/2024-drivers-championship-cumulative-points.md
-      - 2024 Time Spent Leading Cumulative: case-studies/2024-time-spent-leading-cumulative.md
-      - 2025 Italian Grand Prix DRS Effect on Main Straight Ver: case-studies/2025-italian-grand-prix-drs-effect-on-main-straight-ver.md
-      - 2025 Italian Grand Prix Tyre Lap Times Clean Race Laps: case-studies/2025-italian-grand-prix-tyre-lap-times-clean-race-laps.md
-      - 2025 Italian Grand Prix Tyre Strategy: case-studies/2025-italian-grand-prix-tyre-strategy.md
-  - Creating New Visuals:
-      - Overview: creating-new-visuals/index.md
-      - Project Structure: creating-new-visuals/project-structure.md
-      - Loading Data and Managing Cache: creating-new-visuals/data-and-cache.md
-      - Building an Analysis: creating-new-visuals/building-an-analysis.md
-      - Designing and Customizing Charts: creating-new-visuals/chart-design.md
-      - Publishing Visuals: creating-new-visuals/publishing.md
-      - Testing and Quality Checks: creating-new-visuals/quality-checks.md
-      - Style and Pre-commit: creating-new-visuals/style-and-pre-commit.md
-  - API:
-      - Overview: api/index.md
-      - Session Loader: api/session_loader.md
-      - Plotting: api/plotting.md
-      - Chart Builders: api/chart-builders.md
-      - Package Reference: api/reference/fastf1_analytics.md
+  - Case Studies: case-studies/index.md
+  - Creating New Visuals: creating-new-visuals/index.md
+  - API: api/index.md

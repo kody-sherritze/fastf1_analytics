@@ -1,6 +1,6 @@
 title: "2024 Drivers' Championship \u2013 Cumulative points"
 subtitle: Total points by race (lines per driver)
-image: assets/gallery/2024_drivers_championship_points.png
+image: assets/gallery/2024-driver-championship-points.png
 code_path: tools/plots/driver_championship.py
 function: fastf1_analytics.charts.driver_points.build_driver_points_chart
 params:
