@@ -10,29 +10,27 @@ Case studies turn a finished chart into an analytical story: the question, the e
 
 ## Featured analyses
 
-The pages below are generated from the same gallery metadata used to build the main gallery grid.
-
 <div class="grid cards" markdown>
 
 - :material-trophy-outline: **[Championship points](./2024-driver-championship-points.md)**
 
-	A season-long view of cumulative drivers' championship points.
+	How the 2024 drivers' title fight naturally played out, week to week.
 
 - :material-flag-checkered: **[Time spent leading](./2024-driver-time-in-first.md)**
 
-	A cumulative look at who controlled the race across a season.
+	Who really controlled the races, not just who won them.
 
 - :material-radar: **[DRS effectiveness](./2025-italian-gp-drs-effect-VER.md)**
 
-	A telemetry study of speed traces along the main straight.
+	Does DRS deliver the speed advantage it's built for?
 
 - :material-tire: **[Tyre performance](./2025-italian-gp-tyre-performance.md)**
 
-	A clean-lap comparison of compounds and drivers.
+	Which compound actually held pace on a clean lap.
 
 - :material-timeline-clock: **[Tyre strategy](./2025-italian-gp-tyre-strategy.md)**
 
-	A race timeline of stints and compound choices.
+	Why teams chose their stints and how that strategy played out.
 
 </div>
 
