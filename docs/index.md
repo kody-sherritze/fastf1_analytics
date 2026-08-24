@@ -4,32 +4,32 @@
 
 ## From race data to readable stories
 
-FastF1 Analytics turns FastF1 session data into focused visual analyses: strategy timelines, tyre comparisons, telemetry studies, and season-long performance views.
+A portfolio project analyzing Formula 1 sessions with FastF1 — strategy timelines, tyre comparisons, telemetry studies, and season-long performance views, each built to isolate impacts of individual variables.
 
 </div>
 
 ![2025 Italian Grand Prix tyre strategy](assets/gallery/2025-italian-gp-tyre-strategy.png){ loading=lazy }
 
-_A tyre-strategy timeline from the 2025 Italian Grand Prix, generated from FastF1 race data._
+_A tyre-strategy timeline from the 2025 Italian Grand Prix._
 
 ## Explore the project
 
 <div class="grid cards" markdown>
 
-- :material-chart-bar: **Finished visuals**
+- :material-chart-bar: **Want to see finished visuals?**
 
-	Browse the [Gallery](gallery/index.md) for a visual index of the latest rendered charts, source scripts, and production parameters.
+	Browse the [Gallery](gallery/index.md) for every rendered chart, plus the script and parameters that produced it.
 
-- :material-file-document-edit: **Analytical insights**
+- :material-chart-multiple: **Interested in analytical reasoning?**
 
-	Read the [Case Studies](case-studies/index.md) for the questions, methods, and findings behind selected visuals.
+	The [Case Studies](case-studies/index.md) walk through the purpose, method, and findings behind selected visuals.
 
-- :material-source-branch: **Project architecture**
+- :material-source-branch: **Curious how it's made?**
 
-	Follow [Creating New Visuals](creating-new-visuals/index.md) through session loading, analysis, chart construction, publishing, and quality checks.
+	[Creating New Visuals](creating-new-visuals/index.md) covers the pipeline end to end: session loading, analysis, charting, publishing, quality checks.
 
-- :material-api: **Reusable Python code**
+- :material-api: **Looking to reuse the code?**
 
-	Start at the [API Overview](api/index.md) to find the session loader, plotting helpers, chart builders, and generated package reference.
+	The [API Overview](api/index.md) documents the session loader, plotting helpers, chart builders, and full package reference.
 
 </div>
