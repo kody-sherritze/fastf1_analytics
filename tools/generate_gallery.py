@@ -1,15 +1,22 @@
 from __future__ import annotations
 
+import re
 from pathlib import Path
 from typing import Any
 
 import yaml
 
-GALLERY_MD = Path("docs/gallery.md")
+GALLERY_MD = Path("docs/gallery/charts.md")
 ASSETS_DIR = Path("docs/assets/gallery")
 BEGIN = "<!-- AUTO-GALLERY:BEGIN -->"
 END = "<!-- AUTO-GALLERY:END -->"
 REPO = "kody-sherritze/fastf1_analytics"
+
+
+def title_anchor(title: str) -> str:
+    """Return the heading-style anchor used for gallery links."""
+    anchor = re.sub(r"[^\w\s-]", "", title.lower())
+    return re.sub(r"[-\s]+", "-", anchor).strip("-")
 
 
 def load_items() -> list[dict[str, Any]]:
@@ -24,8 +31,11 @@ def render_gallery(items: list[dict[str, Any]]) -> str:
     lines = ['<div class="grid cards" markdown>', ""]
     for it in items:
         title = it["title"]
+        anchor = title_anchor(title)
         subtitle = it.get("subtitle", "")
         img = it["image"]
+        if img.startswith("assets/"):
+            img = f"../{img}"
         code = it.get("code_path", "")
         code_url = it.get("code_url", "")
         # Build a GitHub URL if only code_path is present
@@ -37,6 +47,7 @@ def render_gallery(items: list[dict[str, Any]]) -> str:
         # Make the title itself a hyperlink to source, when available
         title_line = f"- :material-chart-bar: **{title}**"
         lines += [
+            f'<a id="{anchor}"></a>',
             title_line,
             "  ---",
             f"  [![{title}]({img}){{ loading=lazy }}]({img}){{ .glightbox }}",

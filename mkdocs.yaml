@@ -1,6 +1,8 @@
 ﻿site_name: FastF1 Analytics
 repo_url: https://github.com/kody-sherritze/fastf1_analytics
 edit_uri: edit/main/docs/
+exclude_docs: |
+  case-studies/_template.md
 
 theme:
   name: material
@@ -37,9 +39,7 @@ markdown_extensions:
 
 nav:
   - Home: index.md
-  - Gallery: gallery.md
-  - How it works: how-it-works.md
-  - API:
-      - Session Loader: api/session_loader.md
-      - Plotting: api/plotting.md
-      - fastf1_analytics: reference/fastf1_analytics.md
+  - Gallery: gallery/index.md
+  - Case Studies: case-studies/index.md
+  - Creating New Visuals: creating-new-visuals/index.md
+  - API: api/index.md

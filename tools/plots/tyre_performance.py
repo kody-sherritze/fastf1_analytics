@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import argparse
 from pathlib import Path
@@ -49,7 +49,7 @@ def main() -> None:
     yml.parent.mkdir(parents=True, exist_ok=True)
     meta = {
         "title": params.title
-        or f"{session.event.year} {session.event['EventName']} – Tyre lap times (clean race laps)",
+        or f"{session.event.year} {session.event['EventName']} - Tyre lap times (clean race laps)",
         "subtitle": "Bars = median across drivers; dots = each driver (team-colored), annotated by driver code",
         "image": f"assets/gallery/{png.name}",
         "code_path": "tools/plots/tyre_performance.py",

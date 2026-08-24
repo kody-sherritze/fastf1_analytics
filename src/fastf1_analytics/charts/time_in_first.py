@@ -1,12 +1,12 @@
-"""
+﻿"""
 Chart for Cumulative Time Spent Leading
 ---------------------------------------
 
 This module provides a simple line chart that visualises how long each
-driver spent in first place across a Formula 1 season.  Times are
+driver spent in first place across a Formula 1 season.  Times are
 accumulated per race and plotted cumulatively by round, resulting in a
 chart similar to the Drivers' Championship points graph.  Each
-driver’s line is coloured according to their team’s primary colour
+driver's line is coloured according to their team's primary colour
 using :func:`fastf1_analytics.plotting.get_team_color`.  A secondary
 variant is available which lightens the colours for an alternate look.
 
@@ -31,7 +31,7 @@ from fastf1_analytics.plotting import apply_style, get_team_color, lighten_color
 
 @dataclass(frozen=True)
 class TimeInFirstParams:
-    """Customization knobs for the cumulative time‑in‑first chart.
+    """Customization knobs for the cumulative timeâ€‘inâ€‘first chart.
 
     Attributes
     ----------
@@ -77,27 +77,18 @@ def build_time_in_first_chart(
 ) -> tuple[Figure, Axes]:
     """Plot cumulative time spent leading by round.
 
-    Parameters
-    ----------
-    time_cum:
-        Long‑form DataFrame with columns ``[Driver, TeamName, Round, TimeLedCum]``.
-        Each row represents the cumulative minutes a driver has spent
-        leading up to and including a given round.
+    Args:
+        time_cum: Long-form DataFrame with columns
+            ``[Driver, TeamName, Round, TimeLedCum]``. Each row represents the
+            cumulative minutes a driver has spent leading up to and including
+            a given round.
+        year: Season year for the title.
+        params: Visual customisation parameters. See :class:`TimeInFirstParams`.
+        out_path: If provided, the plot is saved to this path using
+            :func:`fastf1_analytics.plotting.savefig` with the DPI defined in
+            ``params``.
 
-    year:
-        Season year for the title.
-
-    params:
-        Visual customisation parameters.  See :class:`TimeInFirstParams`.
-
-    out_path:
-        If provided, the plot is saved to this path using
-        :func:`fastf1_analytics.plotting.savefig` with the DPI defined in
-        ``params``.
-
-    Returns
-    -------
-    (Figure, Axes)
+    Returns:
         The Matplotlib figure and axes objects.
     """
 
@@ -137,7 +128,7 @@ def build_time_in_first_chart(
 
     ax.set_xlabel("Round")
     ax.set_ylabel("Cumulative time in first (min)")
-    title = params.title or f"{year} Time Spent Leading – Cumulative"
+    title = params.title or f"{year} Time Spent Leading - Cumulative"
     ax.set_title(title)
 
     # Annotate the final point for each driver with their abbreviation and total minutes

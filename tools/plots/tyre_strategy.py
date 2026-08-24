@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import argparse
 from pathlib import Path
@@ -47,7 +47,7 @@ def main() -> None:
     build_tyre_strategy(session, params=params, out_path=png)
 
     meta = {
-        "title": params.title or f"{args.year} {session.event['EventName']} – Tyre Strategy",
+        "title": params.title or f"{args.year} {session.event['EventName']} - Tyre Strategy",
         "subtitle": "Stints and compounds by driver",
         "image": f"assets/gallery/{png.name}",
         "code_path": "tools/plots/tyre_strategy.py",

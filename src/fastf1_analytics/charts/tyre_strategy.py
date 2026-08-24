@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
@@ -202,7 +202,7 @@ def build_tyre_strategy(
     # X-axis: match the total number of laps exactly
     ax.set_xlim(0, total_laps)
     ax.set_xlabel("Laps →")
-    title = params.title or f"{session.event.year} {session.event['EventName']} – Tyre Strategy"
+    title = params.title or f"{session.event.year} {session.event['EventName']} - Tyre Strategy"
     ax.set_title(title)
 
     # Clean look

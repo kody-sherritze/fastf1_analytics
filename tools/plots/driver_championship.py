@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import argparse
 import logging
@@ -135,7 +135,7 @@ def main() -> None:
     build_driver_points_chart(points_cum, year=args.year, params=params, out_path=str(png))
 
     meta = {
-        "title": params.title or f"{args.year} Drivers' Championship – Cumulative points",
+        "title": params.title or f"{args.year} Drivers' Championship - Cumulative points",
         "subtitle": "Total points by race (lines per driver)",
         "image": f"assets/gallery/{png.name}",
         "code_path": "tools/plots/driver_championship.py",
