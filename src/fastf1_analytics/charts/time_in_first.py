@@ -77,27 +77,18 @@ def build_time_in_first_chart(
 ) -> tuple[Figure, Axes]:
     """Plot cumulative time spent leading by round.
 
-    Parameters
-    ----------
-    time_cum:
-        Longâ€‘form DataFrame with columns ``[Driver, TeamName, Round, TimeLedCum]``.
-        Each row represents the cumulative minutes a driver has spent
-        leading up to and including a given round.
+    Args:
+        time_cum: Long-form DataFrame with columns
+            ``[Driver, TeamName, Round, TimeLedCum]``. Each row represents the
+            cumulative minutes a driver has spent leading up to and including
+            a given round.
+        year: Season year for the title.
+        params: Visual customisation parameters. See :class:`TimeInFirstParams`.
+        out_path: If provided, the plot is saved to this path using
+            :func:`fastf1_analytics.plotting.savefig` with the DPI defined in
+            ``params``.
 
-    year:
-        Season year for the title.
-
-    params:
-        Visual customisation parameters.  See :class:`TimeInFirstParams`.
-
-    out_path:
-        If provided, the plot is saved to this path using
-        :func:`fastf1_analytics.plotting.savefig` with the DPI defined in
-        ``params``.
-
-    Returns
-    -------
-    (Figure, Axes)
+    Returns:
         The Matplotlib figure and axes objects.
     """
 
