@@ -17,6 +17,7 @@ def test_render_gallery_builds_source_urls_and_optional_metadata() -> None:
     assert "tools\\plots\\tyre_strategy.py" in rendered
     assert "tools/plots/tyre_strategy.py" in rendered
     assert "year=2025, driver_order=results" in rendered
+    assert '<a id="tyre-strategy"></a>' in rendered
 
 
 def test_render_gallery_handles_empty_items() -> None:
