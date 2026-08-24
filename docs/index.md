@@ -33,19 +33,3 @@ _A tyre-strategy timeline from the 2025 Italian Grand Prix, generated from FastF
 	Start at the [API Overview](api/index.md) to find the session loader, plotting helpers, chart builders, and generated package reference.
 
 </div>
-
-## Project Pipeline
-
-The project keeps data access, analysis, rendering, and publishing distinct. Plot scripts load a FastF1 session, call reusable chart code, and write a PNG plus YAML sidecar. The documentation generators use those sidecars to build the gallery and case-study pages.
-
-```mermaid
-flowchart LR
-	A[FastF1 session] --> B[Analysis]
-	B --> C[Chart builder]
-	C --> D[PNG + YAML]
-	D --> E[Published docs]
-```
-
-## Run it locally
-
-The repository README contains the installation and command-line quickstart for generating visuals locally. This site focuses on the outputs, the architecture behind them, and the code that makes them reproducible.
