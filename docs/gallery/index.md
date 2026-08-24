@@ -2,7 +2,7 @@
 
 **Finished visuals, ready to explore**
 
-The Gallery is the visual showcase for FastF1 Analytics. Start with the featured work below, then open the complete chart index to inspect each image, its source script, and the parameters used to produce it.
+Every chart here starts as raw session data and ends as a finished visual. View the featured picks below, or dive into the full index for the source script and parameters behind each one.
 
 ## Featured work
 
@@ -28,4 +28,6 @@ The Gallery is the visual showcase for FastF1 Analytics. Start with the featured
 
 ## Browse the charts
 
-Open the [complete chart index](charts.md) for every published visual and its reproducibility details. For the reasoning behind selected visuals, continue to [Case Studies](../case-studies/index.md); for the code and workflow, visit [Creating New Visuals](../creating-new-visuals/index.md).
+See the [complete chart index](charts.md) for every published visual, source script, and parameter set. <br>
+Want the thought process behind the visuals? Head to [Case Studies](../case-studies/index.md). <br>
+Want to build your own charts? Visit [Creating New Visuals](../creating-new-visuals/index.md) to understand the full pipeline. <br>
