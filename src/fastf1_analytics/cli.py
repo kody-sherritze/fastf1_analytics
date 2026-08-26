@@ -10,7 +10,7 @@ def monaco_main() -> None:
     parser = argparse.ArgumentParser(description="Generate Monaco qualifying best-lap chart.")
     parser.add_argument("--year", type=int, default=2024)
     parser.add_argument("--session", default="Q")
-    parser.add_argument("--cache", default=".fastf1")
+    parser.add_argument("--cache", default=".fastf1-cache")
     args = parser.parse_args()
 
     apply_style()
