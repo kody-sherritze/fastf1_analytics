@@ -11,7 +11,7 @@ def load_session(
     gp: str,
     session: str,
     *,
-    cache: str | None = ".fastf1",
+    cache: str | None = ".fastf1-cache",
 ) -> Any:
     """Load a FastF1 session with optional local cache directory.
 
