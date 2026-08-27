@@ -57,6 +57,7 @@ def main() -> None:
         driver=args.driver,
         params=params,
         out_path=str(png),
+        cache=args.cache,
     )
 
     meta = {

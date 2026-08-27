@@ -383,6 +383,7 @@ def build_drs_effectiveness_distance(
     driver: str,
     params: DRSEffectivenessParams | None = None,
     out_path: str | None = None,
+    cache: str | None = ".fastf1-cache",
 ) -> tuple[Figure, Axes]:
     """Best-case DRS effectiveness on the auto-selected DRS straight.
 
@@ -520,9 +521,7 @@ def build_drs_effectiveness_distance(
     # Fallback: if no ON in race, try fastest valid qualifying lap (same auto-straight)
     if best_on is None:
         try:
-            qual = load_session(
-                session.event.year, session.event["EventName"], "Q", cache=str(session._api.path)
-            )
+            qual = load_session(session.event.year, session.event["EventName"], "Q", cache=cache)
         except (AttributeError, KeyError, OSError, TypeError, ValueError) as exc:
             logger.debug("Unable to load qualifying session for %s: %s", drv, exc, exc_info=True)
             qual = None
