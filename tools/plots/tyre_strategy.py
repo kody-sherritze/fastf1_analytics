@@ -10,7 +10,7 @@ from fastf1_analytics.session_loader import load_session
 
 
 def slug(year: int, event: str) -> str:
-    return f"{event.strip().lower().replace(' ', '_')}_{year}"
+    return f"{year}-{event.strip().lower().replace(' ', '-')}"
 
 
 def main() -> None:
@@ -38,8 +38,8 @@ def main() -> None:
     outdir = Path(args.outdir)
     outdir.mkdir(parents=True, exist_ok=True)
     s = slug(args.year, session.event["EventName"])
-    png = outdir / f"{s}_tyre_strategy.png"
-    yml = outdir / f"{s}_tyre_strategy.yaml"
+    png = outdir / f"{s}-tyre-strategy.png"
+    yml = outdir / f"{s}-tyre-strategy.yaml"
 
     params = TyreStrategyParams(
         driver_order=order, title=args.title, dpi=args.dpi, annotate_compound=True

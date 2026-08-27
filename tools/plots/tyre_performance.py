@@ -13,7 +13,7 @@ from fastf1_analytics.session_loader import load_session
 
 
 def slug(year: int, event: str) -> str:
-    return f"{event.strip().lower().replace(' ', '_')}_{year}"
+    return f"{year}-{event.strip().lower().replace(' ', ' -')}"
 
 
 def main() -> None:
@@ -39,7 +39,7 @@ def main() -> None:
 
     png_dir = Path(args.outdir)
     png_dir.mkdir(parents=True, exist_ok=True)
-    base = f"{slug(args.year, args.event)}_tyre_performance"
+    base = f"{slug(args.year, args.event)}-tyre-performance"
     png = png_dir / f"{base}.png"
 
     build_tyre_performance(session, params=params, out_path=str(png))

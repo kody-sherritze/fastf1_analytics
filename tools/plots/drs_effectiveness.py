@@ -13,8 +13,8 @@ from fastf1_analytics.session_loader import load_session
 
 
 def _slug(year: int, gp: str, driver: str) -> str:
-    gp_slug = gp.lower().replace(" ", "_")
-    return f"{gp_slug}_{year}_drs_effect_{driver.upper()}"
+    gp_slug = gp.lower().replace(" grand prix", "-gp")
+    return f"{year}-{gp_slug}-drs-effect-{driver.upper()}"
 
 
 def main() -> None:

@@ -154,7 +154,7 @@ def _season_lead_time_table(year: int, cache: str) -> pd.DataFrame:
 
 
 def _slug(year: int) -> str:
-    return f"{year}_drivers_time_in_first"
+    return f"{year}-driver-time-in-first"
 
 
 def main() -> None:

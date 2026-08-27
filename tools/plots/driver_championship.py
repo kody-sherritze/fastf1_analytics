@@ -101,7 +101,7 @@ def _season_points_table(year: int, include_sprints: bool, cache: str) -> pd.Dat
 
 
 def _slug(year: int) -> str:
-    return f"{year}_drivers_championship_points"
+    return f"{year}-driver-championship-points"
 
 
 def main() -> None:
