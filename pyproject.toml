@@ -49,6 +49,3 @@ strict = true
 [[tool.mypy.overrides]]
 module = ["fastf1", "fastf1.*"]
 ignore_missing_imports = true
-
-[project.scripts]
-f1-analytics-monaco = "fastf1_analytics.cli:monaco_main"
