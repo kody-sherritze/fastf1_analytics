@@ -2,11 +2,9 @@
 
 import argparse
 
-import yaml
-
 from fastf1_analytics.charts.tyre_strategy import TyreStrategyParams, build_tyre_strategy
 from fastf1_analytics.session_loader import load_session
-from tools.utils import event_slug, get_output_paths
+from tools.utils import event_slug, get_output_paths, write_plot_metadata
 
 
 def slug(year: int, event: str) -> str:
@@ -58,8 +56,7 @@ def main() -> None:
         },
         "tags": ["race", "strategy", "tyres"],
     }
-    with yml.open("w", encoding="utf-8") as f:
-        yaml.safe_dump(meta, f, sort_keys=False)
+    write_plot_metadata(yml, meta)
 
     print(f"Wrote {png} and {yml}")
 

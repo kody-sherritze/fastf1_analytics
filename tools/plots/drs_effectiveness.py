@@ -2,14 +2,12 @@
 
 import argparse
 
-import yaml
-
 from fastf1_analytics.charts.drs_effectiveness import (
     DRSEffectivenessParams,
     build_drs_effectiveness_distance,
 )
 from fastf1_analytics.session_loader import load_session
-from tools.utils import event_slug, get_output_paths
+from tools.utils import event_slug, get_output_paths, write_plot_metadata
 
 
 def _slug(year: int, gp: str, driver: str) -> str:
@@ -73,7 +71,7 @@ def main() -> None:
         },
         "tags": ["drs", "speed", "straight"],
     }
-    yml.write_text(yaml.safe_dump(meta, sort_keys=False), encoding="utf-8")
+    write_plot_metadata(yml, meta)
     print(f"Wrote {png} and {yml}")
 
 

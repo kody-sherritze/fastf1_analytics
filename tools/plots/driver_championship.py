@@ -6,14 +6,13 @@ from typing import Any
 
 import fastf1
 import pandas as pd
-import yaml
 
 from fastf1_analytics.charts.driver_points import (
     DriverPointsParams,
     build_driver_points_chart,
 )
 from fastf1_analytics.session_loader import load_session
-from tools.utils import get_output_paths
+from tools.utils import get_output_paths, write_plot_metadata
 
 logger = logging.getLogger(__name__ + ".driver_championship")
 
@@ -145,7 +144,7 @@ def main() -> None:
         },
         "tags": ["season", "drivers", "points"],
     }
-    yml.write_text(yaml.safe_dump(meta, sort_keys=False), encoding="utf-8")
+    write_plot_metadata(yml, meta)
     logger.info("Wrote %s and %s", png, yml)
     print(f"Wrote {png} and {yml}")
 

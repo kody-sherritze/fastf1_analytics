@@ -1,4 +1,8 @@
+from collections.abc import Mapping
 from pathlib import Path
+from typing import Any
+
+import yaml
 
 
 def event_slug(event: str) -> str:
@@ -28,3 +32,14 @@ def get_output_paths(
         raise ValueError("slug must not be empty")
 
     return out_path / f"{stem}.png", out_path / f"{stem}.yaml"
+
+
+def write_plot_metadata(path: str | Path, metadata: Mapping[str, Any]) -> Path:
+    """Write plot metadata as consistently formatted UTF-8 YAML."""
+    metadata_path = Path(path)
+    metadata_path.parent.mkdir(parents=True, exist_ok=True)
+    metadata_path.write_text(
+        yaml.safe_dump(dict(metadata), sort_keys=False, allow_unicode=True),
+        encoding="utf-8",
+    )
+    return metadata_path

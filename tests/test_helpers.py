@@ -15,7 +15,7 @@ from fastf1_analytics.plotting import (
     savefig,
 )
 from fastf1_analytics.utils import ensure_list
-from tools.utils import event_slug, get_output_paths
+from tools.utils import event_slug, get_output_paths, write_plot_metadata
 
 
 def test_ensure_list_normalizes_common_inputs() -> None:
@@ -35,6 +35,20 @@ def test_get_output_paths_uses_same_directory_for_png_and_yaml(tmp_path: Path) -
 def test_event_slug_uses_gp_suffix() -> None:
     assert event_slug("Austrian Grand Prix") == "austrian-gp"
     assert event_slug("Austrian") == "austrian-gp"
+
+
+def test_write_plot_metadata_writes_utf8_yaml(tmp_path: Path) -> None:
+    output = write_plot_metadata(
+        tmp_path / "nested" / "plot.yaml",
+        {"title": "Résumé", "tags": ["race", "tyres"]},
+    )
+
+    assert output.read_text(encoding="utf-8") == (
+        "title: Résumé\n"
+        "tags:\n"
+        "- race\n"
+        "- tyres\n"
+    )
 
 
 def test_norm_key_removes_case_and_separators() -> None:

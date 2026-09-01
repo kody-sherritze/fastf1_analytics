@@ -19,14 +19,13 @@ from typing import Any
 
 import fastf1
 import pandas as pd
-import yaml
 
 from fastf1_analytics.charts.time_in_first import (
     TimeInFirstParams,
     build_time_in_first_chart,
 )
 from fastf1_analytics.session_loader import load_session
-from tools.utils import get_output_paths
+from tools.utils import get_output_paths, write_plot_metadata
 
 logger = logging.getLogger(__name__ + ".time_in_first")
 
@@ -214,7 +213,7 @@ def main() -> None:
         },
         "tags": ["season", "drivers", "lead", "time"],
     }
-    yml.write_text(yaml.safe_dump(meta, sort_keys=False), encoding="utf-8")
+    write_plot_metadata(yml, meta)
     logger.info("Wrote %s and %s", png, yml)
     print(f"Wrote {png} and {yml}")
 
