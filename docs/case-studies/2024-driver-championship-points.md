@@ -1,6 +1,6 @@
-# 2024 Drivers' Championship - Cumulative points
+﻿# 2024 Drivers' Championship – Cumulative points
 
-![2024 Drivers' Championship - Cumulative points](../assets/gallery/2024-driver-championship-points.png){ loading=lazy }
+![2024 Drivers' Championship – Cumulative points](../assets/gallery/2024-driver-championship-points.png){ loading=lazy }
 
 ## Why this matters
 

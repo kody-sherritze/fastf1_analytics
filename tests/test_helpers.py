@@ -3,6 +3,7 @@ from pathlib import Path
 import matplotlib
 import matplotlib.pyplot as plt
 import pandas as pd
+import pytest
 
 matplotlib.use("Agg")
 
@@ -19,6 +20,7 @@ from tools.utils import (
     event_slug,
     get_metadata_image_path,
     get_output_paths,
+    validate_plot_metadata,
     write_plot_metadata,
 )
 
@@ -56,6 +58,43 @@ def test_write_plot_metadata_writes_utf8_yaml(tmp_path: Path) -> None:
 def test_get_metadata_image_path_uses_output_location() -> None:
     assert get_metadata_image_path("docs/assets/gallery/plot.png") == "assets/gallery/plot.png"
     assert get_metadata_image_path("docs/assets/custom/plot.png") == "assets/custom/plot.png"
+
+
+def test_validate_plot_metadata_requires_standard_fields(tmp_path: Path) -> None:
+    metadata = {
+        "title": "Plot",
+        "subtitle": "Description",
+        "image": "assets/gallery/plot.png",
+        "code_path": "tools/plots/plot.py",
+        "function": "build_plot",
+        "params": {"year": 2025},
+        "tags": ["race"],
+    }
+
+    assert validate_plot_metadata(metadata, tmp_path / "plot.yaml") == metadata
+
+
+def test_validate_plot_metadata_reports_missing_fields(tmp_path: Path) -> None:
+    with pytest.raises(ValueError, match="function"):
+        validate_plot_metadata(
+            {"title": "Plot", "params": {}, "tags": []},
+            tmp_path / "plot.yaml",
+        )
+
+
+def test_validate_plot_metadata_checks_field_types(tmp_path: Path) -> None:
+    metadata = {
+        "title": "Plot",
+        "subtitle": "Description",
+        "image": "assets/gallery/plot.png",
+        "code_path": "tools/plots/plot.py",
+        "function": "build_plot",
+        "params": [],
+        "tags": ["race"],
+    }
+
+    with pytest.raises(ValueError, match="params.*mapping"):
+        validate_plot_metadata(metadata, tmp_path / "plot.yaml")
 
 
 def test_norm_key_removes_case_and_separators() -> None:

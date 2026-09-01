@@ -1,6 +1,6 @@
-# 2024 Time Spent Leading
+﻿# 2024 Time Spent Leading – Cumulative
 
-![2024 Time Spent Leading](../assets/gallery/2024-driver-time-in-first.png){ loading=lazy }
+![2024 Time Spent Leading – Cumulative](../assets/gallery/2024-driver-time-in-first.png){ loading=lazy }
 
 ## Why this matters
 

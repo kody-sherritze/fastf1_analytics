@@ -1,6 +1,6 @@
-# 2025 Italian Grand Prix - DRS effect on main straight (VER)
+﻿# 2025 Italian Grand Prix – DRS effect on main straight (VER)
 
-![2025 Italian Grand Prix - DRS effect on main straight (VER)](../assets/gallery/2025-italian-gp-drs-effect-VER.png){ loading=lazy }
+![2025 Italian Grand Prix – DRS effect on main straight (VER)](../assets/gallery/2025-italian-gp-drs-effect-VER.png){ loading=lazy }
 
 ## Why this matters
 

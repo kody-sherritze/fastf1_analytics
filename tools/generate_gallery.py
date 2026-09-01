@@ -6,6 +6,8 @@ from typing import Any
 
 import yaml
 
+from tools.utils import validate_plot_metadata
+
 GALLERY_MD = Path("docs/gallery/charts.md")
 ASSETS_DIR = Path("docs/assets/gallery")
 BEGIN = "<!-- AUTO-GALLERY:BEGIN -->"
@@ -23,7 +25,7 @@ def load_items() -> list[dict[str, Any]]:
     items: list[dict[str, Any]] = []
     for yml in sorted(ASSETS_DIR.glob("*.yaml")):
         with yml.open("r", encoding="utf-8") as f:
-            items.append(yaml.safe_load(f))
+            items.append(validate_plot_metadata(yaml.safe_load(f), yml))
     return items
 
 

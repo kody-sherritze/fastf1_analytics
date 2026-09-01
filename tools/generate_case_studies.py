@@ -6,6 +6,8 @@ from typing import Any
 
 import yaml
 
+from tools.utils import validate_plot_metadata
+
 CASE_STUDIES_DIR = Path("docs/case-studies")
 GALLERY_DIR = Path("docs/assets/gallery")
 TEMPLATE_PATH = CASE_STUDIES_DIR / "_template.md"
@@ -16,7 +18,7 @@ def load_items() -> list[dict[str, Any]]:
     items: list[dict[str, Any]] = []
     for yml in sorted(GALLERY_DIR.glob("*.yaml")):
         with yml.open("r", encoding="utf-8") as fh:
-            item = yaml.safe_load(fh) or {}
+            item = validate_plot_metadata(yaml.safe_load(fh), yml)
         if item.get("case_study") is False:
             continue
         items.append(item)
@@ -182,7 +184,6 @@ def main() -> None:
         target = CASE_STUDIES_DIR / f"{slug}.md"
         target.write_text(render_case_study(item, template), encoding="utf-8")
 
-    INDEX_PATH.write_text(build_index(items), encoding="utf-8")
     print(f"Generated {len(items)} case-study stubs in {CASE_STUDIES_DIR}.")
 
 

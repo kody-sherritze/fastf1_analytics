@@ -1,6 +1,6 @@
-# 2025 Italian Grand Prix - Tyre lap times (clean race laps)
+﻿# 2025 Italian Grand Prix – Tyre lap times (clean race laps)
 
-![2025 Italian Grand Prix - Tyre lap times (clean race laps)](../assets/gallery/2025-italian-gp-tyre-performance.png){ loading=lazy }
+![2025 Italian Grand Prix – Tyre lap times (clean race laps)](../assets/gallery/2025-italian-gp-tyre-performance.png){ loading=lazy }
 
 ## Why this matters
 

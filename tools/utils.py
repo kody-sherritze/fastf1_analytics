@@ -57,6 +57,45 @@ def get_metadata_image_path(path: str | Path) -> str:
     return image_path.as_posix()
 
 
+REQUIRED_PLOT_METADATA_FIELDS = (
+    "title",
+    "subtitle",
+    "image",
+    "code_path",
+    "function",
+    "params",
+    "tags",
+)
+
+
+def validate_plot_metadata(metadata: Any, source: str | Path) -> dict[str, Any]:
+    """Validate and return the required metadata contract for a plot sidecar."""
+    source_path = Path(source)
+    if not isinstance(metadata, Mapping):
+        raise TypeError(f"Plot metadata in {source_path} must be a YAML mapping")
+
+    missing = [
+        field
+        for field in REQUIRED_PLOT_METADATA_FIELDS
+        if field not in metadata or metadata[field] is None
+    ]
+    if missing:
+        fields = ", ".join(missing)
+        raise ValueError(f"Plot metadata in {source_path} is missing required fields: {fields}")
+
+    for field in REQUIRED_PLOT_METADATA_FIELDS:
+        if field in {"params", "tags"}:
+            continue
+        if not isinstance(metadata[field], str) or not metadata[field].strip():
+            raise ValueError(f"Plot metadata field '{field}' in {source_path} must not be empty")
+    if not isinstance(metadata["params"], Mapping):
+        raise TypeError(f"Plot metadata field 'params' in {source_path} must be a mapping")
+    if not isinstance(metadata["tags"], list):
+        raise TypeError(f"Plot metadata field 'tags' in {source_path} must be a list")
+
+    return dict(metadata)
+
+
 def write_plot_metadata(path: str | Path, metadata: Mapping[str, Any]) -> Path:
     """Write plot metadata as consistently formatted UTF-8 YAML."""
     metadata_path = Path(path)

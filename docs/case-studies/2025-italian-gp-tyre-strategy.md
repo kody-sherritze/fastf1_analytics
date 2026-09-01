@@ -1,6 +1,6 @@
-# 2025 Italian Grand Prix - Tyre Strategy
+﻿# 2025 Italian Grand Prix – Tyre Strategy
 
-![2025 Italian Grand Prix - Tyre Strategy](../assets/gallery/2025-italian-gp-tyre-strategy.png){ loading=lazy }
+![2025 Italian Grand Prix – Tyre Strategy](../assets/gallery/2025-italian-gp-tyre-strategy.png){ loading=lazy }
 
 ## Why this matters
 
