@@ -10,6 +10,7 @@ def event_slug(event: str) -> str:
         normalized = normalized[: -len("-grandprix")]
     return f"{normalized}-gp"
 
+
 def get_output_paths(
     outdir: str | Path, slug: str, *, create_dir: bool = True
 ) -> tuple[Path, Path]:
