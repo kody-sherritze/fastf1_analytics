@@ -15,7 +15,12 @@ from fastf1_analytics.plotting import (
     savefig,
 )
 from fastf1_analytics.utils import ensure_list
-from tools.utils import event_slug, get_output_paths, write_plot_metadata
+from tools.utils import (
+    event_slug,
+    get_metadata_image_path,
+    get_output_paths,
+    write_plot_metadata,
+)
 
 
 def test_ensure_list_normalizes_common_inputs() -> None:
@@ -49,6 +54,11 @@ def test_write_plot_metadata_writes_utf8_yaml(tmp_path: Path) -> None:
         "- race\n"
         "- tyres\n"
     )
+
+
+def test_get_metadata_image_path_uses_output_location() -> None:
+    assert get_metadata_image_path("docs/assets/gallery/plot.png") == "assets/gallery/plot.png"
+    assert get_metadata_image_path("docs/assets/custom/plot.png") == "assets/custom/plot.png"
 
 
 def test_norm_key_removes_case_and_separators() -> None:

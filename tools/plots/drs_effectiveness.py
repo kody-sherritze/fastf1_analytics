@@ -8,7 +8,13 @@ from fastf1_analytics.charts.drs_effectiveness import (
     build_drs_effectiveness_distance,
 )
 from fastf1_analytics.session_loader import load_session
-from tools.utils import configure_logging, event_slug, get_output_paths, write_plot_metadata
+from tools.utils import (
+    configure_logging,
+    event_slug,
+    get_metadata_image_path,
+    get_output_paths,
+    write_plot_metadata,
+)
 
 logger = logging.getLogger(__name__ + ".drs_effectiveness")
 
@@ -61,7 +67,7 @@ def main() -> None:
         "title": params.title
         or f"{session.event.year} {session.event['EventName']} - DRS effect on main straight ({args.driver.upper()})",
         "subtitle": "Median speed traces along main straight (DRS ON/OFF)",
-        "image": f"assets/gallery/{png.name}",
+        "image": get_metadata_image_path(png),
         "code_path": "tools/plots/drs_effectiveness.py",
         "function": "fastf1_analytics.charts.drs_effectiveness.build_drs_effectiveness_distance",
         "params": {

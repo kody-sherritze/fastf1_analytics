@@ -25,7 +25,12 @@ from fastf1_analytics.charts.time_in_first import (
     build_time_in_first_chart,
 )
 from fastf1_analytics.session_loader import load_session
-from tools.utils import configure_logging, get_output_paths, write_plot_metadata
+from tools.utils import (
+    configure_logging,
+    get_metadata_image_path,
+    get_output_paths,
+    write_plot_metadata,
+)
 
 logger = logging.getLogger(__name__ + ".time_in_first")
 
@@ -203,7 +208,7 @@ def main() -> None:
     meta = {
         "title": params.title or f"{args.year} Time Spent Leading ‑ Cumulative",
         "subtitle": "Cumulative minutes led by race (lines per driver)",
-        "image": f"assets/gallery/{png.name}",
+        "image": get_metadata_image_path(png),
         "code_path": "tools/plots/time_in_first.py",
         "function": "fastf1_analytics.charts.time_in_first.build_time_in_first_chart",
         "params": {

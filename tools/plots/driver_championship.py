@@ -12,7 +12,12 @@ from fastf1_analytics.charts.driver_points import (
     build_driver_points_chart,
 )
 from fastf1_analytics.session_loader import load_session
-from tools.utils import configure_logging, get_output_paths, write_plot_metadata
+from tools.utils import (
+    configure_logging,
+    get_metadata_image_path,
+    get_output_paths,
+    write_plot_metadata,
+)
 
 logger = logging.getLogger(__name__ + ".driver_championship")
 
@@ -133,7 +138,7 @@ def main() -> None:
     meta = {
         "title": params.title or f"{args.year} Drivers' Championship - Cumulative points",
         "subtitle": "Total points by race (lines per driver)",
-        "image": f"assets/gallery/{png.name}",
+        "image": get_metadata_image_path(png),
         "code_path": "tools/plots/driver_championship.py",
         "function": "fastf1_analytics.charts.driver_points.build_driver_points_chart",
         "params": {

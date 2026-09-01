@@ -5,7 +5,13 @@ import logging
 
 from fastf1_analytics.charts.tyre_strategy import TyreStrategyParams, build_tyre_strategy
 from fastf1_analytics.session_loader import load_session
-from tools.utils import configure_logging, event_slug, get_output_paths, write_plot_metadata
+from tools.utils import (
+    configure_logging,
+    event_slug,
+    get_metadata_image_path,
+    get_output_paths,
+    write_plot_metadata,
+)
 
 logger = logging.getLogger(__name__ + ".tyre_strategy")
 
@@ -47,7 +53,7 @@ def main() -> None:
     meta = {
         "title": params.title or f"{args.year} {session.event['EventName']} - Tyre Strategy",
         "subtitle": "Stints and compounds by driver",
-        "image": f"assets/gallery/{png.name}",
+        "image": get_metadata_image_path(png),
         "code_path": "tools/plots/tyre_strategy.py",
         "function": "fastf1_analytics.charts.tyre_strategy.build_tyre_strategy",
         "params": {

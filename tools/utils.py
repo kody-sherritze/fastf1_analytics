@@ -48,6 +48,15 @@ def get_output_paths(
     return out_path / f"{stem}.png", out_path / f"{stem}.yaml"
 
 
+def get_metadata_image_path(path: str | Path) -> str:
+    """Return a POSIX image path relative to the documentation root when possible."""
+    image_path = Path(path)
+    parts = image_path.parts
+    if parts and parts[0].lower() == "docs":
+        image_path = Path(*parts[1:])
+    return image_path.as_posix()
+
+
 def write_plot_metadata(path: str | Path, metadata: Mapping[str, Any]) -> Path:
     """Write plot metadata as consistently formatted UTF-8 YAML."""
     metadata_path = Path(path)

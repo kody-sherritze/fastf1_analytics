@@ -8,7 +8,13 @@ from fastf1_analytics.charts.tyre_performance import (
     build_tyre_performance,
 )
 from fastf1_analytics.session_loader import load_session
-from tools.utils import configure_logging, event_slug, get_output_paths, write_plot_metadata
+from tools.utils import (
+    configure_logging,
+    event_slug,
+    get_metadata_image_path,
+    get_output_paths,
+    write_plot_metadata,
+)
 
 logger = logging.getLogger(__name__ + ".tyre_performance")
 
@@ -46,7 +52,7 @@ def main() -> None:
         "title": params.title
         or f"{session.event.year} {session.event['EventName']} - Tyre lap times (clean race laps)",
         "subtitle": "Bars = median across drivers; dots = each driver (team-colored), annotated by driver code",
-        "image": f"assets/gallery/{png.name}",
+        "image": get_metadata_image_path(png),
         "code_path": "tools/plots/tyre_performance.py",
         "function": "fastf1_analytics.charts.tyre_performance.build_tyre_performance",
         "params": {
