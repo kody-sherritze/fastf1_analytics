@@ -2,7 +2,6 @@
 
 import argparse
 import logging
-from pathlib import Path
 from typing import Any
 
 import fastf1
@@ -14,6 +13,7 @@ from fastf1_analytics.charts.driver_points import (
     build_driver_points_chart,
 )
 from fastf1_analytics.session_loader import load_session
+from tools.utils import get_output_paths
 
 logger = logging.getLogger(__name__ + ".driver_championship")
 
@@ -116,13 +116,9 @@ def main() -> None:
     ap.add_argument("--outdir", default="docs/assets/gallery")
     args = ap.parse_args()
 
-    outdir = Path(args.outdir)
-    outdir.mkdir(parents=True, exist_ok=True)
-
     points_cum = _season_points_table(args.year, args.include_sprints, cache=args.cache)
 
-    png = outdir / f"{_slug(args.year)}.png"
-    yml = outdir / f"{_slug(args.year)}.yaml"
+    png, yml = get_output_paths(args.outdir, _slug(args.year))
 
     params = DriverPointsParams(
         color_variant=args.color_variant,

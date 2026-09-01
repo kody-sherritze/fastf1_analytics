@@ -1,7 +1,6 @@
 ﻿from __future__ import annotations
 
 import argparse
-from pathlib import Path
 
 import yaml
 
@@ -10,6 +9,7 @@ from fastf1_analytics.charts.tyre_performance import (
     build_tyre_performance,
 )
 from fastf1_analytics.session_loader import load_session
+from tools.utils import get_output_paths
 
 
 def slug(year: int, event: str) -> str:
@@ -37,16 +37,10 @@ def main() -> None:
         dpi=args.dpi,
     )
 
-    png_dir = Path(args.outdir)
-    png_dir.mkdir(parents=True, exist_ok=True)
     base = f"{slug(args.year, args.event)}-tyre-performance"
-    png = png_dir / f"{base}.png"
+    png, yml = get_output_paths(args.outdir, base)
 
     build_tyre_performance(session, params=params, out_path=str(png))
-
-    # YAML for docs gallery
-    yml = Path("docs") / "assets" / "gallery" / f"{base}.yaml"
-    yml.parent.mkdir(parents=True, exist_ok=True)
     meta = {
         "title": params.title
         or f"{session.event.year} {session.event['EventName']} - Tyre lap times (clean race laps)",

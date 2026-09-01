@@ -1,7 +1,6 @@
 ﻿from __future__ import annotations
 
 import argparse
-from pathlib import Path
 
 import yaml
 
@@ -10,6 +9,7 @@ from fastf1_analytics.charts.drs_effectiveness import (
     build_drs_effectiveness_distance,
 )
 from fastf1_analytics.session_loader import load_session
+from tools.utils import get_output_paths
 
 
 def _slug(year: int, gp: str, driver: str) -> str:
@@ -34,9 +34,6 @@ def main() -> None:
     ap.add_argument("--outdir", default="docs/assets/gallery")
     args = ap.parse_args()
 
-    outdir = Path(args.outdir)
-    outdir.mkdir(parents=True, exist_ok=True)
-
     session = load_session(args.year, args.event, args.session, cache=args.cache)
 
     params = DRSEffectivenessParams(
@@ -49,8 +46,7 @@ def main() -> None:
     )
 
     slug = _slug(args.year, args.event, args.driver)
-    png = outdir / f"{slug}.png"
-    yml = outdir / f"{slug}.yaml"
+    png, yml = get_output_paths(args.outdir, slug)
 
     build_drs_effectiveness_distance(
         session,

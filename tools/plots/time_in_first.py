@@ -15,7 +15,6 @@ from __future__ import annotations
 
 import argparse
 import logging
-from pathlib import Path
 from typing import Any
 
 import fastf1
@@ -27,6 +26,7 @@ from fastf1_analytics.charts.time_in_first import (
     build_time_in_first_chart,
 )
 from fastf1_analytics.session_loader import load_session
+from tools.utils import get_output_paths
 
 logger = logging.getLogger(__name__ + ".time_in_first")
 
@@ -184,15 +184,11 @@ def main() -> None:
     )
     args = ap.parse_args()
 
-    outdir = Path(args.outdir)
-    outdir.mkdir(parents=True, exist_ok=True)
-
     # Build the long‑form table of cumulative lead times
     time_cum = _season_lead_time_table(args.year, cache=args.cache)
 
     slug = _slug(args.year)
-    png = outdir / f"{slug}.png"
-    yml = outdir / f"{slug}.yaml"
+    png, yml = get_output_paths(args.outdir, slug)
 
     params = TimeInFirstParams(
         color_variant=args.color_variant,

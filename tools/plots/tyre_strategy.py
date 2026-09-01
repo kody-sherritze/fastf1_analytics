@@ -1,12 +1,12 @@
 ﻿from __future__ import annotations
 
 import argparse
-from pathlib import Path
 
 import yaml
 
 from fastf1_analytics.charts.tyre_strategy import TyreStrategyParams, build_tyre_strategy
 from fastf1_analytics.session_loader import load_session
+from tools.utils import get_output_paths
 
 
 def slug(year: int, event: str) -> str:
@@ -35,11 +35,8 @@ def main() -> None:
 
     session = load_session(args.year, args.event, "R", cache=args.cache)
 
-    outdir = Path(args.outdir)
-    outdir.mkdir(parents=True, exist_ok=True)
     s = slug(args.year, session.event["EventName"])
-    png = outdir / f"{s}-tyre-strategy.png"
-    yml = outdir / f"{s}-tyre-strategy.yaml"
+    png, yml = get_output_paths(args.outdir, f"{s}-tyre-strategy")
 
     params = TyreStrategyParams(
         driver_order=order, title=args.title, dpi=args.dpi, annotate_compound=True

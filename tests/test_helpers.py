@@ -15,6 +15,7 @@ from fastf1_analytics.plotting import (
     savefig,
 )
 from fastf1_analytics.utils import ensure_list
+from tools.utils import get_output_paths
 
 
 def test_ensure_list_normalizes_common_inputs() -> None:
@@ -22,6 +23,13 @@ def test_ensure_list_normalizes_common_inputs() -> None:
     assert ensure_list("VER") == ["VER"]
     assert ensure_list(("VER", "HAM")) == ["VER", "HAM"]
     assert ensure_list({"VER"}) == ["VER"]
+
+
+def test_get_output_paths_uses_same_directory_for_png_and_yaml(tmp_path: Path) -> None:
+    png, yml = get_output_paths(tmp_path / "nested" / "out", "2024-italian-gp")
+    assert png == tmp_path / "nested" / "out" / "2024-italian-gp.png"
+    assert yml == tmp_path / "nested" / "out" / "2024-italian-gp.yaml"
+    assert png.parent.is_dir()
 
 
 def test_norm_key_removes_case_and_separators() -> None:
