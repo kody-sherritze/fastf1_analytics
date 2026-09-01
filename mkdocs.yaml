@@ -4,6 +4,10 @@ edit_uri: edit/main/docs/
 exclude_docs: |
   case-studies/_template.md
 
+validation:
+  nav:
+    omitted_files: ignore
+
 theme:
   name: material
   features:

@@ -1,4 +1,4 @@
-﻿# 2025 Italian Grand Prix - DRS effect on main straight (VER)
+# 2025 Italian Grand Prix - DRS effect on main straight (VER)
 
 ![2025 Italian Grand Prix - DRS effect on main straight (VER)](../assets/gallery/2025-italian-gp-drs-effect-VER.png){ loading=lazy }
 
@@ -38,7 +38,7 @@ This is the part of the analysis that matters most from a portfolio standpoint: 
 ## Reproduce this chart
 
 ```bash
-python tools/plots/drs_effectiveness.py --year 2025 --event "Italian Grand Prix" --session R --driver VER --n-points 200 --accel-threshold-kmh-s -8.0 --sustain-sec 0.3 --cache .fastf1-cache
+python -m tools.plots.drs_effectiveness --year 2025 --event "Italian Grand Prix" --session R --driver VER --n-points 200 --accel-threshold-kmh-s -8.0 --sustain-sec 0.3 --cache .fastf1-cache
 ```
 
 ## Skills demonstrated

@@ -1,4 +1,4 @@
-﻿# 2025 Italian Grand Prix - Tyre lap times (clean race laps)
+# 2025 Italian Grand Prix - Tyre lap times (clean race laps)
 
 ![2025 Italian Grand Prix - Tyre lap times (clean race laps)](../assets/gallery/2025-italian-gp-tyre-performance.png){ loading=lazy }
 
@@ -38,7 +38,7 @@ This is the part of the analysis that matters most from a portfolio standpoint: 
 ## Reproduce this chart
 
 ```bash
-python tools/plots/tyre_performance.py --year 2025 --event "Italian Grand Prix" --min-laps-per-compound 1 --aggregate median --dpi 220 --cache .fastf1-cache
+python -m tools.plots.tyre_performance --year 2025 --event "Italian Grand Prix" --min-laps-per-compound 1 --aggregate median --dpi 220 --cache .fastf1-cache
 ```
 
 ## Skills demonstrated

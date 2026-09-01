@@ -1,4 +1,4 @@
-﻿# 2025 Italian Grand Prix - Tyre Strategy
+# 2025 Italian Grand Prix - Tyre Strategy
 
 ![2025 Italian Grand Prix - Tyre Strategy](../assets/gallery/2025-italian-gp-tyre-strategy.png){ loading=lazy }
 
@@ -38,7 +38,7 @@ This is the part of the analysis that matters most from a portfolio standpoint: 
 ## Reproduce this chart
 
 ```bash
-python tools/plots/tyre_strategy.py --driver-order results --bar-height 0.6 --bar-gap 0.35 --annotate-compound --dpi 220 --cache .fastf1-cache
+python -m tools.plots.tyre_strategy --driver-order results --bar-height 0.6 --bar-gap 0.35 --annotate-compound --dpi 220 --cache .fastf1-cache
 ```
 
 ## Skills demonstrated

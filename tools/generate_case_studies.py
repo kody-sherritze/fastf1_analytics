@@ -28,6 +28,16 @@ def slugify(value: str) -> str:
     return slug or "case-study"
 
 
+def case_study_slug(item: dict[str, Any]) -> str:
+    """Return the case-study filename stem matching the generated plot asset."""
+    image = str(item.get("image", "")).strip()
+    if image:
+        image_stem = Path(image).stem.strip()
+        if image_stem:
+            return image_stem
+    return slugify(str(item.get("title", "case-study")))
+
+
 def format_cli_value(value: Any) -> str:
     if isinstance(value, bool):
         return str(value).lower()
@@ -50,7 +60,8 @@ def build_repro_command(item: dict[str, Any]) -> str:
         else:
             flags.append(f"{flag} {format_cli_value(value)}")
 
-    command = ["python", code_path, *flags]
+    module_path = code_path.removesuffix(".py").replace("/", ".").replace("\\", ".")
+    command = ["python", "-m", module_path, *flags]
     if code_path and "--cache" not in " ".join(command):
         command.append("--cache")
         command.append(".fastf1-cache")
@@ -78,7 +89,7 @@ def build_index(items: list[dict[str, Any]]) -> str:
         "",
     ]
     for item in items:
-        slug = slugify(item.get("title", "case-study"))
+        slug = case_study_slug(item)
         title = item.get("title", "Case study")
         lines.append(f"- [{title}](./{slug}.md)")
     return "\n".join(lines) + "\n"
@@ -143,9 +154,9 @@ def render_case_study(item: dict[str, Any], template: str) -> str:
         "{skill_3}": str(skills[2]),
         "{skill_4}": str(skills[3]) if len(skills) > 3 else str(skills[2]),
         "{related_visual_title}": "Creating New Visuals",
-        "{related_visual_path}": "/creating-new-visuals/",
+        "{related_visual_path}": "../creating-new-visuals/index.md",
         "{related_visual_title_2}": "Gallery",
-        "{related_visual_path_2}": "/gallery/",
+        "{related_visual_path_2}": "../gallery/index.md",
     }
 
     rendered = template
@@ -167,8 +178,7 @@ def main() -> None:
     items = load_items()
 
     for item in items:
-        title = item.get("title", "Case study")
-        slug = slugify(title)
+        slug = case_study_slug(item)
         target = CASE_STUDIES_DIR / f"{slug}.md"
         target.write_text(render_case_study(item, template), encoding="utf-8")
 

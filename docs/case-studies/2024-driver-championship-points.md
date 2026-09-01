@@ -1,4 +1,4 @@
-﻿# 2024 Drivers' Championship - Cumulative points
+# 2024 Drivers' Championship - Cumulative points
 
 ![2024 Drivers' Championship - Cumulative points](../assets/gallery/2024-driver-championship-points.png){ loading=lazy }
 
@@ -38,7 +38,7 @@ This is the part of the analysis that matters most from a portfolio standpoint: 
 ## Reproduce this chart
 
 ```bash
-python tools/plots/driver_championship.py --year 2024 --include-sprints --color-variant primary --min-total-points 1.0 --dpi 220 --cache .fastf1-cache
+python -m tools.plots.driver_championship --year 2024 --include-sprints --color-variant primary --min-total-points 1.0 --dpi 220 --cache .fastf1-cache
 ```
 
 ## Skills demonstrated

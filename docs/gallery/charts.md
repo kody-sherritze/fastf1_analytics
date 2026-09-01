@@ -61,6 +61,7 @@ Use the gallery as a quick scan of the project's range, from season-long champio
   `Params:` `driver_order=results, bar_height=0.6, bar_gap=0.35, annotate_compound=True, dpi=220`
 
 </div>
+
 <!-- AUTO-GALLERY:END -->
 
 ## Go deeper
