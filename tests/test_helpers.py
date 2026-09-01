@@ -15,7 +15,7 @@ from fastf1_analytics.plotting import (
     savefig,
 )
 from fastf1_analytics.utils import ensure_list
-from tools.utils import get_output_paths
+from tools.utils import event_slug, get_output_paths
 
 
 def test_ensure_list_normalizes_common_inputs() -> None:
@@ -30,6 +30,11 @@ def test_get_output_paths_uses_same_directory_for_png_and_yaml(tmp_path: Path) -
     assert png == tmp_path / "nested" / "out" / "2024-italian-gp.png"
     assert yml == tmp_path / "nested" / "out" / "2024-italian-gp.yaml"
     assert png.parent.is_dir()
+
+
+def test_event_slug_uses_gp_suffix() -> None:
+    assert event_slug("Austrian Grand Prix") == "austrian-gp"
+    assert event_slug("Austrian") == "austrian-gp"
 
 
 def test_norm_key_removes_case_and_separators() -> None:

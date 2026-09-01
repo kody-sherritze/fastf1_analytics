@@ -1,6 +1,15 @@
 from pathlib import Path
 
 
+def event_slug(event: str) -> str:
+    """Normalize a Grand Prix name for use in generated filenames."""
+    normalized = "-".join(event.strip().lower().split())
+    if normalized.endswith("-grand-prix"):
+        normalized = normalized[: -len("-grand-prix")]
+    elif normalized.endswith("-grandprix"):
+        normalized = normalized[: -len("-grandprix")]
+    return f"{normalized}-gp"
+
 def get_output_paths(
     outdir: str | Path, slug: str, *, create_dir: bool = True
 ) -> tuple[Path, Path]:

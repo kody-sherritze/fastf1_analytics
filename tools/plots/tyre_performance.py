@@ -9,11 +9,11 @@ from fastf1_analytics.charts.tyre_performance import (
     build_tyre_performance,
 )
 from fastf1_analytics.session_loader import load_session
-from tools.utils import get_output_paths
+from tools.utils import event_slug, get_output_paths
 
 
 def slug(year: int, event: str) -> str:
-    return f"{year}-{event.strip().lower().replace(' ', ' -')}"
+    return f"{year}-{event_slug(event)}"
 
 
 def main() -> None:

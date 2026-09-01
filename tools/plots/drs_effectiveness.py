@@ -9,12 +9,11 @@ from fastf1_analytics.charts.drs_effectiveness import (
     build_drs_effectiveness_distance,
 )
 from fastf1_analytics.session_loader import load_session
-from tools.utils import get_output_paths
+from tools.utils import event_slug, get_output_paths
 
 
 def _slug(year: int, gp: str, driver: str) -> str:
-    gp_slug = gp.lower().replace(" grand prix", "-gp")
-    return f"{year}-{gp_slug}-drs-effect-{driver.upper()}"
+    return f"{year}-{event_slug(gp)}-drs-effect-{driver.upper()}"
 
 
 def main() -> None:
