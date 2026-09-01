@@ -1,20 +1,23 @@
 ﻿from __future__ import annotations
 
 import argparse
+import logging
 
 from fastf1_analytics.charts.tyre_performance import (
     TyrePerformanceParams,
     build_tyre_performance,
 )
 from fastf1_analytics.session_loader import load_session
-from tools.utils import event_slug, get_output_paths, write_plot_metadata
+from tools.utils import configure_logging, event_slug, get_output_paths, write_plot_metadata
 
+logger = logging.getLogger(__name__ + ".tyre_performance")
 
 def slug(year: int, event: str) -> str:
     return f"{year}-{event_slug(event)}"
 
 
 def main() -> None:
+    configure_logging()
     ap = argparse.ArgumentParser(description="Generate a Tyre Lap Times plot (+ YAML).")
     ap.add_argument("--year", type=int, required=True)
     ap.add_argument("--event", type=str, required=True, help='e.g., "Italian Grand Prix"')
@@ -57,8 +60,7 @@ def main() -> None:
         "tags": ["race", "tyres", "performance", "lap times"],
     }
     write_plot_metadata(yml, meta)
-
-    print(f"Wrote {png} and {yml}")
+    logger.info("Wrote %s and %s", png, yml)
 
 
 if __name__ == "__main__":

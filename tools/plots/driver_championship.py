@@ -12,7 +12,7 @@ from fastf1_analytics.charts.driver_points import (
     build_driver_points_chart,
 )
 from fastf1_analytics.session_loader import load_session
-from tools.utils import get_output_paths, write_plot_metadata
+from tools.utils import configure_logging, get_output_paths, write_plot_metadata
 
 logger = logging.getLogger(__name__ + ".driver_championship")
 
@@ -104,6 +104,7 @@ def _slug(year: int) -> str:
 
 
 def main() -> None:
+    configure_logging()
     ap = argparse.ArgumentParser(description="Generate Drivers' Championship points chart + YAML.")
     ap.add_argument("--year", type=int, required=True)
     ap.add_argument("--cache", default=".fastf1-cache")
@@ -146,7 +147,6 @@ def main() -> None:
     }
     write_plot_metadata(yml, meta)
     logger.info("Wrote %s and %s", png, yml)
-    print(f"Wrote {png} and {yml}")
 
 
 if __name__ == "__main__":

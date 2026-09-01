@@ -1,13 +1,16 @@
 ﻿from __future__ import annotations
 
 import argparse
+import logging
 
 from fastf1_analytics.charts.drs_effectiveness import (
     DRSEffectivenessParams,
     build_drs_effectiveness_distance,
 )
 from fastf1_analytics.session_loader import load_session
-from tools.utils import event_slug, get_output_paths, write_plot_metadata
+from tools.utils import configure_logging, event_slug, get_output_paths, write_plot_metadata
+
+logger = logging.getLogger(__name__ + ".drs_effectiveness")
 
 
 def _slug(year: int, gp: str, driver: str) -> str:
@@ -15,6 +18,7 @@ def _slug(year: int, gp: str, driver: str) -> str:
 
 
 def main() -> None:
+    configure_logging()
     ap = argparse.ArgumentParser(
         description="Generate distance-aligned DRS effectiveness chart + YAML for the gallery."
     )
@@ -72,7 +76,7 @@ def main() -> None:
         "tags": ["drs", "speed", "straight"],
     }
     write_plot_metadata(yml, meta)
-    print(f"Wrote {png} and {yml}")
+    logger.info("Wrote %s and %s", png, yml)
 
 
 if __name__ == "__main__":

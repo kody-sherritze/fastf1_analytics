@@ -1,8 +1,22 @@
+import logging
 from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
 
 import yaml
+
+
+def configure_logging() -> None:
+    """Configure visible INFO-level logging for standalone command-line tools."""
+    root_logger = logging.getLogger()
+    root_logger.setLevel(logging.INFO)
+    if not root_logger.handlers:
+        logging.basicConfig(level=logging.INFO)
+        return
+
+    for handler in root_logger.handlers:
+        if handler.level == logging.NOTSET or handler.level > logging.INFO:
+            handler.setLevel(logging.INFO)
 
 
 def event_slug(event: str) -> str:

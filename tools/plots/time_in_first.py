@@ -25,7 +25,7 @@ from fastf1_analytics.charts.time_in_first import (
     build_time_in_first_chart,
 )
 from fastf1_analytics.session_loader import load_session
-from tools.utils import get_output_paths, write_plot_metadata
+from tools.utils import configure_logging, get_output_paths, write_plot_metadata
 
 logger = logging.getLogger(__name__ + ".time_in_first")
 
@@ -157,6 +157,7 @@ def _slug(year: int) -> str:
 
 
 def main() -> None:
+    configure_logging()
     ap = argparse.ArgumentParser(
         description="Generate cumulative time‑in‑first chart for a given season and write PNG+YAML sidecar."
     )
@@ -215,7 +216,6 @@ def main() -> None:
     }
     write_plot_metadata(yml, meta)
     logger.info("Wrote %s and %s", png, yml)
-    print(f"Wrote {png} and {yml}")
 
 
 if __name__ == "__main__":
