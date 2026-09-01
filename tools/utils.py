@@ -1,7 +1,9 @@
 from pathlib import Path
 
 
-def get_output_paths(outdir: str | Path, slug: str, *, create_dir: bool = True) -> tuple[Path, Path]:
+def get_output_paths(
+    outdir: str | Path, slug: str, *, create_dir: bool = True
+) -> tuple[Path, Path]:
     """Return the paired PNG/YAML output paths for a generated plot.
 
     The PNG and YAML sidecars are always written into the same directory, and the
