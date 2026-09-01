@@ -15,6 +15,7 @@ from tools.utils import (
 
 logger = logging.getLogger(__name__ + ".tyre_strategy")
 
+
 def slug(year: int, event: str) -> str:
     return f"{year}-{event_slug(event)}"
 

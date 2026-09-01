@@ -49,10 +49,7 @@ def test_write_plot_metadata_writes_utf8_yaml(tmp_path: Path) -> None:
     )
 
     assert output.read_text(encoding="utf-8") == (
-        "title: Résumé\n"
-        "tags:\n"
-        "- race\n"
-        "- tyres\n"
+        "title: Résumé\n" "tags:\n" "- race\n" "- tyres\n"
     )
 
 
