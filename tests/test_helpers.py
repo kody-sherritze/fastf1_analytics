@@ -93,7 +93,7 @@ def test_validate_plot_metadata_checks_field_types(tmp_path: Path) -> None:
         "tags": ["race"],
     }
 
-    with pytest.raises(ValueError, match="params.*mapping"):
+    with pytest.raises(TypeError, match="params.*mapping"):
         validate_plot_metadata(metadata, tmp_path / "plot.yaml")
 
 
