@@ -3,6 +3,7 @@ from pathlib import Path
 import matplotlib
 import matplotlib.pyplot as plt
 import pandas as pd
+import pytest
 
 matplotlib.use("Agg")
 
@@ -15,6 +16,13 @@ from fastf1_analytics.plotting import (
     savefig,
 )
 from fastf1_analytics.utils import ensure_list
+from tools.utils import (
+    event_slug,
+    get_metadata_image_path,
+    get_output_paths,
+    validate_plot_metadata,
+    write_plot_metadata,
+)
 
 
 def test_ensure_list_normalizes_common_inputs() -> None:
@@ -22,6 +30,71 @@ def test_ensure_list_normalizes_common_inputs() -> None:
     assert ensure_list("VER") == ["VER"]
     assert ensure_list(("VER", "HAM")) == ["VER", "HAM"]
     assert ensure_list({"VER"}) == ["VER"]
+
+
+def test_get_output_paths_uses_same_directory_for_png_and_yaml(tmp_path: Path) -> None:
+    png, yml = get_output_paths(tmp_path / "nested" / "out", "2024-italian-gp")
+    assert png == tmp_path / "nested" / "out" / "2024-italian-gp.png"
+    assert yml == tmp_path / "nested" / "out" / "2024-italian-gp.yaml"
+    assert png.parent.is_dir()
+
+
+def test_event_slug_uses_gp_suffix() -> None:
+    assert event_slug("Austrian Grand Prix") == "austrian-gp"
+    assert event_slug("Austrian") == "austrian-gp"
+
+
+def test_write_plot_metadata_writes_utf8_yaml(tmp_path: Path) -> None:
+    output = write_plot_metadata(
+        tmp_path / "nested" / "plot.yaml",
+        {"title": "Résumé", "tags": ["race", "tyres"]},
+    )
+
+    assert output.read_text(encoding="utf-8") == (
+        "title: Résumé\n" "tags:\n" "- race\n" "- tyres\n"
+    )
+
+
+def test_get_metadata_image_path_uses_output_location() -> None:
+    assert get_metadata_image_path("docs/assets/gallery/plot.png") == "assets/gallery/plot.png"
+    assert get_metadata_image_path("docs/assets/custom/plot.png") == "assets/custom/plot.png"
+
+
+def test_validate_plot_metadata_requires_standard_fields(tmp_path: Path) -> None:
+    metadata = {
+        "title": "Plot",
+        "subtitle": "Description",
+        "image": "assets/gallery/plot.png",
+        "code_path": "tools/plots/plot.py",
+        "function": "build_plot",
+        "params": {"year": 2025},
+        "tags": ["race"],
+    }
+
+    assert validate_plot_metadata(metadata, tmp_path / "plot.yaml") == metadata
+
+
+def test_validate_plot_metadata_reports_missing_fields(tmp_path: Path) -> None:
+    with pytest.raises(ValueError, match="function"):
+        validate_plot_metadata(
+            {"title": "Plot", "params": {}, "tags": []},
+            tmp_path / "plot.yaml",
+        )
+
+
+def test_validate_plot_metadata_checks_field_types(tmp_path: Path) -> None:
+    metadata = {
+        "title": "Plot",
+        "subtitle": "Description",
+        "image": "assets/gallery/plot.png",
+        "code_path": "tools/plots/plot.py",
+        "function": "build_plot",
+        "params": [],
+        "tags": ["race"],
+    }
+
+    with pytest.raises(TypeError, match="params.*mapping"):
+        validate_plot_metadata(metadata, tmp_path / "plot.yaml")
 
 
 def test_norm_key_removes_case_and_separators() -> None:

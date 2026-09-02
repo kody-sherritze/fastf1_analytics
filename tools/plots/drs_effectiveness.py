@@ -1,23 +1,30 @@
 ﻿from __future__ import annotations
 
 import argparse
-from pathlib import Path
-
-import yaml
+import logging
 
 from fastf1_analytics.charts.drs_effectiveness import (
     DRSEffectivenessParams,
     build_drs_effectiveness_distance,
 )
 from fastf1_analytics.session_loader import load_session
+from tools.utils import (
+    configure_logging,
+    event_slug,
+    get_metadata_image_path,
+    get_output_paths,
+    write_plot_metadata,
+)
+
+logger = logging.getLogger(__name__ + ".drs_effectiveness")
 
 
 def _slug(year: int, gp: str, driver: str) -> str:
-    gp_slug = gp.lower().replace(" grand prix", "-gp")
-    return f"{year}-{gp_slug}-drs-effect-{driver.upper()}"
+    return f"{year}-{event_slug(gp)}-drs-effect-{driver.upper()}"
 
 
 def main() -> None:
+    configure_logging()
     ap = argparse.ArgumentParser(
         description="Generate distance-aligned DRS effectiveness chart + YAML for the gallery."
     )
@@ -34,9 +41,6 @@ def main() -> None:
     ap.add_argument("--outdir", default="docs/assets/gallery")
     args = ap.parse_args()
 
-    outdir = Path(args.outdir)
-    outdir.mkdir(parents=True, exist_ok=True)
-
     session = load_session(args.year, args.event, args.session, cache=args.cache)
 
     params = DRSEffectivenessParams(
@@ -49,8 +53,7 @@ def main() -> None:
     )
 
     slug = _slug(args.year, args.event, args.driver)
-    png = outdir / f"{slug}.png"
-    yml = outdir / f"{slug}.yaml"
+    png, yml = get_output_paths(args.outdir, slug)
 
     build_drs_effectiveness_distance(
         session,
@@ -64,7 +67,7 @@ def main() -> None:
         "title": params.title
         or f"{session.event.year} {session.event['EventName']} - DRS effect on main straight ({args.driver.upper()})",
         "subtitle": "Median speed traces along main straight (DRS ON/OFF)",
-        "image": f"assets/gallery/{png.name}",
+        "image": get_metadata_image_path(png),
         "code_path": "tools/plots/drs_effectiveness.py",
         "function": "fastf1_analytics.charts.drs_effectiveness.build_drs_effectiveness_distance",
         "params": {
@@ -78,8 +81,8 @@ def main() -> None:
         },
         "tags": ["drs", "speed", "straight"],
     }
-    yml.write_text(yaml.safe_dump(meta, sort_keys=False), encoding="utf-8")
-    print(f"Wrote {png} and {yml}")
+    write_plot_metadata(yml, meta)
+    logger.info("Wrote %s and %s", png, yml)
 
 
 if __name__ == "__main__":

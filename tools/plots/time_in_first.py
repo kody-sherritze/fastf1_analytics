@@ -15,18 +15,22 @@ from __future__ import annotations
 
 import argparse
 import logging
-from pathlib import Path
 from typing import Any
 
 import fastf1
 import pandas as pd
-import yaml
 
 from fastf1_analytics.charts.time_in_first import (
     TimeInFirstParams,
     build_time_in_first_chart,
 )
 from fastf1_analytics.session_loader import load_session
+from tools.utils import (
+    configure_logging,
+    get_metadata_image_path,
+    get_output_paths,
+    write_plot_metadata,
+)
 
 logger = logging.getLogger(__name__ + ".time_in_first")
 
@@ -158,6 +162,7 @@ def _slug(year: int) -> str:
 
 
 def main() -> None:
+    configure_logging()
     ap = argparse.ArgumentParser(
         description="Generate cumulative time‑in‑first chart for a given season and write PNG+YAML sidecar."
     )
@@ -184,15 +189,11 @@ def main() -> None:
     )
     args = ap.parse_args()
 
-    outdir = Path(args.outdir)
-    outdir.mkdir(parents=True, exist_ok=True)
-
     # Build the long‑form table of cumulative lead times
     time_cum = _season_lead_time_table(args.year, cache=args.cache)
 
     slug = _slug(args.year)
-    png = outdir / f"{slug}.png"
-    yml = outdir / f"{slug}.yaml"
+    png, yml = get_output_paths(args.outdir, slug)
 
     params = TimeInFirstParams(
         color_variant=args.color_variant,
@@ -207,7 +208,7 @@ def main() -> None:
     meta = {
         "title": params.title or f"{args.year} Time Spent Leading ‑ Cumulative",
         "subtitle": "Cumulative minutes led by race (lines per driver)",
-        "image": f"assets/gallery/{png.name}",
+        "image": get_metadata_image_path(png),
         "code_path": "tools/plots/time_in_first.py",
         "function": "fastf1_analytics.charts.time_in_first.build_time_in_first_chart",
         "params": {
@@ -218,9 +219,8 @@ def main() -> None:
         },
         "tags": ["season", "drivers", "lead", "time"],
     }
-    yml.write_text(yaml.safe_dump(meta, sort_keys=False), encoding="utf-8")
+    write_plot_metadata(yml, meta)
     logger.info("Wrote %s and %s", png, yml)
-    print(f"Wrote {png} and {yml}")
 
 
 if __name__ == "__main__":

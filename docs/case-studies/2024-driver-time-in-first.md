@@ -1,6 +1,6 @@
-﻿# 2024 Time Spent Leading
+﻿# 2024 Time Spent Leading – Cumulative
 
-![2024 Time Spent Leading](../assets/gallery/2024-driver-time-in-first.png){ loading=lazy }
+![2024 Time Spent Leading – Cumulative](../assets/gallery/2024-driver-time-in-first.png){ loading=lazy }
 
 ## Why this matters
 
@@ -38,7 +38,7 @@ This is the part of the analysis that matters most from a portfolio standpoint: 
 ## Reproduce this chart
 
 ```bash
-python tools/plots/time_in_first.py --year 2024 --color-variant primary --min-total-time 30.0 --dpi 220 --cache .fastf1-cache
+python -m tools.plots.time_in_first --year 2024 --color-variant primary --min-total-time 30.0 --dpi 220 --cache .fastf1-cache
 ```
 
 ## Skills demonstrated

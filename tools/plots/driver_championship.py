@@ -2,18 +2,22 @@
 
 import argparse
 import logging
-from pathlib import Path
 from typing import Any
 
 import fastf1
 import pandas as pd
-import yaml
 
 from fastf1_analytics.charts.driver_points import (
     DriverPointsParams,
     build_driver_points_chart,
 )
 from fastf1_analytics.session_loader import load_session
+from tools.utils import (
+    configure_logging,
+    get_metadata_image_path,
+    get_output_paths,
+    write_plot_metadata,
+)
 
 logger = logging.getLogger(__name__ + ".driver_championship")
 
@@ -105,6 +109,7 @@ def _slug(year: int) -> str:
 
 
 def main() -> None:
+    configure_logging()
     ap = argparse.ArgumentParser(description="Generate Drivers' Championship points chart + YAML.")
     ap.add_argument("--year", type=int, required=True)
     ap.add_argument("--cache", default=".fastf1-cache")
@@ -116,13 +121,9 @@ def main() -> None:
     ap.add_argument("--outdir", default="docs/assets/gallery")
     args = ap.parse_args()
 
-    outdir = Path(args.outdir)
-    outdir.mkdir(parents=True, exist_ok=True)
-
     points_cum = _season_points_table(args.year, args.include_sprints, cache=args.cache)
 
-    png = outdir / f"{_slug(args.year)}.png"
-    yml = outdir / f"{_slug(args.year)}.yaml"
+    png, yml = get_output_paths(args.outdir, _slug(args.year))
 
     params = DriverPointsParams(
         color_variant=args.color_variant,
@@ -137,7 +138,7 @@ def main() -> None:
     meta = {
         "title": params.title or f"{args.year} Drivers' Championship - Cumulative points",
         "subtitle": "Total points by race (lines per driver)",
-        "image": f"assets/gallery/{png.name}",
+        "image": get_metadata_image_path(png),
         "code_path": "tools/plots/driver_championship.py",
         "function": "fastf1_analytics.charts.driver_points.build_driver_points_chart",
         "params": {
@@ -149,9 +150,8 @@ def main() -> None:
         },
         "tags": ["season", "drivers", "points"],
     }
-    yml.write_text(yaml.safe_dump(meta, sort_keys=False), encoding="utf-8")
+    write_plot_metadata(yml, meta)
     logger.info("Wrote %s and %s", png, yml)
-    print(f"Wrote {png} and {yml}")
 
 
 if __name__ == "__main__":

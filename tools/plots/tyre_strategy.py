@@ -1,19 +1,27 @@
 ﻿from __future__ import annotations
 
 import argparse
-from pathlib import Path
-
-import yaml
+import logging
 
 from fastf1_analytics.charts.tyre_strategy import TyreStrategyParams, build_tyre_strategy
 from fastf1_analytics.session_loader import load_session
+from tools.utils import (
+    configure_logging,
+    event_slug,
+    get_metadata_image_path,
+    get_output_paths,
+    write_plot_metadata,
+)
+
+logger = logging.getLogger(__name__ + ".tyre_strategy")
 
 
 def slug(year: int, event: str) -> str:
-    return f"{year}-{event.strip().lower().replace(' ', '-')}"
+    return f"{year}-{event_slug(event)}"
 
 
 def main() -> None:
+    configure_logging()
     ap = argparse.ArgumentParser(description="Generate a Tyre Strategy plot + YAML.")
     ap.add_argument("--year", type=int, required=True)
     ap.add_argument("--event", required=True, help="e.g. 'Monaco' or 'Italian Grand Prix'")
@@ -35,11 +43,8 @@ def main() -> None:
 
     session = load_session(args.year, args.event, "R", cache=args.cache)
 
-    outdir = Path(args.outdir)
-    outdir.mkdir(parents=True, exist_ok=True)
     s = slug(args.year, session.event["EventName"])
-    png = outdir / f"{s}-tyre-strategy.png"
-    yml = outdir / f"{s}-tyre-strategy.yaml"
+    png, yml = get_output_paths(args.outdir, f"{s}-tyre-strategy")
 
     params = TyreStrategyParams(
         driver_order=order, title=args.title, dpi=args.dpi, annotate_compound=True
@@ -49,7 +54,7 @@ def main() -> None:
     meta = {
         "title": params.title or f"{args.year} {session.event['EventName']} - Tyre Strategy",
         "subtitle": "Stints and compounds by driver",
-        "image": f"assets/gallery/{png.name}",
+        "image": get_metadata_image_path(png),
         "code_path": "tools/plots/tyre_strategy.py",
         "function": "fastf1_analytics.charts.tyre_strategy.build_tyre_strategy",
         "params": {
@@ -61,10 +66,8 @@ def main() -> None:
         },
         "tags": ["race", "strategy", "tyres"],
     }
-    with yml.open("w", encoding="utf-8") as f:
-        yaml.safe_dump(meta, f, sort_keys=False)
-
-    print(f"Wrote {png} and {yml}")
+    write_plot_metadata(yml, meta)
+    logger.info("Wrote %s and %s", png, yml)
 
 
 if __name__ == "__main__":

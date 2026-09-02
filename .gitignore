@@ -29,3 +29,6 @@ build/
 
 # docs build
 site/
+
+# dev folders
+/tmp-plot-test
