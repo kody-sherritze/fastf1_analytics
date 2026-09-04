@@ -1,4 +1,4 @@
-from types import SimpleNamespace
+﻿from types import SimpleNamespace
 
 import matplotlib
 import numpy as np
@@ -12,17 +12,22 @@ from fastf1_analytics.charts.drs_effectiveness import (
     _segments_from_brake_mask,
     _time_from_resampled,
 )
+from fastf1_analytics.charts.pace_consistency import (
+    average_median_lap_time,
+    stint_boundaries,
+)
 from fastf1_analytics.charts.tyre_performance import (
-    _clean_race_laps,
     _per_driver_compound_laptime,
 )
 from fastf1_analytics.charts.tyre_strategy import _driver_sort_order, _eligible_drivers
+from fastf1_analytics.utils import clean_race_laps
 
 
 def test_clean_race_laps_removes_invalid_conditions_and_normalizes_compounds() -> None:
     session = SimpleNamespace(
         laps=pd.DataFrame(
             {
+                "Driver": ["VER", "VER", "HAM", "VER", "HAM"],
                 "PitInTime": [pd.NaT, pd.NaT, pd.Timestamp("2025-01-01"), pd.NaT, pd.NaT],
                 "PitOutTime": [pd.NaT] * 5,
                 "InLap": [False, True, False, False, False],
@@ -42,10 +47,38 @@ def test_clean_race_laps_removes_invalid_conditions_and_normalizes_compounds() -
         )
     )
 
-    cleaned = _clean_race_laps(session)
+    cleaned = clean_race_laps(session)
 
     assert cleaned["Compound"].tolist() == ["SOFT", ""]
     assert cleaned["LapTime_s"].tolist() == [80.0, 83.0]
+    assert clean_race_laps(session, driver="VER")["Driver"].tolist() == ["VER"]
+
+
+def test_average_median_lap_time_uses_selected_drivers() -> None:
+    laps = pd.DataFrame({"Driver": ["VER", "VER", "HAM", "HAM"], "LapTime_s": [80, 82, 90, 94]})
+
+    assert average_median_lap_time(laps) == 86.5
+    assert average_median_lap_time(laps, ["VER"]) == 81.0
+
+
+def test_stint_boundaries_return_driver_ranges_and_compounds() -> None:
+    session = SimpleNamespace(
+        laps=pd.DataFrame(
+            {
+                "Driver": ["VER", "VER", "VER", "HAM"],
+                "Stint": [1, 1, 2, 1],
+                "LapNumber": [1, 2, 3, 1],
+                "Compound": ["soft", "soft", "medium", "hard"],
+            }
+        )
+    )
+
+    boundaries = stint_boundaries(session)
+    assert boundaries[["Driver", "start_lap", "end_lap", "Compound"]].to_dict("records") == [
+        {"Driver": "HAM", "start_lap": 1, "end_lap": 1, "Compound": "HARD"},
+        {"Driver": "VER", "start_lap": 1, "end_lap": 2, "Compound": "SOFT"},
+        {"Driver": "VER", "start_lap": 3, "end_lap": 3, "Compound": "MEDIUM"},
+    ]
 
 
 def test_per_driver_compound_laptime_aggregates_filters_and_orders() -> None:

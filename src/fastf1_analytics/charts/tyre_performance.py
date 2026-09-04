@@ -1,7 +1,7 @@
 ﻿from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Literal, cast
+from typing import Any, Literal
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -16,9 +16,10 @@ from fastf1_analytics.plotting import (
     savefig,
     seconds_formatter,
 )
+from fastf1_analytics.utils import clean_race_laps
 
-# Track status codes for SC/VSC/yellows to exclude
-_DANGER_CODES = {"4", "5", "6", "7", "8"}
+# Preserve the existing private import for compatibility.
+_clean_race_laps = clean_race_laps
 
 # Dry compounds in a stable order
 COMPOUND_ORDER = ["SOFT", "MEDIUM", "HARD"]
@@ -31,42 +32,6 @@ class TyrePerformanceParams:
     aggregate: Literal["median", "mean"] = "median"
     include_inter_wet: bool = False
     dpi: int = 220
-
-
-def _clean_race_laps(session: Any) -> pd.DataFrame:
-    """Return clean race laps with LapTime in seconds (no in/out laps, no SC/VSC/yellows)."""
-    laps_any = session.laps.copy()
-    laps: pd.DataFrame = cast(pd.DataFrame, laps_any)
-
-    # drop in/out laps
-    for col in ("PitInTime", "PitOutTime"):
-        if col in laps.columns:
-            laps = laps[laps[col].isna()]
-    for col in ("InLap", "OutLap"):
-        if col in laps.columns:
-            laps = laps[~laps[col].fillna(False)]
-
-    # drop unsafe track status
-    if "TrackStatus" in laps.columns:
-
-        def _ok(ts: str | float) -> bool:
-            s = str(ts) if pd.notna(ts) else ""
-            parts = {p.strip() for p in s.split("+") if p.strip()}
-            return parts.isdisjoint(_DANGER_CODES)
-
-        laps = laps[laps["TrackStatus"].apply(_ok)]
-
-    # valid times
-    laps = laps[laps["LapTime"].notna()].copy()
-    laps["LapTime_s"] = laps["LapTime"].dt.total_seconds()
-
-    # compound labels
-    if "Compound" in laps.columns:
-        laps["Compound"] = laps["Compound"].fillna("").astype(str).str.upper()
-    else:
-        laps["Compound"] = ""
-
-    return laps.reset_index(drop=True)
 
 
 def _per_driver_compound_laptime(

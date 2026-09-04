@@ -17,7 +17,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
-from typing import Any, NamedTuple, cast
+from typing import Any, NamedTuple
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -28,6 +28,7 @@ from pandas.api.types import is_timedelta64_dtype
 
 from fastf1_analytics.plotting import apply_style, savefig
 from fastf1_analytics.session_loader import load_session
+from fastf1_analytics.utils import clean_race_laps
 
 logger = logging.getLogger(__name__)
 
@@ -71,34 +72,6 @@ class DRSEffectivenessParams:
 # -----------------------------------------------------------------------------
 # Lap filtering helpers
 # -----------------------------------------------------------------------------
-
-_DANGER_CODES = {"4", "5", "6", "7", "8"}  # SC, VSC, VSC End, Yellow, Double Yellow
-
-
-def _clean_laps(session: Any, driver: str) -> pd.DataFrame:
-    """Return race laps for ``driver`` excluding in/out and SC/VSC/Yellow laps.
-
-    If called on a non‑race session, the same filters are applied.
-    """
-    laps_any = session.laps.pick_drivers(driver).copy()
-    laps: pd.DataFrame = cast(pd.DataFrame, laps_any)
-    # Remove in/out laps based on pit timing or flags
-    for col in ("PitInTime", "PitOutTime"):
-        if col in laps.columns:
-            laps = laps[laps[col].isna()]
-    for col in ("InLap", "OutLap"):
-        if col in laps.columns:
-            laps = laps[~laps[col].fillna(False)]
-    # Remove laps with dangerous track status codes (SC/VSC/Yellow)
-    if "TrackStatus" in laps.columns:
-
-        def _ok(ts: str | float) -> bool:
-            s = str(ts) if pd.notna(ts) else ""
-            parts = {p.strip() for p in s.split("+") if p.strip()}
-            return parts.isdisjoint(_DANGER_CODES)
-
-        laps = laps[laps["TrackStatus"].apply(_ok)]
-    return laps.reset_index(drop=True)
 
 
 # -----------------------------------------------------------------------------
@@ -397,7 +370,7 @@ def build_drs_effectiveness_distance(
     drv = str(driver).upper()
 
     # Filter laps (race-only, no in/out, no SC/VSC/Yellow)
-    laps = _clean_laps(session, drv)
+    laps = clean_race_laps(session, driver=drv)
 
     # Track best ON and OFF windows (by minimal time across the straight)
     best_on: _BestLap | None = None
